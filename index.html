@@ -2,14 +2,42 @@
 <html lang="en">
 
 <head>
+    <!-- ---------- Meta Tags 🟢 ----------  -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hemant Kumar</title>
-    <link rel="stylesheet" href="./assets/css/app.css">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <meta property="og:image" content="http://example.com/logo.jpg">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="1024">
+    <!-- ---------- Meta Tags 🛑 ----------  -->
+
+    <title>Hemant Kumar</title>
+
+    <!-- ---------- Favicon 🟢 ----------  -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/favicon_io/">
+    <link rel="manifest" href="./assets/images/favicon_io/site.webmanifest">
+    <!-- ---------- Favicon 🛑 ----------  -->
+
+    <link rel="stylesheet" href="./assets/css/app.css">
+
+    <!-- ---------- Unicon Fonts CDN 🟢 ----------  -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/thinline.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/solid.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- ---------- Unicon Fonts CDN 🛑 ----------  -->
+
+    <!-- ---------- Boxicon CDN 🟢 ----------  -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <!-- ---------- Boxicon CDN 🛑 ----------  -->
+
+    <!-- ---------- Animate CSS CDN 🟢 ----------  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- ---------- Animate CSS CDN 🛑 ----------  -->
+
 
 </head>
 
@@ -17,7 +45,7 @@
     <header>
         <nav>
             <div class="nav_name">
-                <ul class="text hidden">
+                <ul class="text hidden remove_list_style">
                     <li>H</li>
                     <li class="ghost">e</li>
                     <li class="ghost">m</li>
@@ -36,14 +64,14 @@
 
 
             <div class="nav_options">
-                <ul class="nav_list">
-                    <li>About Me</li>
-                    <!-- <li>⋈</li> -->
-                    <li>Skills</li>
-                    <!-- <li>⋈</li> -->
-                    <li>Projects</li>
-                    <!-- <li>⋈</li> -->
-                    <li>Contact</li>
+                <ul class="nav_list remove_list_style">
+                    <li> <a href="#">About Me</a> </li>
+
+                    <li> <a href="#">Skills</a> </li>
+
+                    <li> <a href="#">Projects</a> </li>
+
+                    <li> <a href="#">Contact</a> </li>
                 </ul>
             </div>
         </nav>
@@ -51,11 +79,11 @@
     </header>
 
     <main>
-        <div class="hero">
+        <section class="hero">
             <div class="hero_content">
 
                 <div class="intro_wrapper">
-                    <h3>Hi, I am </h3>
+                    <h3>Hi<span class="wave">👋</span>, I am </h3>
                     <h1> <span class="hemant_span">Hemant</span> Kumar</h1>
                     <h3>Web Developer</h3>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et eum facere corporis quaerat atque.
@@ -64,23 +92,74 @@
                 </div>
 
                 <div class="button_wrapper">
-                    <button class="download" type="download">Download CV<i class="uil uil-file-download"></i></button>
-                    <button class="contact" type="contact">Contact Me</button>
+                    <button class="download btn-hero" type="download">
+                        <p>Download CV</p> <i class="uil uil-file-download"></i>
+                    </button>
+                    <button class="contact btn-hero" type="contact">
+                        <p>Contact Me</p> <i class="uil uil-at"></i>
+                    </button>
                 </div>
 
             </div>
 
             <div class="hero_img">
-                <img src="./assets/images/PhotoRoom-20210706_042125.png" alt="">
+                <img src="./assets/images/hk_avatar_8x.png" alt="">
             </div>
-        </div>
+        </section>
+
+        <section class="about_me">
+
+        </section>
+
+        <section class="skills">
+
+        </section>
+
+        <section class="projects">
+
+        </section>
+
+        <section class="contact">
+
+        </section>
+
     </main>
 
 
-    <footer></footer>
 
+    <footer>
+        <div class="main_credits">
+            <h2>Hemant Kumar</h2>
+        </div>
+        <div class="sub_credit">
+            <h6>Made with <span>💖</span> in India</h6>
+        </div>
+        <div class="socials">
+            <ul class="socials_list remove_list_style glow">
+                <li> <a href="#"><i class="uil uil-github-alt"></i></a> </li>
+
+                <li> <a href="#"><i class="uil uil-telegram-alt"></i></a> </li>
+
+                <li> <a href="#"><i class="uil uil-youtube"></i></a> </li>
+
+                <li> <a href="#"><i class="uil uil-twitter-alt"></i></a> </li>
+
+                <li> <a href="#"><i class="uil uil-linkedin-alt"></i></a> </li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- ---------- jquery CDN 🟢 ----------  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <!-- ---------- jquery CDN 🛑 ----------  -->
+
+    <!-- ---------- app.js 🟢 ----------  -->
     <script src="./assets/js/app.js"></script>
+    <!-- ---------- app.js 🛑 ----------  -->
 
+    <!-- ---------- Typed JS CDN 🟢 ----------  -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <!-- ---------- Typed JS CDN 🛑 ----------  -->
 </body>
 
 

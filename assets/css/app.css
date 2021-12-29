@@ -1,29 +1,89 @@
-@import url('https://fonts.googleapis.com/css?family=Muli:300,400,700');
-@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@200;300;400&family=Poppins:wght@200;300;400&display=swap');
+/* ---------- Google Fonts 🟢 ---------- */
+@import url("https://fonts.googleapis.com/css?family=Muli:300,400,700");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+/* ---------- Google Fonts 🛑 ---------- */
+
+:root {
+  --clr-primary-200: #f3eed9;
+  --clr-primary-400: #824936;
+  --clr-primary-999: #000;
+  --clr-hover: #77ffb0;
+
+  --clr-neutral-0: #fff;
+  --clr-neutral-50: #e0e0e0;
+  --clr-neutral-900: #222c2a;
+  --clr-neutral-600: #585858;
+  --clr-neutral-500: #757575;
+
+  --clr-body-bg: #c2c5aa;
+
+  --clr-telegram-blue: #0088cc;
+  --clr-twitter-blue: #00acee;
+  --clr-github-blue: #24292e;
+  --clr-youtube-red: #ff0000;
+  --clr-linkedin-blue: #0a66c2;
 
 
+  --ff-primary: "Poppins", sans-serif;
+  --ff-secondary: "Muli", sans-serif;
+  --ff-tertiary: "Montserrat", sans-serif;
+
+  --fs-primary: 1.6rem;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
 
 * {
   margin: 0;
   padding: 0;
+  font-family: var(--ff-primary);
 }
 
 html {
-    scroll-behavior: smooth;
-  }
+  scroll-behavior: smooth;
+}
 
 body {
-  background-color: #F3F6F9;
-  height: 200vh;
+  background-color: #f3f6f9;
+  /* height: 200vh; */
   /* font-family: 'Muli', sans-serif; */
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
+
+/* ---------- Utility Class 🟢 ---------- */
+
+.remove_list_style {
+  list-style: none;
+  /* list-style-type: none; */
+}
+/* ---------- Utility Class 🛑 ---------- */
+
+/* ---------- Custom Scrollbar 🟢 ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 128, 255, 0.8);
+}
+/* ---------- Custom Scrollbar 🛑 ---------- */
+
 .text {
   position: fixed;
-  top: 2vh;
+  top: 2.5vh;
   left: 7vw;
   /* transform: translateX(-50%) translateY(-50%); */
-  list-style: none;
+  /* list-style: none; */
   border-bottom: 0;
 }
 
@@ -36,7 +96,7 @@ body {
   float: left;
   font-weight: 700;
   font-size: 2em;
-  color: #2F3A45;
+  color: #2f3a45;
   opacity: 1;
   transition: all 0.5s ease-in-out;
   max-width: 2em;
@@ -53,135 +113,253 @@ body {
   max-width: 0;
 }
 
-
 header {
-    display: flex;
-    height: 10vh;
+  display: flex;
+  height: 10vh;
 
-    background-color: chocolate;
-    position: sticky;
-    top:0;
+  background-color: chocolate;
+  position: sticky;
+  top: 0;
 
-    transition: top 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    z-index: 1100;
-    backdrop-filter: blur(20px);
-    box-shadow: inset 0px -1px 1px #eaeef3;
-    background-color: rgba(255,255,255,0.72);
+  transition: top 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  z-index: 1100;
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0px -1px 1px #eaeef3;
+  background-color: rgba(255, 255, 255, 0.72);
 }
 
 nav {
-    display: flex;
-    width: 100vw;
-    align-content: center;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  width: 100vw;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
 
-    padding: 0 6rem;
+  padding: 0 6rem;
 }
 
 .nav_name {
   font-size: 0.8rem;
-
-
 }
 
-.nav_options{
-color: #2F3A45;
+.nav_list a{
+  text-decoration: none;
+  color: #2f3a45;
 }
 
-.nav_options ul{
-    display: flex;
-   
+.nav_list {
+  display: flex;
 }
 
-.nav_options li{
-    list-style-type: none;
-    padding: 0.5rem;
+.nav_options li {
+  /* list-style-type: none; */
+  padding: 0.5rem;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-around;
+  height: 42rem;
+  height: 90vh;
+  align-items: center;
+
+  /* background-color: #0059b2; */
+}
+
+.hero_content {
+  width: 40vw;
+  height: 400px;
+  /* background-color: yellow; */
+  font-size: 1.5rem;
+  /* font-family: 'Lexend Deca', sans-serif; */
+  font-family: "Poppins", sans-serif;
+  /* padding-bottom: 4rem; */
+  /* margin-bottom: 4em; */
+}
+
+.hero_img {
+  /* margin-bottom: 6rem; */
+  display: flex;
+  align-items: center;
+
+  /* transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; */
+  /* border-radius: 10px; */
+
+  /* display: block; */
+  /* background-color: rgb(19, 47, 76); */
+  /* padding: 20px; */
+}
+
+.hero_img img {
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50%;
+  /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
+
+  /* border: 4px solid rgb(38, 93, 151); */
+
+  /* box-shadow: #007fff40 0 0 2px,#007fff40 0 0 4px,#007fff40 0 0 8px,#007fff40 0 0 16px,#007fff40 0 0 32px; */
+
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+
+  /* Google Colours */
+  /* box-shadow: #4285f4 0px 0px 0px 8px, #ea4335 0px 0px 0px 16px, #fbbc05 0px 0px 0px 24px, #34a853 0px 0px 0px 32px; */
+
+  /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
+  box-shadow: rgba(38, 93, 151, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(38, 93, 151, 0.35) 0px -2px 6px 0px inset;
+
     
 }
 
-
-
-
-.hero{
-    display: flex;
-    justify-content: space-around;
-    height: 42rem;
-    align-items: center;
-}
-
-
-.hero_content{
-width: 40vw;
-height: 400px;
-/* background-color: yellow; */
-font-size: 1.5rem;
-/* font-family: 'Lexend Deca', sans-serif; */
-font-family: 'Poppins', sans-serif;
-/* padding-bottom: 4rem; */
-margin-bottom: 4em;
-}
-
-.hero_img{
-  margin-bottom: 6rem;
-display: flex;
-align-items: center;
-}
-
-.hero_img img{
-    width: 30vw;
-    height: 30vw;
-    border-radius: 50%;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset; */
-}
-
-.button_wrapper{
+.button_wrapper {
   /* font-family: 'Poppins', sans-serif; */
   display: flex;
   justify-content: space-between;
   width: 16em;
-
 }
 
-.button_wrapper button{
-    background: rgb(0, 127, 255);
-    font-family: 'Poppins', sans-serif;
-    color: #fff;
-    border-radius: 10px;
-    border:2px solid;
-    padding: 1em 2em;
-    font-size: 0.6em;
-    transition: color 0.25s,border-color 0.25s,box-shadow 0.25s,transform 0.25s;
-    /* margin:0.5em; */
-  }
-
-.button_wrapper button:hover{
-    border-color: rgb(0, 127, 255);
-    color:#fff;
-    /* box-shadow:0 0.5em 0.5em -0.4em #0059B2; */
-    /* transform: translateY(-0.25em); */
-    cursor:pointer;
-    background: #0059B2;
-
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+.button_wrapper button {
+  background: #007fff;
+  /* font-family: "Poppins", sans-serif; */
+  color: #fff;
+  border-radius: 8px;
+  border: 2px solid #007fff;
+  padding: 1em 2em;
+  font-size: 0.6em;
+  transition: color 0.15s, border 0.1s, box-shadow 0.25s, transform 0.15s;
+  /* margin:0.5em; */
 }
 
-.intro_wrapper{
-    margin-bottom: 1rem;
+.button_wrapper button:hover {
+  border: 2px solid #004a9857;
+  color: #fff;
+  /* box-shadow:0 0 2px 1px #005ab434; */
+  transform: translateY(-0.05em);
+  cursor: pointer;
+  /* background: #0780f8; */
+  transition: color 0.15s, border 0.1s, box-shadow 0.25s, transform 0.15s;
+
+  /* box-shadow: #007fff40 0px 2px 8px 4px, #007fff40 0px 0px 8px 4px; */
+
+  box-shadow: #007fff40 0 1px 2px, #007fff40 0 2px 4px, #007fff40 0 4px 8px,
+    #007fff40 0 8px 16px, #007fff40 0 16px 32px;
 }
 
-.intro_wrapper p{
-  color: #2F3A45;
+.button_wrapper button:active {
+  transform: translateY(0.25em);
+}
+
+.intro_wrapper {
+  margin-bottom: 1rem;
+}
+
+.intro_wrapper p {
+  color: #2f3a45;
   font-weight: 250;
   font-size: 0.8em;
 }
 
-.hemant_span{
-  background: linear-gradient(to right, #007FFF, #0059B2);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+.hemant_span {
+  background: linear-gradient(to right, #007fff, #0059b2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
+.btn-hero {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-hero .uil {
+  margin-left: 0.5rem;
+}
+
+/* ---------- Hand Wave Animation 🟢 ---------- */
+.wave {
+  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s;        /* Change to speed up or slow down */
+  animation-iteration-count: infinite;  /* Never stop waving :) */
+  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  display: inline-block;
+  
+  font-weight: 100;               /* Fix for emoji otline  */
+}
+
+@keyframes wave-animation {
+    0% { transform: rotate( 0.0deg) }
+   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
+   20% { transform: rotate(-8.0deg) }
+   30% { transform: rotate(14.0deg) }
+   40% { transform: rotate(-4.0deg) }
+   50% { transform: rotate(10.0deg) }
+   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
+  100% { transform: rotate( 0.0deg) }
+}
+/* ---------- Hand Wave Animation 🛑 ---------- */
+
+/* ---------- footer Section 🟢 ---------- */
+footer{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 20vh;
+  font-size: 1.5rem;
+  margin: 2rem 0;
+}
+
+.socials_list{
+  /* list-style-type: none; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  
+  width: 100%;
+}
+
+.socials_list li{
+  padding: 0.5rem;
+}
+
+.socials_list i{
+  font-size: 1.5rem;
+  color: #2f3a45;
+  transition: color 0.6s,text-shadow 0.4s;
+
+  
+}
+
+.sub_credit span{
+  font-weight: 100;
+}
+
+.uil-telegram-alt:hover{
+  color: var(--clr-telegram-blue);
+  text-shadow: 0 0 32px var(--clr-telegram-blue);
+}
+
+.uil-youtube:hover{
+  color: var(--clr-youtube-red);
+  text-shadow: 0 0 32px var(--clr-youtube-red);
+}
+
+.uil-twitter-alt:hover{
+  color: var(--clr-twitter-blue);
+  text-shadow: 0 0 32px var(--clr-twitter-blue);
+}
+
+.uil-linkedin-alt:hover{
+  color: var(--clr-linkedin-blue);
+  text-shadow: 0 0 32px var(--clr-linkedin-blue);
+}
+
+.uil-github-alt:hover{
+  color: var(--clr-github-blue);
+  text-shadow: 0 0 32px var(--clr-github-blue);
+}
+
+/* ---------- footer Section 🛑 ---------- */
 
 
