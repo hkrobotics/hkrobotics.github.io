@@ -85,7 +85,11 @@
                 <div class="intro_wrapper">
                     <h3>Hi<span class="wave">👋</span>, I am </h3>
                     <h1> <span class="hemant_span">Hemant</span> Kumar</h1>
-                    <h3>Web Developer</h3>
+                    <div class="typed_wrapper">
+                        <h3 class="typed_word"></h3>
+                        <span class="typed-cursor"></span>
+                    </div>
+
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et eum facere corporis quaerat atque.
                         Aut iste eligendi ex consequuntur corporis animi molestiae exercitationem, obcaecati labore
                         culpa excepturi eum, quos reprehenderit?</p>
@@ -157,9 +161,26 @@
     <script src="./assets/js/app.js"></script>
     <!-- ---------- app.js 🛑 ----------  -->
 
-    <!-- ---------- Typed JS CDN 🟢 ----------  -->
+    <!-- ---------- Typed JS 🟢 ----------  -->
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-    <!-- ---------- Typed JS CDN 🛑 ----------  -->
+
+    <script>
+        var options = {
+            strings: ['Frontend Developer', 'Backend Developer', 'Open Source Enthusiast'],
+            typeSpeed: 50,
+            backSpeed: 50,
+            backDelay: 2500,
+            loop: true,
+            contentType: 'html',
+            cursorChar: '_',
+            autoInsertCss: true
+        };
+
+        var typed = new Typed('.typed_word', options);
+    </script>
+
+    <!-- ---------- Typed JS 🛑 ----------  -->
+
 </body>
 
 
