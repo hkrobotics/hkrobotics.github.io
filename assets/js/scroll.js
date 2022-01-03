@@ -5,7 +5,13 @@ window.sr = ScrollReveal();
             distance: '100px',
             easing: 'ease-in-out',
             scale: 1,
-            opacity: 0
+            opacity: 0,
+            reveal: true,
+            delay: 0,
+            reset: true,
+            mobile: true,
+            viewFactor: 0.5
+
         });
 
         sr.reveal('.hero_img', {
@@ -45,28 +51,34 @@ window.sr = ScrollReveal();
         });
 
         sr.reveal('.main_credits', {
+            interval: 200,
             duration: 2000,
             origin: 'bottom',
-            distance: '100px',
+            distance: '96px',
             easing: 'ease-in-out',
             scale: 1,
-            opacity: 0
+            opacity: 0,
+            reset: true
         });
 
         sr.reveal('.sub_credit', {
-            duration: 2000,
+            interval: 200,
+            duration: 1500,
             origin: 'bottom',
-            distance: '100px',
+            distance: '64px',
             easing: 'ease-in-out',
             scale: 1,
-            opacity: 0
+            opacity: 0,
+            reset: true
         });
 
         sr.reveal('.socials_list li', {
-            duration: 2000,
+            duration: 500,
+            interval: 200,
             origin: 'bottom',
-            distance: '100px',
+            distance: '32px',
             easing: 'ease-in-out',
             scale: 1,
-            opacity: 0
+            opacity: 0,
+            reset: true
         });
