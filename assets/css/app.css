@@ -24,6 +24,9 @@
   --clr-youtube-red: #ff0000;
   --clr-linkedin-blue: #0a66c2;
 
+  --clr-body-bg-light: #f3f6f9;
+  --clr-body-bg-dark: #0a1929;
+
 
   --ff-primary: "Poppins", sans-serif;
   --ff-secondary: "Muli", sans-serif;
@@ -31,6 +34,12 @@
 
   --fs-primary: 1.6rem;
 }
+
+
+
+/* ---------- Dark Mode 🟢 ---------- */
+
+/* ---------- Dark Mode 🛑 ---------- */
 
 *,
 *:before,
@@ -49,11 +58,12 @@ html {
 }
 
 body {
-  background-color: #f3f6f9;
+  background-color: var(--clr-body-bg-light);
   /* height: 200vh; */
   /* font-family: 'Muli', sans-serif; */
   font-family: "Poppins", sans-serif;
 }
+
 
 /* ---------- Utility Class 🟢 ---------- */
 
@@ -372,4 +382,58 @@ footer{
 
 /* ---------- footer Section 🛑 ---------- */
 
+/* ---------- Responsive Section 🟢 ---------- */
+@media screen and (max-width: 992px) {
+  
+  .nav_name{
+    display: none;
+  }
 
+  nav{
+    justify-content: flex-end;
+    display: none;
+  }
+
+  header{
+    display:none;
+  }
+
+  
+  
+  .hero{
+    flex-direction: column-reverse;
+    height: auto;
+
+    margin-top: 10%;
+  }
+
+  .hero_content{
+    width: auto;
+    height: auto;
+    padding: 10%;
+
+    font-size: 1rem;
+  }
+
+  footer{
+    font-size: 1rem;
+    height: auto;
+  }
+
+
+}
+
+@media screen and (max-width: 768px) {
+  .hero_content{
+    max-width: 90vw;
+  }
+}
+  
+@media screen and (max-width: 576px) {
+  .hero_content{
+    max-width: 90vw;
+  }
+}
+
+
+/* ---------- Responsive Section 🛑 ---------- */
