@@ -447,4 +447,22 @@ footer{
 }
 
 
+@media screen and (max-width: 320px) {
+  .hero_content{
+    padding: 2%;
+  }
+
+  .hero_content{
+    font-size: 0.8rem;
+  }
+
+
+}
+
+@media screen and (max-width: 768px) {
+  .hero_content{
+    padding: 5%;
+  }
+}
+
 /* ---------- Responsive Section 🛑 ---------- */
