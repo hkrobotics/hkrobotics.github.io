@@ -5,7 +5,7 @@
 /* ---------- Google Fonts 🛑 ---------- */
 
 :root {
-  --clr-primary-200: #f3eed9;
+  /* --clr-primary-200: #f3eed9;
   --clr-primary-400: #824936;
   --clr-primary-999: #000;
   --clr-hover: #77ffb0;
@@ -16,7 +16,7 @@
   --clr-neutral-600: #585858;
   --clr-neutral-500: #757575;
 
-  --clr-body-bg: #c2c5aa;
+  --clr-body-bg: #c2c5aa; */
 
   --clr-telegram-blue: #0088cc;
   --clr-twitter-blue: #00acee;
@@ -24,15 +24,32 @@
   --clr-youtube-red: #ff0000;
   --clr-linkedin-blue: #0a66c2;
 
-  --clr-body-bg-light: #f3f6f9;
-  --clr-body-bg-dark: #0a1929;
+  /* --clr-body-bg-light: #f3f6f9;
+  --clr-body-bg-dark: #0a1929; */
 
+  --clr-body-bg:#f3f6f9;
 
   --ff-primary: "Poppins", sans-serif;
   --ff-secondary: "Muli", sans-serif;
   --ff-tertiary: "Montserrat", sans-serif;
 
   --fs-primary: 1.6rem;
+}
+
+
+
+html[data-theme="dark"]{
+  --clr-telegram-blue: #0088cc;
+  --clr-twitter-blue: #00acee;
+  --clr-github-blue: #24292e;
+  --clr-youtube-red: #ff0000;
+  --clr-linkedin-blue: #0a66c2;
+
+  /* --clr-body-bg-light: #f3f6f9;
+  --clr-body-bg-dark: #0a1929; */
+
+  --clr-body-bg:#0a1929;
+
 }
 
 
@@ -58,7 +75,7 @@ html {
 }
 
 body {
-  background-color: var(--clr-body-bg-light);
+  background-color: var(--clr-body-bg);
   /* height: 200vh; */
   /* font-family: 'Muli', sans-serif; */
   font-family: "Poppins", sans-serif;
