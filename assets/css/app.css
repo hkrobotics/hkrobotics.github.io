@@ -24,8 +24,8 @@
   --clr-youtube-red: #ff0000;
   --clr-linkedin-blue: #0a66c2;
 
-  /* --clr-body-bg-light: #f3f6f9;
-  --clr-body-bg-dark: #0a1929; */
+  /* --clr-body-bg-light: #f3f6f9;*/
+  --clr-body-bg-dark: #0a1929; 
 
   --clr-body-bg:#f3f6f9;
 
@@ -79,6 +79,9 @@ body {
   /* height: 200vh; */
   /* font-family: 'Muli', sans-serif; */
   font-family: "Poppins", sans-serif;
+
+  /* overflow-x: hidden; */
+  
 }
 
 
@@ -483,3 +486,19 @@ footer{
 }
 
 /* ---------- Responsive Section 🛑 ---------- */
+
+.menu_content{
+  height: 100vh;
+  width: 25vw;
+  background-color: var(--clr-body-bg-dark);
+
+  position: fixed;
+  top:0;
+  right: -100%;
+  transition: all ease-in-out 0.5s;
+}
+
+.menu_content_clicked{
+  right:0;
+  z-index: 1101;
+}

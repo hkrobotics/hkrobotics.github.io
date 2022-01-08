@@ -11,7 +11,8 @@
     <title>hkrobotics</title>
     <meta name="title" content="hkrobotics">
     <meta name="description" content="Full Stack Developer | Open Source Enthusiast | Tech Geek">
-    <meta name="keywords" content="hemant kumar, hkrobotics, hemant, hemant kumar portfolio, hemant portfolio, hkrobotics portfolio, web development, the royal flush trf, trf, the-royal-flush">
+    <meta name="keywords"
+        content="hemant kumar, hkrobotics, hemant, hemant kumar portfolio, hemant portfolio, hkrobotics portfolio, web development, the royal flush trf, trf, the-royal-flush">
     <meta name="author" content="hemant kumar">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
@@ -77,6 +78,11 @@
     <!-- ---------- Scroll Reveal JS CDN 🟢 ----------  -->
     <script src="https://unpkg.com/scrollreveal"></script>
     <!-- ---------- Scroll Reveal JS CDN 🛑 ----------  -->
+
+
+    <!-- ---------- Scroll Reveal JS CDN 🟢 ----------  -->
+    <link href="https://seattleowl.com/pointer.js/pointer.css" rel="stylesheet">
+    <!-- ---------- Scroll Reveal JS CDN 🟢 ----------  -->
 
 
 
@@ -154,7 +160,12 @@
         </section>
 
         <section class="about_me">
+            <button id="menu" class="menu" onclick="open_menu()">Hamburger</button>
+            <div class="menu_content" id="menu_content">
 
+
+
+            </div>
         </section>
 
         <section class="skills">
@@ -230,6 +241,29 @@
     <!-- ---------- Scroll Reveal 🟢 ----------  -->
     <script src="./assets/js/scroll.js"></script>
     <!-- ---------- Scroll Reveal 🛑 ----------  -->
+
+    <script>
+        function open_menu() {
+            var my_element = document.getElementById("menu_content");
+            my_element.classList.toggle("menu_content_clicked");
+        }
+    </script>
+
+    <script src="https://seattleowl.com/pointer.js/pointer.js"></script>
+
+    <script>
+        init_pointer({
+
+            pointerColor: "#0059b2", // Css color
+
+            pointerWidth: "10px", // Css width
+
+            ringSize: 15, // Pixels
+
+            ringClickSize: 10 // Pixels when clicking
+
+        })
+    </script>
 
 </body>
 
