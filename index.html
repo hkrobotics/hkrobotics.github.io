@@ -80,45 +80,25 @@
     <!-- ---------- Scroll Reveal JS CDN 🛑 ----------  -->
 
 
-    <!-- ---------- Scroll Reveal JS CDN 🟢 ----------  -->
-    <link href="https://seattleowl.com/pointer.js/pointer.css" rel="stylesheet">
-    <!-- ---------- Scroll Reveal JS CDN 🟢 ----------  -->
-
-
 
 </head>
 
 <body>
     <header>
         <nav>
-            <div class="nav_name">
-                <ul class="text hidden remove_list_style">
-                    <li>H</li>
-                    <li class="ghost">e</li>
-                    <li class="ghost">m</li>
-                    <li class="ghost">a</li>
-                    <li class="ghost">n</li>
-                    <li class="ghost">t</li>
-                    <li class="spaced">K</li>
-                    <li class="ghost">u</li>
-                    <li class="ghost">m</li>
-                    <li class="ghost">a</li>
-                    <li class="ghost">r</li>
 
-                </ul>
-            </div>
 
 
 
             <div class="nav_options">
                 <ul class="nav_list remove_list_style">
-                    <li> <a href="#">About Me</a> </li>
+                    <li> <a href="#">./About</a> </li>
 
-                    <li> <a href="#">Skills</a> </li>
+                    <li> <a href="#">./Skills</a> </li>
 
-                    <li> <a href="#">Projects</a> </li>
+                    <li> <a href="#">./Projects</a> </li>
 
-                    <li> <a href="#">Contact</a> </li>
+                    <li> <a href="#">./Contact</a> </li>
                 </ul>
             </div>
         </nav>
@@ -154,14 +134,14 @@
 
             </div>
 
-            <div class="hero_img">
-                <img src="./assets/images/hk_avatar_8x.png" alt="">
+            <div class="hero_img" >
+                <img id="hero_img" src="./assets/images/hero_img_light.png" alt="">
+
             </div>
         </section>
 
         <section class="about_me">
-            <button id="menu" class="menu" onclick="open_menu()">Hamburger</button>
-            <div class="menu_content" id="menu_content">
+            
 
 
 
@@ -242,28 +222,10 @@
     <script src="./assets/js/scroll.js"></script>
     <!-- ---------- Scroll Reveal 🛑 ----------  -->
 
-    <script>
-        function open_menu() {
-            var my_element = document.getElementById("menu_content");
-            my_element.classList.toggle("menu_content_clicked");
-        }
-    </script>
+    
 
-    <script src="https://seattleowl.com/pointer.js/pointer.js"></script>
 
-    <script>
-        init_pointer({
 
-            pointerColor: "#0059b2", // Css color
-
-            pointerWidth: "10px", // Css width
-
-            ringSize: 15, // Pixels
-
-            ringClickSize: 10 // Pixels when clicking
-
-        })
-    </script>
 
 </body>
 

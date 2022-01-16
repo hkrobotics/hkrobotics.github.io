@@ -2,6 +2,7 @@
 @import url("https://fonts.googleapis.com/css?family=Muli:300,400,700");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
 /* ---------- Google Fonts 🛑 ---------- */
 
 :root {
@@ -25,20 +26,26 @@
   --clr-linkedin-blue: #0a66c2;
 
   /* --clr-body-bg-light: #f3f6f9;*/
-  --clr-body-bg-dark: #0a1929; 
+  --clr-body-bg-dark: #0a1929;
 
-  --clr-body-bg:#f3f6f9;
+  --clr-body-bg: #f3f6f9;
+  /* --clr-body-bg:#0a192f; */
+
+
+  --clr-nav-list: #2f3a45;
 
   --ff-primary: "Poppins", sans-serif;
   --ff-secondary: "Muli", sans-serif;
   --ff-tertiary: "Montserrat", sans-serif;
+  --ff-mono: "Ubuntu Mono", monospace;
 
   --fs-primary: 1.6rem;
+  --fs-secondary: 1.4rem;
+  --fs-tertiary: 1.2rem;
+  --fs-mono: 1.2rem;
 }
 
-
-
-html[data-theme="dark"]{
+html[data-theme="dark"] {
   --clr-telegram-blue: #0088cc;
   --clr-twitter-blue: #00acee;
   --clr-github-blue: #24292e;
@@ -48,11 +55,10 @@ html[data-theme="dark"]{
   /* --clr-body-bg-light: #f3f6f9;
   --clr-body-bg-dark: #0a1929; */
 
-  --clr-body-bg:#0a1929;
+  --clr-body-bg: #0a1929;
 
+  /* --clr-body-bg:#0a192f; */
 }
-
-
 
 /* ---------- Dark Mode 🟢 ---------- */
 
@@ -81,9 +87,12 @@ body {
   font-family: "Poppins", sans-serif;
 
   /* overflow-x: hidden; */
-  
-}
 
+  scroll-behavior: smooth;
+
+  width: 70%;
+  margin: auto;
+}
 
 /* ---------- Utility Class 🟢 ---------- */
 
@@ -92,7 +101,8 @@ body {
   /* list-style-type: none; */
 }
 
-.no-select{
+
+.no-select {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -117,54 +127,20 @@ body {
 }
 /* ---------- Custom Scrollbar 🛑 ---------- */
 
-.text {
-  position: fixed;
-  top: 2.5vh;
-  left: 7vw;
-  /* transform: translateX(-50%) translateY(-50%); */
-  /* list-style: none; */
-  border-bottom: 0;
-}
-
-.text.hidden {
-  border-bottom: 1px solid #fff;
-}
-
-.text li {
-  display: inline-block;
-  float: left;
-  font-weight: 700;
-  font-size: 2em;
-  color: #2f3a45;
-  opacity: 1;
-  transition: all 0.5s ease-in-out;
-  max-width: 2em;
-}
-.text.hidden li.spaced {
-  padding-left: 0;
-}
-.text li.spaced {
-  padding-left: 0.5em;
-}
-
-.text.hidden li.ghost {
-  opacity: 0;
-  max-width: 0;
-}
-
 header {
   display: flex;
   height: 10vh;
+  margin-top: 3rem;
 
-  background-color: chocolate;
-  position: sticky;
-  top: 0;
+  /* background-color: chocolate; */
+  /* position: sticky; */
+  /* top: 20px; */
 
   transition: top 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  z-index: 1100;
-  backdrop-filter: blur(20px);
-  box-shadow: inset 0px -1px 1px #eaeef3;
-  background-color: rgba(255, 255, 255, 0.72);
+  /* z-index: 1100; */
+  /* backdrop-filter: blur(20px); */
+  /* box-shadow: inset 0px -1px 1px #eaeef3; */
+  /* background-color: rgba(255, 255, 255, 0.72); */
 }
 
 nav {
@@ -174,16 +150,15 @@ nav {
   justify-content: space-between;
   align-items: center;
 
-  padding: 0 6rem;
+  /* padding: 0 6rem; */
 }
 
-.nav_name {
-  font-size: 0.8rem;
-}
-
-.nav_list a{
+.nav_list a {
+  color: var(--clr-nav-list);
+  font-family: var(--ff-mono);
   text-decoration: none;
-  color: #2f3a45;
+  font-size: var(--fs-mono);
+  font-weight: 550;
 }
 
 .nav_list {
@@ -197,9 +172,9 @@ nav {
 
 .hero {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   height: 42rem;
-  height: 90vh;
+  height: 82vh;
   align-items: center;
 
   /* background-color: #0059b2; */
@@ -230,26 +205,24 @@ nav {
 }
 
 .hero_img img {
-  width: 30vw;
-  height: 30vw;
+  width: 25vw;
+  height: 25vw;
   border-radius: 50%;
   /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 
-  /* border: 4px solid rgb(38, 93, 151); */
+  border: 4px solid rgb(100, 100, 111, 0.99);
 
   /* box-shadow: #007fff40 0 0 2px,#007fff40 0 0 4px,#007fff40 0 0 8px,#007fff40 0 0 16px,#007fff40 0 0 32px; */
 
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+  /* box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px; */
 
   /* Google Colours */
   /* box-shadow: #4285f4 0px 0px 0px 8px, #ea4335 0px 0px 0px 16px, #fbbc05 0px 0px 0px 24px, #34a853 0px 0px 0px 32px; */
 
   /* box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; */
-  box-shadow: rgba(38, 93, 151, 0.25) 0px 50px 100px -20px,
+  /* box-shadow: rgba(38, 93, 151, 0.25) 0px 50px 100px -20px, 
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
-    rgba(38, 93, 151, 0.35) 0px -2px 6px 0px inset;
-
-    
+    rgba(38, 93, 151, 0.35) 0px -2px 6px 0px inset;*/
 }
 
 .button_wrapper {
@@ -315,8 +288,6 @@ nav {
   font-weight: 800;
 }
 
-
-
 .btn-hero {
   display: flex;
   justify-content: space-between;
@@ -328,29 +299,45 @@ nav {
 
 /* ---------- Hand Wave Animation 🟢 ---------- */
 .wave {
-  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
-  animation-duration: 2.5s;        /* Change to speed up or slow down */
-  animation-iteration-count: infinite;  /* Never stop waving :) */
-  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  animation-name: wave-animation; /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s; /* Change to speed up or slow down */
+  animation-iteration-count: infinite; /* Never stop waving :) */
+  transform-origin: 70% 70%; /* Pivot around the bottom-left palm */
   display: inline-block;
-  
-  font-weight: 100;               /* Fix for emoji otline  */
+
+  font-weight: 100; /* Fix for emoji otline  */
 }
 
 @keyframes wave-animation {
-    0% { transform: rotate( 0.0deg) }
-   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
-   20% { transform: rotate(-8.0deg) }
-   30% { transform: rotate(14.0deg) }
-   40% { transform: rotate(-4.0deg) }
-   50% { transform: rotate(10.0deg) }
-   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
-  100% { transform: rotate( 0.0deg) }
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  } /* The following five values can be played with to make the waving more or less extreme */
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  } /* Reset for the last half to pause */
+  100% {
+    transform: rotate(0deg);
+  }
 }
 /* ---------- Hand Wave Animation 🛑 ---------- */
 
 /* ---------- footer Section 🟢 ---------- */
-footer{
+footer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -360,53 +347,49 @@ footer{
   margin: 2rem 0;
 }
 
-.socials_list{
+.socials_list {
   /* list-style-type: none; */
   display: flex;
   justify-content: space-between;
-  align-items: center;  
+  align-items: center;
   width: 100%;
 }
 
-.socials_list li{
+.socials_list li {
   padding: 0.5rem;
 }
 
-.socials_list i{
+.socials_list i {
   font-size: 1.5rem;
   color: #2f3a45;
-  transition: color 0.6s,text-shadow 0.4s;
-
-
-
-  
+  transition: color 0.6s, text-shadow 0.4s;
 }
 
-.sub_credit span{
+.sub_credit span {
   font-weight: 100;
 }
 
-.uil-telegram-alt:hover{
+.uil-telegram-alt:hover {
   color: var(--clr-telegram-blue);
   text-shadow: 0 0 32px var(--clr-telegram-blue);
 }
 
-.uil-youtube:hover{
+.uil-youtube:hover {
   color: var(--clr-youtube-red);
   text-shadow: 0 0 32px var(--clr-youtube-red);
 }
 
-.uil-twitter-alt:hover{
+.uil-twitter-alt:hover {
   color: var(--clr-twitter-blue);
   text-shadow: 0 0 32px var(--clr-twitter-blue);
 }
 
-.uil-linkedin-alt:hover{
+.uil-linkedin-alt:hover {
   color: var(--clr-linkedin-blue);
   text-shadow: 0 0 32px var(--clr-linkedin-blue);
 }
 
-.uil-github-alt:hover{
+.uil-github-alt:hover {
   color: var(--clr-github-blue);
   text-shadow: 0 0 32px var(--clr-github-blue);
 }
@@ -415,30 +398,23 @@ footer{
 
 /* ---------- Responsive Section 🟢 ---------- */
 @media screen and (max-width: 992px) {
-  
-  .nav_name{
-    display: none;
-  }
-
-  nav{
+  nav {
     justify-content: flex-end;
     display: none;
   }
 
-  header{
-    display:none;
+  header {
+    display: none;
   }
 
-  
-  
-  .hero{
+  .hero {
     flex-direction: column-reverse;
     height: auto;
 
     margin-top: 10%;
   }
 
-  .hero_content{
+  .hero_content {
     width: auto;
     height: auto;
     padding: 10%;
@@ -446,59 +422,54 @@ footer{
     font-size: 1rem;
   }
 
-  footer{
+  footer {
     font-size: 1rem;
     height: auto;
   }
-
-
 }
 
 @media screen and (max-width: 768px) {
-  .hero_content{
-    max-width: 90vw;
-  }
-}
-  
-@media screen and (max-width: 576px) {
-  .hero_content{
+  .hero_content {
     max-width: 90vw;
   }
 }
 
+@media screen and (max-width: 576px) {
+  .hero_content {
+    max-width: 90vw;
+  }
+}
 
 @media screen and (max-width: 320px) {
-  .hero_content{
+  .hero_content {
     padding: 2%;
   }
 
-  .hero_content{
+  .hero_content {
     font-size: 0.8rem;
   }
-
-
 }
 
 @media screen and (max-width: 768px) {
-  .hero_content{
+  .hero_content {
     padding: 5%;
   }
 }
 
 /* ---------- Responsive Section 🛑 ---------- */
 
-.menu_content{
+.menu_content {
   height: 100vh;
   width: 25vw;
   background-color: var(--clr-body-bg-dark);
 
   position: fixed;
-  top:0;
+  top: 0;
   right: -100%;
   transition: all ease-in-out 0.5s;
 }
 
-.menu_content_clicked{
-  right:0;
+.menu_content_clicked {
+  right: 0;
   z-index: 1101;
 }
