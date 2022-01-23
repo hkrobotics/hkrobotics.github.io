@@ -4,6 +4,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 /* ---------- Google Fonts 🛑 ---------- */
 
 :root {
@@ -32,28 +35,41 @@
 
   --clr-telegram-blue: #0088cc;
   --clr-twitter-blue: #00acee;
-  --clr-github-blue: #24292e;
+  --clr-github-blue: #e6f1ff;
   --clr-youtube-red: #ff0000;
   --clr-linkedin-blue: #0a66c2;
 
   --clr-body-bg: #f3f6f9;
   --clr-body-bg: #0a1929;
 
-  --clr-borders: #0780f8;
+  --clr-accent: #0780f8;
+
+  --clr-hemant-span-1: #007fff;
+  --clr-hemant-span-2: #0059b2;
 
   --clr-nav-list: #2f3a45;
   --clr-nav-list: #45515e;
+
+  --clr-hero-img-bg: #000233;
 
   --ff-primary: "Poppins", sans-serif;
   --ff-secondary: "Muli", sans-serif;
   --ff-tertiary: "Montserrat", sans-serif;
   --ff-mono: "Ubuntu Mono", monospace;
   --ff-ntr: "NTR", sans-serif;
+  --ff-sora: "Sora", sans-serif;
+  --ff-jetbrains: "JetBrains Mono", monospace;
+  --ff-roboto: "Roboto", sans-serif;
 
   --fs-primary: 1.6rem;
   --fs-secondary: 1.4rem;
   --fs-tertiary: 1.2rem;
   --fs-mono: 1.2rem;
+  --fs-ntr: 1.2rem;
+
+  --line-height: 1.5;
+  --letter-spacing: 1px;
+
   --block-color: #112240;
   --cards-color: #112240;
   --cards-text-color: white;
@@ -79,7 +95,8 @@ html[data-theme="dark"] {
 * {
   margin: 0;
   padding: 0;
-  font-family: var(--ff-ntr);
+  font-family: var(--ff-primary);
+  letter-spacing: var(--letter-spacing);
 
   color: var(--clr-White);
 }
@@ -130,7 +147,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: rgba(0, 128, 255, 0.8);
+  background-color: #0080ffcc;
 }
 /* ---------- Custom Scrollbar 🛑 ---------- */
 
@@ -163,20 +180,20 @@ nav {
 .nav_list a {
   color: var(--clr-nav-list);
   /* font-family: var(--ff-mono); */
-  font-family: var(--ff-ntr);
-  line-height: 1.5;
+  font-family: var(--ff-mono);
+  line-height: var(--line-height);
 
   text-decoration: none;
-  font-size: var(--fs-mono);
+  font-size: var(--fs-jetbrains);
+  font-size: 1.2rem;
   font-weight: 550;
 
   transition: all ease-in-out 300ms;
 }
 
 .nav_list a:hover {
-  color: var(--clr-borders);
-
-  transition: all ease-in-out 300ms;
+  color: var(--clr-accent);
+  transition: all ease-in-out 400ms;
 }
 
 .nav_list {
@@ -256,7 +273,7 @@ nav {
   width: 20vw;
   border-radius: 8px;
   /* border: 4px solid rgba(99, 99, 110, 0.99); */
-  border: 2px solid var(--clr-borders);
+  border: 2px solid var(--clr-accent);
 
   margin-bottom: 6rem;
 }
@@ -265,6 +282,11 @@ nav {
   background: url("../images/hero_img_dark_square.png") no-repeat;
   background-size: cover;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.hero_img_foreground::after{
+  position:absolute; width:0; height:0; overflow:hidden; z-index:-1;  /*hide images*/
+  content:url("../images/hero_img_mono_square.png");   /* load images */
 }
 
 .hero_img_foreground:hover {
@@ -276,7 +298,7 @@ nav {
 }
 
 .hero_img_foreground:hover + .hero_img_background {
-  background: #000233;
+  background: var(--clr-hero-img-bg);
   top: 12px;
   left: 12px;
 
@@ -293,36 +315,34 @@ nav {
   transition: all 300ms ease-in-out;
 }
 
-.hero_img_background:hover {
-  
+ .hero_img_background:hover {
 }
 
 .button_wrapper {
   /* font-family: 'Poppins', sans-serif; */
   display: flex;
-  justify-content: space-between;
-  
+  justify-content: flex-start;
 }
 
-.button_wrapper button,
-.contact_btn {
+.button_wrapper button {
   background: var(--clr-body-bg);
   /* font-family: "Poppins", sans-serif; */
   color: var(--clr-White);
   border-radius: 8px;
-  border: 2px solid var(--clr-borders);
-  padding: 1rem 2rem;
+  border: 2px solid var(--clr-accent);
+  /* padding: 1rem 2rem; */
   font-size: 1rem;
   transition: color 0.15s, border 0.1s, box-shadow 0.25s, transform 0.15s;
   /* margin:0.5em; */
 }
 
 .button_wrapper button:hover,
-.contact_btn:hover {
-  border: 2px solid var(--clr-borders);
+.btn-contact:hover {
+  border: 2px solid var(--clr-accent);
   /* color: #fff; */
   /* box-shadow:0 0 2px 1px #005ab434; */
-  transform: translateY(-0.05rem);
+  transform: translateY(-0.15rem);
+  transition: all 0.15s ease-in-out;
   cursor: pointer;
   /* background: #0780f8; */
   /* transition: color 0.15s, border 0.1s, box-shadow 0.25s, transform 0.15s; */
@@ -334,7 +354,7 @@ nav {
 }
 
 .button_wrapper button:active,
-.contact_btn:active {
+.btn-contact:active {
   transform: translateY(0.25rem);
 }
 
@@ -343,7 +363,7 @@ nav {
   font-family: var(--ff-ntr);
   margin-bottom: 1rem;
 
-  line-height: 1.5;
+  line-height: var(--line-height);
 }
 
 .intro_wrapper p {
@@ -352,7 +372,11 @@ nav {
 }
 
 .hemant_span {
-  background: linear-gradient(to right, #007fff, #0059b2);
+  background: linear-gradient(
+    to right,
+    var(--clr-hemant-span-1),
+    var(--clr-hemant-span-2)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -368,7 +392,7 @@ nav {
 
 .btn-hero {
   text-decoration: none;
-  color: inherit;
+  /* color: inherit; */
   display: flex;
   justify-content: space-between;
 }
@@ -397,26 +421,70 @@ nav {
   font-size: 4rem;
 }
 
+.contact_heading span {
+  background: linear-gradient(
+    to right,
+    var(--clr-hemant-span-1),
+    var(--clr-hemant-span-2)
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .contact_desc {
   font-size: 1.5rem;
-  line-height: 1.5;
+  line-height: var(--line-height);
   text-align: center;
-  margin-bottom: 2rem;
+
+  font-weight: 300;
+  margin-bottom: 4rem;
   color: var(--clr-White-Secondary);
 }
 
-.contact_btn_p {
-  font-size: 1rem;
+.btn-anchor {
+  padding: 1rem 2rem;
 }
+
+/* ---------- Underline Animation on Hover 🟢 ---------- */
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+  color: var(--clr-accent);
+}
+
+.hover-underline-animation:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--clr-accent);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+/* ---------- Underline Animation on Hover 🛑 ---------- */
+
+/* .btn-contact_p {
+  font-size: 1rem;
+} */
 
 /* .btn-hero-contact {
   justify-content: space-evenly;
   align-items: center;
 } */
 
-.contact_btn {
+/* .btn-contact {
   width: 10rem;
-}
+} */
 
 /* ---------- Hand Wave Animation 🟢 ---------- */
 .wave {
@@ -463,7 +531,7 @@ footer {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 20vh;
+  /* height: 20vh; */
   font-size: 1.5rem;
   margin: 2rem 0;
 }
@@ -482,12 +550,28 @@ footer {
 
 .socials_list i {
   font-size: 1.5rem;
-  color: #2f3a45;
+  color: var(--clr-nav-list);
   transition: color 0.6s, text-shadow 0.4s;
 }
 
+.sub_credit h6 {
+  font-size: 1.2rem;
+  color: var(--clr-nav-list);
+  line-height: var(--line-height);
+  font-family: var(--ff-jetbrains);
+}
+
 .sub_credit span {
-  font-weight: 100;
+  font-size: 1.2rem;
+  color: var(--clr-nav-list);
+  line-height: var(--line-height);
+  transition: color 0.6s ease-in-out;
+}
+.sub_credit span:hover {
+  color: var(--clr-accent);
+
+  text-shadow: 0px 0px 1px var(--clr-accent);
+  transition: all 0.6s ease-in-out;
 }
 
 .uil-telegram-alt:hover {
@@ -579,7 +663,7 @@ footer {
 
 /* ---------- Responsive Section 🛑 ---------- */
 
-.menu_content {
+/* .menu_content {
   height: 100vh;
   width: 25vw;
   background-color: var(--clr-body-bg-dark);
@@ -593,6 +677,4 @@ footer {
 .menu_content_clicked {
   right: 0;
   z-index: 1101;
-}
-
-
+} */
