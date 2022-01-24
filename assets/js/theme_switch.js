@@ -17,8 +17,3 @@ checkbox.addEventListener('change', function () {
         localStorage.setItem('mode', 'light')
     }
 })
-
-    
-
-
-
