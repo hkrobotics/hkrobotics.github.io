@@ -90,6 +90,8 @@
   --cards-text-hover-color: #233554;
   --span-color: #64ffda;
   --card-hover-color: #233554;
+
+  --fs-hero: 14px;
 }
 
 /* ---------- Dark Mode 🟢 ---------- */
@@ -122,7 +124,7 @@ body {
   font-family: var(--ff-primary);
   scroll-behavior: smooth;
   width: 70vw;
-  margin: auto ;
+  margin: auto;
 
   border: 1px dashed;
 }
@@ -214,7 +216,8 @@ nav {
 .hero {
   display: flex;
   justify-content: space-between;
-  height: 76vh;
+  height: 85vh;
+  min-height: fit-content;
   align-items: center;
 
   /* width: fit-content; */
@@ -222,8 +225,8 @@ nav {
 
 .hero_content {
   width: 40vw;
-  height: 400px;
-  font-size: 1.5rem;
+  /* height: 400px; */
+  font-size: calc(1.5 * var(--fs-hero));
   font-family: "Poppins", sans-serif;
 
   /* border: 1px dashed; */
@@ -243,8 +246,8 @@ nav {
 } */
 
 .hero_img_square {
-  height: 20vw;
-  width: 20vw;
+  height: calc(18.75 * var(--fs-hero));
+  width: calc(18.75 * var(--fs-hero));
   border-radius: 8px;
   border: 2px solid var(--clr-accent);
   margin-bottom: 2rem;
@@ -326,7 +329,7 @@ nav {
 }
 
 .intro-name-wrapper {
-  font-size: 3.4rem;
+  font-size: calc(3.4 * var(--fs-hero));
 }
 
 .intro-superheading,
@@ -340,7 +343,7 @@ nav {
 
 .intro_wrapper p {
   font-weight: 250;
-  font-size: 1.2rem;
+  font-size: calc(1.2 * var(--fs-hero));
 }
 
 .hemant_span {
@@ -384,9 +387,10 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
-.contact_container h2 {
+.contact_heading {
   font-size: 4rem;
 }
 
@@ -635,6 +639,8 @@ footer {
   /* height: 20vh; */
   font-size: 1.5rem;
   margin: 2rem 0;
+
+  text-align: center;
 }
 
 .socials_list {
@@ -646,7 +652,7 @@ footer {
 }
 
 .socials_list li {
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
 }
 
 .socials_list i {
@@ -722,12 +728,13 @@ footer {
 .projects-title {
   font-size: 2.5rem;
   font-weight: 300;
-  margin-bottom: 6rem;
+  margin-bottom: 2rem;
   color: var(--clr-White-Secondary);
+  text-align: center;
 }
 
 .projects-title {
-  margin: 6rem 0 0;
+  margin: 4rem 0 2rem;
 }
 
 .skills-container {
@@ -745,6 +752,8 @@ footer {
   align-items: center;
   justify-content: center;
   width: fit-content;
+
+  /* border: 1px solid; */
 }
 
 .skill-box i {
@@ -781,6 +790,12 @@ footer {
 
 /* ---------- Responsive Section 🟢 ---------- */
 
+@media screen and (orientation: landscape) {
+  .hero {
+    margin-top: 10%;
+  }
+}
+
 @media screen and (max-width: 1360px) {
   .nav_list {
     bottom: 2vmin;
@@ -791,12 +806,37 @@ footer {
   .projects-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .projects-card-container:last-child {
+    grid-column: span 2;
+  }
+
+  .skills-container {
+    flex-wrap: wrap;
+    justify-content: center;
+
+    transition: all ease-in-out 0.5s;
+  }
+
+  .skills {
+    font-size: 1rem;
+
+    transition: all ease-in-out 0.5s;
+  }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1000px) {
+  
 }
 
+
+/* mobile layout starts here */
 @media screen and (max-width: 992px) {
+
+  :root{
+    --fs-hero: 12px;
+  }
+
   body {
     width: 80vw;
     transition: all ease-in-out 0.5s;
@@ -805,6 +845,8 @@ footer {
   nav {
     justify-content: flex-end;
     display: none;
+
+    transition: all ease-in-out 0.5s;
   }
 
   header {
@@ -813,29 +855,43 @@ footer {
 
   .hero {
     flex-direction: column-reverse;
-    height: auto;
-
-    margin-top: 10%;
+    height: 100vh;
+    justify-content: space-evenly;
   }
 
   .hero_content {
     width: auto;
     height: auto;
-    padding: 10%;
+    /* padding: 10%; */
 
     font-size: 1rem;
+  }
+
+  .intro_wrapper p{
+    width: 43vw;
+    /* border: 1px dotted; */
   }
 
   footer {
-    font-size: 1rem;
     height: auto;
   }
+
 }
 
-@media screen and (max-width:786px) {
+@media screen and (max-width: 786px) {
   .projects-grid {
     grid-template-columns: repeat(1, 1fr);
   }
+
+  .projects-card-container:last-child {
+    grid-column: span 1;
+  }
+
+  .projects-card-container {
+    min-height: auto;
+  }
+
+  
 }
 
 @media screen and (max-width: 768px) {
@@ -846,11 +902,34 @@ footer {
   .hero_content {
     padding: 5%;
   }
+
+  .contact_heading {
+    font-size: 3rem;
+  }
+
+  .contact_desc {
+    font-size: 1rem;
+  }
+
+  .intro_wrapper p{
+    width: auto;
+    /* border: 1px dotted; */
+  }
+
 }
 
 @media screen and (max-width: 576px) {
   .hero_content {
     max-width: 90vw;
+  }
+
+  .hero_img_square{
+    height: calc(18.75 * var(--fs-hero));
+    width: calc(18.75 * var(--fs-hero));
+  }
+
+  .skills {
+    height: 60vh;
   }
 }
 
