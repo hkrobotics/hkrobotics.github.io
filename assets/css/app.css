@@ -790,12 +790,6 @@ footer {
 
 /* ---------- Responsive Section 🟢 ---------- */
 
-@media screen and (orientation: landscape) {
-  .hero {
-    margin-top: 10%;
-  }
-}
-
 @media screen and (max-width: 1360px) {
   .nav_list {
     bottom: 2vmin;
