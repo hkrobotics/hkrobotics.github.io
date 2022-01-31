@@ -50,15 +50,24 @@
     <link rel="manifest" href="./assets/images/favicon_io/site.webmanifest">
     <!-- ---------- Favicon 🛑 ----------  -->
 
+    <!-- ---------- Custom Stylesheets 🟢 ----------  -->
+    <link rel="stylesheet" href="./assets/css/preloader.css">
     <link rel="stylesheet" href="./assets/css/app.css">
+    <!-- ---------- Custom Stylesheets 🛑 ----------  -->
 
     <!-- ---------- Google Fonts 🟢 ----------  -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=NTR&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
     <!-- ---------- Google Fonts 🛑 ----------  -->
 
     <!-- ---------- Unicon Fonts CDN 🟢 ----------  -->
@@ -90,8 +99,18 @@
 </head>
 
 <body>
-    <div id="loader">
+    <div class="loader" id="loader">
         <!-- ---------- Loader Starts Here 🟢 ----------  -->
+        <div class="svg_cotainer">
+            <svg width="244" height="263" viewBox="0 0 244 263" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M16.5278 24.1988L13.5975 22.6087L13.574 25.9426L12.8969 122.095L12.8884 123.296L13.9454 123.868L226.789 238.98L229.741 240.576V237.221V143.392L240.447 137.627L241.73 259.12L2 129.044V4.03303L114.323 64.7944L102.916 71.0763L16.5278 24.1988Z"
+                    stroke="white" stroke-width="4" class="svg-elem-1"></path>
+                <path
+                    d="M13.1225 236.543V239.903L16.076 238.302L88.0773 199.254L91.3064 197.503L88.083 195.741L51.7439 175.878L51.7321 175.872L16.0701 156.687L13.1225 155.101V158.448V236.543ZM49.8371 179.395L82.9412 197.489L17.1225 233.184V161.795L49.8254 179.388L49.8371 179.395ZM227.245 23.7438L34.7636 127.284L23.1625 120.986L241.315 3.35071V129.263L139.283 183.93L128.08 177.67L228.911 123.646L229.964 123.082L229.966 121.888L230.192 25.5098L230.2 22.1541L227.245 23.7438ZM2 257.905V136.295L115.037 197.309C72.2707 221.44 45.9723 235.83 2 257.905Z"
+                    stroke="#FF3040" stroke-width="4" class="svg-elem-2"></path>
+            </svg>
+        </div>
         <!-- ---------- Loader Ends Here 🛑 ----------  -->
     </div>
     <div id="content">
@@ -679,6 +698,10 @@
         </div>
     </footer>
 
+    <!-- ---------- preloader.js 🟢 ----------  -->
+    <script src="./assets/js/preloader.js"></script>
+    <!-- ---------- preloader.js 🛑 ----------  -->
+
     <!-- ---------- app.js 🟢 ----------  -->
     <script src="./assets/js/app.js"></script>
     <!-- ---------- app.js 🛑 ----------  -->
@@ -713,7 +736,8 @@
     <script src="./assets/js/scroll.js"></script>
     <!-- ---------- Scroll Reveal 🛑 ----------  -->
 
-    <script src="./assets/js/change_img.js"></script>
+    <!-- <script src="./assets/js/change_img.js"></script> -->
+    
     <!-- ---------- Body Ends Here 🛑 ----------  -->
     </div>
 
