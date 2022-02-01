@@ -186,6 +186,10 @@ nav {
   transition: all ease-in-out 400ms;
 }
 
+/* .active-link {
+  color: var(--clr-accent);
+} */
+
 .nav_list {
   display: flex;
   flex-direction: column;
@@ -756,7 +760,7 @@ footer {
   color: var(--clr-Slate);
 }
 
-.skill-js i:hover {
+/* .skill-js i:hover {
   color: var(--clr-javascript);
 }
 .skill-cpp i:hover {
@@ -772,6 +776,25 @@ footer {
   color: var(--clr-react);
 }
 .skill-html i:hover {
+  color: var(--clr-html);
+} */
+
+.skill-js i {
+  color: var(--clr-javascript);
+}
+.skill-cpp i {
+  color: var(--clr-cpp);
+}
+.skill-node i {
+  color: var(--clr-nodejs);
+}
+.skill-css i {
+  color: var(--clr-css);
+}
+.skill-react i {
+  color: var(--clr-react);
+}
+.skill-html i {
   color: var(--clr-html);
 }
 
