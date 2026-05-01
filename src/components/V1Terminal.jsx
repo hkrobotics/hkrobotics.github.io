@@ -24,7 +24,7 @@ const v1Styles = {
     pointerEvents: 'none', zIndex: 5,
   },
   topbar: {
-    height: 30, flexShrink: 0,
+    height: 'clamp(26px, 4vh, 30px)', flexShrink: 0,
     background: '#15181a',
     borderBottom: '1px solid #1f2326',
     display: 'flex', alignItems: 'center',
@@ -54,7 +54,7 @@ const v1Styles = {
   termWrap: {
     flex: 1, minWidth: 0, minHeight: 0,
     display: 'flex', flexDirection: 'column',
-    padding: '14px 18px 0',
+    padding: 'clamp(10px, 2.4vh, 14px) clamp(12px, 3vw, 18px) 0',
     overflow: 'hidden',
   },
   output: { flex: 1, overflowY: 'auto', paddingRight: 8, paddingBottom: 12 },
@@ -64,7 +64,7 @@ const v1Styles = {
   promptPath: { color: '#a8a47f' },
   inputLine: {
     display: 'flex', alignItems: 'center',
-    padding: '8px 0 14px',
+    padding: 'clamp(8px, 1.8vh, 10px) 0 clamp(10px, 2.2vh, 14px)',
     borderTop: '1px dashed #1a1d1e',
   },
   input: {
@@ -626,7 +626,7 @@ export default function V1Terminal() {
   return (
     <div style={v1Styles.root} data-v1-root className="v1-root-cq">
       <div style={v1Styles.scanlines} />
-      <div style={v1Styles.topbar}>
+      <div style={v1Styles.topbar} className="v1-topbar">
         <div style={v1Styles.dot('#ff5f57')} />
         <div style={v1Styles.dot('#febc2e')} />
         <div style={v1Styles.dot('#28c840')} />

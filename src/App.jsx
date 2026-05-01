@@ -1,7 +1,10 @@
 import React from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 import V1Terminal from './components/V1Terminal.jsx';
 import V2IDE from './components/V2IDE.jsx';
 import V3Monitor from './components/V3Monitor.jsx';
+
+const STORAGE_KEY = 'portfolio:variant';
 
 const variants = {
   v1: {
@@ -18,22 +21,26 @@ const variants = {
   },
 };
 
-function getInitialVariant() {
+function getVariantFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const fromQuery = params.get('view') || params.get('variant');
-  const fromHash = window.location.hash.replace(/^#/, '');
-  return variants[fromQuery] ? fromQuery : variants[fromHash] ? fromHash : 'v1';
+  return variants[fromQuery] ? fromQuery : null;
 }
 
 export default function App() {
-  const [variant, setVariant] = React.useState(getInitialVariant);
+  const [variant, setVariant] = useLocalStorage(STORAGE_KEY, 'v1');
   const ActiveVariant = variants[variant].component;
+
+  React.useEffect(() => {
+    // Allow query param override while still persisting future switches.
+    const fromQuery = getVariantFromQuery();
+    if (fromQuery && fromQuery !== variant) setVariant(fromQuery);
+  }, [setVariant, variant]);
 
   React.useEffect(() => {
     window.__switchVariant = (next) => {
       if (!variants[next]) return;
       setVariant(next);
-      window.history.replaceState(null, '', `#${next}`);
     };
 
     const onKeyDown = (event) => {

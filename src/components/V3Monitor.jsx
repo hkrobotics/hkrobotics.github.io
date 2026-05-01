@@ -31,11 +31,11 @@ const v3Styles = {
     overflow: 'hidden',
   },
   header: {
-    height: 56, flexShrink: 0,
+    height: 'clamp(44px, 8vh, 56px)', flexShrink: 0,
     background: '#0a0d12',
     borderBottom: '1px solid #1c232b',
     display: 'flex', alignItems: 'center',
-    padding: '0 18px',
+    padding: '0 clamp(12px, 3vw, 18px)',
     gap: 24,
   },
   headerName: {
@@ -125,16 +125,16 @@ function Sparkline({ values, color = '#3fb950' }) {
   const max = Math.max(...values, 1);
   const min = Math.min(...values, 0);
   const range = max - min || 1;
-  const w = 100, h = 30;
+  const w = 100, vh = 30;
   const pts = values.map((v, i) => {
     const x = (i / (values.length - 1)) * w;
-    const y = h - ((v - min) / range) * h;
+    const y = vh - ((v - min) / range) * vh;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={v3Styles.graphSvg}>
+    <svg viewBox={`0 0 ${w} ${vh}`} preserveAspectRatio="none" style={v3Styles.graphSvg}>
       <polyline points={pts} fill="none" stroke={color} strokeWidth="1.2" />
-      <polyline points={`0,${h} ${pts} ${w},${h}`} fill={color} opacity="0.08" />
+      <polyline points={`0,${vh} ${pts} ${w},${vh}`} fill={color} opacity="0.08" />
     </svg>
   );
 }
@@ -205,8 +205,17 @@ export default function V3Monitor() {
     { t: '08:30:12', tag: 'PR', c: '#58a6ff', msg: '#1281 chore: webpack → vite/swc — DX win' },
   ];
 
+  const mobilePanel = isMobile
+    ? {
+        ...v3Styles.panel,
+        padding: '14px 16px',
+        overflow: 'visible',
+        minHeight: 'auto',
+      }
+    : v3Styles.panel;
+
   return (
-    <div style={v3Styles.root}>
+    <div style={v3Styles.root} className="v3-root">
       <style>{`
         @keyframes v3pulse {
           0% { box-shadow: 0 0 0 0 rgba(63,185,80,0.6); }
@@ -215,7 +224,10 @@ export default function V3Monitor() {
         }
       `}</style>
 
-      <div style={isMobile ? { ...v3Styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : v3Styles.header}>
+      <div
+        style={isMobile ? { ...v3Styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : v3Styles.header}
+        className="v3-header"
+      >
         <div style={{ width: isMobile ? '100%' : 'auto' }}>
           <div style={v3Styles.headerName}>hemant kumar</div>
           <div style={v3Styles.headerSub}>lead.mobile.engineer · react-native · new-delhi · ist</div>
@@ -268,50 +280,69 @@ export default function V3Monitor() {
         </div>
       </div>
 
-      <div style={isMobile ? { ...v3Styles.body, gridTemplateColumns: '1fr', gridTemplateRows: 'auto', overflowY: 'auto' } : v3Styles.body}>
+      <div
+        style={
+          isMobile
+            ? {
+                ...v3Styles.body,
+                gridTemplateColumns: '1fr',
+                gridTemplateRows: 'auto',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                alignContent: 'start',
+              }
+            : v3Styles.body
+        }
+      >
         {/* Row 1 — three metric panels */}
-        <div style={v3Styles.panel}>
+        <div style={mobilePanel}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[01]</span><span>cpu · production output</span></div>
             <span style={{ color: '#3fb950' }}>● live</span>
           </div>
-          <div style={v3Styles.metric}>
+          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
             <div style={v3Styles.metricNum}>{cpu}</div>
-            <div style={v3Styles.metricUnit}>% · features shipped this quarter</div>
+            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>% · features shipped this quarter</div>
           </div>
-          <div style={v3Styles.bar}><div style={v3Styles.barFill(cpu)} /></div>
-          <Sparkline values={series} />
+          <div style={isMobile ? { ...v3Styles.bar, marginTop: 10 } : v3Styles.bar}><div style={v3Styles.barFill(cpu)} /></div>
+          <div style={isMobile ? { marginTop: 10 } : null}>
+            <Sparkline values={series} />
+          </div>
         </div>
 
-        <div style={v3Styles.panel}>
+        <div style={mobilePanel}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[02]</span><span>mem · brain capacity</span></div>
             <span style={{ color: '#a371f7' }}>● learning</span>
           </div>
-          <div style={v3Styles.metric}>
+          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
             <div style={v3Styles.metricNum}>{mem}</div>
-            <div style={v3Styles.metricUnit}>% · loaded with unified-app architecture</div>
+            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>% · loaded with unified-app architecture</div>
           </div>
-          <div style={v3Styles.bar}><div style={v3Styles.barFill(mem, '#a371f7')} /></div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: 10 }}>currently building: one app · all wylo communities</div>
+          <div style={isMobile ? { ...v3Styles.bar, marginTop: 10 } : v3Styles.bar}><div style={v3Styles.barFill(mem, '#a371f7')} /></div>
+          <div style={{ ...v3Styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.4 }}>
+            currently building: one app · all wylo communities
+          </div>
         </div>
 
-        <div style={v3Styles.panel}>
+        <div style={mobilePanel}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[03]</span><span>net · ship rate</span></div>
             <span style={{ color: '#f0883e' }}>● peak</span>
           </div>
-          <div style={v3Styles.metric}>
+          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
             <div style={v3Styles.metricNum}>{ship}</div>
-            <div style={v3Styles.metricUnit}>% · store releases on time</div>
+            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>% · store releases on time</div>
           </div>
-          <div style={v3Styles.bar}><div style={v3Styles.barFill(ship, '#f0883e')} /></div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: 10 }}>app store ✓ play store ✓ testflight ✓</div>
+          <div style={isMobile ? { ...v3Styles.bar, marginTop: 10 } : v3Styles.bar}><div style={v3Styles.barFill(ship, '#f0883e')} /></div>
+          <div style={{ ...v3Styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.4 }}>
+            app store ✓ play store ✓ testflight ✓
+          </div>
         </div>
 
         {/* Row 2 — three project cards */}
         {projects.map(p => (
-          <div key={p.name} style={v3Styles.panel}>
+          <div key={p.name} style={mobilePanel}>
             <div style={v3Styles.panelHead}>
               <div style={v3Styles.panelTitle}>
                 <span style={v3Styles.panelKey}>◇</span>
@@ -331,32 +362,49 @@ export default function V3Monitor() {
         ))}
 
         {/* Row 3 — process list (work) + skills bars */}
-        <div style={{ ...v3Styles.panel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
+        <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[ps]</span><span>process list · work history</span></div>
             <span>{processes.length} procs · 2 running</span>
           </div>
-          <div style={{ ...v3Styles.proc, ...v3Styles.procHead }}>
+          <div
+            style={{
+              ...v3Styles.proc,
+              ...v3Styles.procHead,
+              ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
+            }}
+          >
             <span>PID</span><span>CMD</span><span>STATUS</span><span>WHEN</span>
           </div>
-          <div style={{ overflowY: 'auto', flex: 1 }}>
+          <div style={isMobile ? { overflow: 'visible' } : { overflowY: 'auto', flex: 1 }}>
             {processes.map(p => (
-              <div key={p.pid} style={v3Styles.proc}>
+              <div
+                key={p.pid}
+                style={{
+                  ...v3Styles.proc,
+                  ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
+                }}
+              >
                 <span style={{ color: '#6e7681' }}>{p.pid}</span>
-                <span>{p.cmd}</span>
-                <span style={{ color: p.stat === 'RUNNING' ? '#3fb950' : '#7d8590' }}>{p.stat === 'RUNNING' ? '● ' : '✓ '}{p.stat}</span>
-                <span style={{ color: '#6e7681' }}>{p.cpu}</span>
+                <span style={isMobile ? { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : null}>
+                  {p.cmd}
+                </span>
+                <span style={{ color: p.stat === 'RUNNING' ? '#3fb950' : '#7d8590', whiteSpace: 'nowrap' }}>
+                  {p.stat === 'RUNNING' ? '● ' : '✓ '}
+                  {p.stat}
+                </span>
+                <span style={{ color: '#6e7681', whiteSpace: 'nowrap' }}>{p.cpu}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={v3Styles.panel}>
+        <div style={mobilePanel}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[skills]</span><span>resource allocation</span></div>
             <span>{skills.length} loaded</span>
           </div>
-          <div style={{ overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 5, flex: 1 }}>
+          <div style={isMobile ? { display: 'flex', flexDirection: 'column', gap: 5 } : { overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 5, flex: 1 }}>
             {skills.map(s => (
               <div key={s.name}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, marginBottom: 2 }}>
@@ -372,7 +420,7 @@ export default function V3Monitor() {
         </div>
 
         {/* Row 4 — contribution heatmap + contact */}
-        <div style={{ ...v3Styles.panel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
+        <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[git]</span><span>contributions · 12mo · gitlab + github</span></div>
             <span style={{ color: '#39d353' }}>● live</span>
@@ -380,7 +428,7 @@ export default function V3Monitor() {
           <ContribHeatmap theme="monitor" />
         </div>
 
-        <div style={v3Styles.panel}>
+        <div style={mobilePanel}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[net]</span><span>endpoints · contact</span></div>
             <span style={{ color: '#3fb950' }}>● 200 ok</span>

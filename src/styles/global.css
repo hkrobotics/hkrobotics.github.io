@@ -20,8 +20,29 @@ body {
 .portfolio-shell {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
 }
 
 a {
   color: inherit;
+}
+
+/* Short-height screens (laptops split view, mobile landscape):
+   reclaim vertical space so variants don't feel cramped. */
+@media (max-height: 720px) {
+  .v1-topbar {
+    gap: 6px;
+  }
+
+  .v2-topbar {
+    gap: 10px;
+  }
+
+  .v2-status {
+    gap: 10px;
+  }
+
+  .v3-header {
+    gap: 14px;
+  }
 }

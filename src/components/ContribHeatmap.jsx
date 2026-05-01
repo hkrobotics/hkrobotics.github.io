@@ -137,8 +137,14 @@ export default function ContribHeatmap({ theme = 'monitor', titleColor }) {
         <Stat label="active days" value={days} />
         <Stat label="peak day" value={<span style={{ color: t.peakColor }}>{max}</span>} />
       </div>
-      <div style={{ overflowX: 'auto', flex: 1, WebkitOverflowScrolling: 'touch' }}>
-        <svg width={svgWidth} height={svgHeight} style={{ display: 'block' }}>
+      <div style={{ overflowX: 'hidden', flex: 1 }}>
+        <svg
+          width="100%"
+          height={svgHeight}
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          preserveAspectRatio="xMinYMin meet"
+          style={{ display: 'block' }}
+        >
           {padLeft > 0 && monthLabels.map((m, i) => (
             <text key={i} x={padLeft + m.w * (cellSize + gap)} y={10}
                   fontSize="9" fill={t.labelColor} fontFamily="'JetBrains Mono', monospace">{m.label}</text>

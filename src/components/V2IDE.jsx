@@ -29,9 +29,10 @@ const v2Styles = {
     fontSize: 13,
     display: 'flex', flexDirection: 'column',
     overflow: 'hidden',
+    overflowX: 'hidden',
   },
   topbar: {
-    height: 30, flexShrink: 0,
+    height: 'clamp(26px, 4vh, 30px)', flexShrink: 0,
     background: '#2b2d30',
     borderBottom: '1px solid #1e1f22',
     display: 'flex', alignItems: 'center',
@@ -73,7 +74,7 @@ const v2Styles = {
   // Editor
   editorWrap: { display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 },
   tabs: {
-    display: 'flex', height: 32, flexShrink: 0,
+    display: 'flex', height: 'clamp(28px, 4.5vh, 32px)', flexShrink: 0,
     background: '#2b2d30',
     borderBottom: '1px solid #1e1f22',
     overflowX: 'auto',
@@ -92,7 +93,7 @@ const v2Styles = {
   }),
   tabClose: { color: '#5d6166', fontSize: 14, marginLeft: 4 },
   breadcrumb: {
-    height: 28, flexShrink: 0,
+    height: 'clamp(24px, 4vh, 28px)', flexShrink: 0,
     background: '#1e1f22',
     borderBottom: '1px solid #1a1b1e',
     padding: '0 14px',
@@ -105,11 +106,12 @@ const v2Styles = {
     background: '#1e1f22',
     overflow: 'auto',
     display: 'flex',
+    minWidth: 0,
   },
   gutter: {
     background: '#1e1f22',
     color: '#3c3f44',
-    padding: '14px 0',
+    padding: 'clamp(10px, 2.4vh, 14px) 0',
     textAlign: 'right',
     fontSize: 12,
     lineHeight: '20px',
@@ -119,11 +121,12 @@ const v2Styles = {
   },
   code: {
     flex: 1,
-    padding: '14px 18px',
+    padding: 'clamp(10px, 2.4vh, 14px) clamp(12px, 3vw, 18px)',
     fontSize: 13,
     lineHeight: '20px',
     color: '#bcbec4',
     minWidth: 0,
+    overflowX: 'hidden',
   },
   // Minimap
   minimap: {
@@ -138,7 +141,7 @@ const v2Styles = {
   },
   // Status bar
   status: {
-    height: 24, flexShrink: 0,
+    height: 'clamp(22px, 3.6vh, 24px)', flexShrink: 0,
     background: '#2b2d30',
     borderTop: '1px solid #1e1f22',
     display: 'flex', alignItems: 'center',
@@ -516,6 +519,8 @@ export default function V2IDE() {
   const [openFiles, setOpenFiles] = React.useState(['README.md', 'about.tsx', 'work.ts', 'projects.tsx']);
   const [active, setActive] = React.useState('README.md');
   const isMobile = useIsMobile(700);
+  const [viewMenuOpen, setViewMenuOpen] = React.useState(false);
+  const viewMenuRef = React.useRef(null);
 
   const openFile = (f) => {
     if (!openFiles.includes(f)) setOpenFiles(o => [...o, f]);
@@ -531,9 +536,38 @@ export default function V2IDE() {
   const file = active && FILES[active];
   const lineCount = 60; // approximate gutter
 
+  React.useEffect(() => {
+    if (!viewMenuOpen) return;
+    const onDown = (e) => {
+      if (viewMenuRef.current && !viewMenuRef.current.contains(e.target)) {
+        setViewMenuOpen(false);
+      }
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') setViewMenuOpen(false);
+    };
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [viewMenuOpen]);
+
   return (
-    <div style={v2Styles.root}>
-      <div style={v2Styles.topbar}>
+    <div style={v2Styles.root} className="v2-root">
+      <div
+        style={{
+          ...v2Styles.topbar,
+          ...(isMobile
+            ? {
+                padding: '0 10px',
+                gap: 10,
+              }
+            : null),
+        }}
+        className="v2-topbar"
+      >
         <div style={{ display: 'flex', gap: 6 }}>
           <div style={v2Styles.dot('#ff5f57')} />
           <div style={v2Styles.dot('#febc2e')} />
@@ -550,7 +584,19 @@ export default function V2IDE() {
             <span style={v2Styles.menuItem}>Help</span>
           </div>
         )}
-        <div style={{ flex: 1, textAlign: 'center', color: '#5d6166' }}>portfolio — hemant-kumar</div>
+        <div
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            color: '#5d6166',
+            fontSize: isMobile ? 10 : 11,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {isMobile ? 'portfolio — hk' : 'portfolio — hemant-kumar'}
+        </div>
         {!isMobile && (
           <div style={{ display: 'flex', gap: 12, color: '#5d6166', fontSize: 11 }}>
             <span>⌘P</span><span>⌘⇧P</span>
@@ -558,13 +604,27 @@ export default function V2IDE() {
         )}
       </div>
 
-      <div style={isMobile ? { ...v2Styles.body, display: 'flex', flexDirection: 'column' } : v2Styles.body}>
+      <div
+        style={
+          isMobile
+            ? {
+                ...v2Styles.body,
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                minHeight: 0,
+                overflowX: 'hidden',
+              }
+            : v2Styles.body
+        }
+      >
         {isMobile ? (
           // Mobile: horizontal-scroll file strip in place of the sidebar
           <div style={{
             display: 'flex', flexShrink: 0,
             background: '#2b2d30', borderBottom: '1px solid #1e1f22',
             overflowX: 'auto', padding: '6px 8px', gap: 4,
+            WebkitOverflowScrolling: 'touch',
           }}>
             {TREE.filter(n => n.type === 'file').map((node, i) => {
               const isActive = active === node.file;
@@ -656,7 +716,7 @@ export default function V2IDE() {
         )}
 
         <div style={v2Styles.editorWrap}>
-          <div style={v2Styles.tabs}>
+          <div style={v2Styles.tabs} className="v2-tabs">
             {openFiles.map(f => (
               <div
                 key={f}
@@ -664,13 +724,15 @@ export default function V2IDE() {
                 onClick={() => setActive(f)}
               >
                 <FileIcon name={f.split('/').pop()} />
-                <span>{f.split('/').pop()}</span>
+                <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {f.split('/').pop()}
+                </span>
                 <span style={v2Styles.tabClose} onClick={e => closeFile(e, f)}>×</span>
               </div>
             ))}
           </div>
           {file && (
-            <div style={v2Styles.breadcrumb}>
+            <div style={v2Styles.breadcrumb} className="v2-breadcrumb">
               {file.breadcrumb.map((b, i) => (
                 <React.Fragment key={i}>
                   {i > 0 && <span style={{ color: '#3c3f44' }}>›</span>}
@@ -679,7 +741,7 @@ export default function V2IDE() {
               ))}
             </div>
           )}
-          <div style={v2Styles.editor}>
+          <div style={{ ...v2Styles.editor, overflowX: 'hidden' }}>
             <div style={v2Styles.gutter}>
               {Array.from({ length: lineCount }, (_, i) => (
                 <div key={i} style={{ padding: '0 12px' }}>{i + 1}</div>
@@ -710,37 +772,164 @@ export default function V2IDE() {
         )}
       </div>
 
-      <div style={v2Styles.status}>
-        <div style={{ ...v2Styles.statusItem, background: '#3574f0', color: 'white', padding: '0 8px', height: '100%', alignItems: 'center', display: 'flex' }}>
+      <div
+        style={{
+          ...v2Styles.status,
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 20,
+          ...(isMobile
+            ? {
+                height: 'auto',
+                padding: '8px 10px',
+                gap: 10,
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }
+            : null),
+        }}
+        className="v2-status"
+      >
+        <div
+          style={{
+            ...v2Styles.statusItem,
+            background: '#3574f0',
+            color: 'white',
+            padding: isMobile ? '6px 8px' : '0 8px',
+            height: isMobile ? 'auto' : '100%',
+            alignItems: 'center',
+            display: 'flex',
+            borderRadius: isMobile ? 4 : 0,
+          }}
+        >
           <span>⎇ main</span>
         </div>
-        <div style={v2Styles.statusItem}>
-          <span style={{ color: '#7fa650' }}>● 0</span>
-          <span style={{ color: '#e6c07a' }}>⚠ 0</span>
-        </div>
+        {!isMobile && (
+          <div style={v2Styles.statusItem}>
+            <span style={{ color: '#7fa650' }}>● 0</span>
+            <span style={{ color: '#e6c07a' }}>⚠ 0</span>
+          </div>
+        )}
         <div
-          style={{ ...v2Styles.statusItem, cursor: 'pointer', padding: '0 8px', display: 'flex', alignItems: 'center', gap: 6 }}
-          onClick={() => {
-            const next = window.prompt('switch to: terminal | ide | monitor');
-            if (!next) return;
-            const map = { terminal: 'v1', ide: 'v2', monitor: 'v3' };
-            const id = map[next.toLowerCase().trim()];
-            if (id && window.__switchVariant) window.__switchVariant(id);
+          ref={viewMenuRef}
+          style={{
+            ...v2Styles.statusItem,
+            cursor: 'pointer',
+            padding: isMobile ? '6px 8px' : '0 8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            background: isMobile ? '#1e1f22' : 'transparent',
+            border: isMobile ? '1px solid #3c3f44' : 'none',
+            borderRadius: isMobile ? 4 : 0,
+            position: 'relative',
           }}
+          onClick={() => setViewMenuOpen(v => !v)}
           title="switch portfolio view (1·2·3)"
-          onMouseEnter={e => e.currentTarget.style.background = '#2b2d30'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          onMouseEnter={e => { if (!isMobile) e.currentTarget.style.background = '#2b2d30'; }}
+          onMouseLeave={e => { if (!isMobile) e.currentTarget.style.background = 'transparent'; }}
         >
           <span style={{ color: '#7fcf9a' }}>◇</span>
-          <span>view: ide</span>
+          <span style={{ whiteSpace: 'nowrap' }}>view: ide</span>
+          <span style={{ color: '#5d6166', marginLeft: 2 }}>{viewMenuOpen ? '▴' : '▾'}</span>
+
+          {viewMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                bottom: 'calc(100% + 8px)',
+                minWidth: 168,
+                background: '#2b2d30',
+                border: '1px solid #1e1f22',
+                borderRadius: 2,
+                padding: 4,
+                boxShadow: '0 10px 18px rgba(0,0,0,0.32)',
+                zIndex: 50,
+              }}
+              role="menu"
+              aria-label="Switch view"
+            >
+              {[
+                { id: 'v1', label: 'terminal', key: '1' },
+                { id: 'v2', label: 'ide', key: '2', cur: true },
+                { id: 'v3', label: 'monitor', key: '3' },
+              ].map((it) => (
+                <button
+                  key={it.id}
+                  type="button"
+                  onClick={() => {
+                    setViewMenuOpen(false);
+                    if (!it.cur && window.__switchVariant) window.__switchVariant(it.id);
+                  }}
+                  disabled={it.cur}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                    padding: '8px 10px',
+                    borderRadius: 2,
+                    border: `1px solid ${it.cur ? '#1e1f22' : 'transparent'}`,
+                    background: it.cur ? '#1e1f22' : 'transparent',
+                    color: it.cur ? '#e8eaed' : '#bcbec4',
+                    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+                    fontSize: 12,
+                    cursor: it.cur ? 'default' : 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (it.cur) return;
+                    e.currentTarget.style.background = '#2e3033';
+                    e.currentTarget.style.borderColor = '#1e1f22';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (it.cur) return;
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = 'transparent';
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        background: it.cur ? '#7fcf9a' : '#3d4347',
+                        boxShadow: it.cur ? '0 0 0 2px rgba(127,207,154,0.18)' : 'none',
+                      }}
+                    />
+                    <span>{it.label}</span>
+                  </span>
+                  <span style={{ color: '#5d6166', fontSize: 10, padding: '1px 6px', border: '1px solid #3c3f44', borderRadius: 2 }}>
+                    {it.key}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        <div style={{ flex: 1 }} />
+        <div style={isMobile ? { flex: '1 1 auto' } : { flex: 1 }} />
         {!isMobile && <div style={v2Styles.statusItem}><span>Ln 12, Col 24</span></div>}
         {!isMobile && <div style={v2Styles.statusItem}><span>Spaces: 2</span></div>}
         {!isMobile && <div style={v2Styles.statusItem}><span>UTF-8</span></div>}
         {!isMobile && <div style={v2Styles.statusItem}><span>LF</span></div>}
-        <div style={v2Styles.statusItem}><span>{file?.lang || 'plaintext'}</span></div>
-        <div style={v2Styles.statusItem}><span style={{ color: '#7fa650' }}>● open to work</span></div>
+        <div
+          style={{
+            ...v2Styles.statusItem,
+            padding: isMobile ? '6px 8px' : 0,
+            background: isMobile ? '#1e1f22' : 'transparent',
+            border: isMobile ? '1px solid #3c3f44' : 'none',
+            borderRadius: isMobile ? 4 : 0,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <span>{file?.lang || 'plaintext'}</span>
+        </div>
+        <div style={v2Styles.statusItem}>
+          <span style={{ color: '#7fa650', whiteSpace: 'nowrap' }}>● open to work</span>
+        </div>
       </div>
     </div>
   );
