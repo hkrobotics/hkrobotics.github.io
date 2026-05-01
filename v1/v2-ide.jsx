@@ -2,6 +2,20 @@
 // File tree on left, tabbed editor middle, minimap right. Each "file" reveals
 // a section of the portfolio rendered as syntax-highlighted code with prose layered in.
 // Status bar at bottom (git branch, line:col, encoding).
+//
+// Responsive: on narrow viewports (<700px) the file tree becomes a horizontal
+// scroll strip above the editor, the minimap is hidden, and the topbar collapses.
+
+const useIsMobile = (bp = 700) => {
+  const get = () => typeof window !== 'undefined' && window.innerWidth < bp;
+  const [m, setM] = React.useState(get);
+  React.useEffect(() => {
+    const r = () => setM(get());
+    window.addEventListener('resize', r);
+    return () => window.removeEventListener('resize', r);
+  }, []);
+  return m;
+};
 
 const v2Styles = {
   root: {
@@ -160,7 +174,7 @@ const FILES = {
     render: () => (
       <>
         <div><span style={{ color: '#cf8e6d' }}># Hemant Kumar</span></div>
-        <div style={{ color: '#7a7e85' }}>&gt; Lead Mobile Engineer · React Native · Chennai, IN</div>
+        <div style={{ color: '#7a7e85' }}>&gt; Lead Mobile Engineer · React Native · New Delhi, IN</div>
         <div>&nbsp;</div>
         <div><span style={{ color: '#cf8e6d' }}>## about</span></div>
         <div style={{ maxWidth: 720 }}>
@@ -198,7 +212,7 @@ const FILES = {
         <div><K>export const</K> <P>hemant</P>: <T>Engineer</T> = {'{'}</div>
         <div>&nbsp;&nbsp;<P>name</P>: <S>'Hemant Kumar'</S>,</div>
         <div>&nbsp;&nbsp;<P>role</P>: <S>'Lead Mobile Engineer'</S>,</div>
-        <div>&nbsp;&nbsp;<P>location</P>: <S>'Chennai, India'</S>,</div>
+        <div>&nbsp;&nbsp;<P>location</P>: <S>'New Delhi, India'</S>,</div>
         <div>&nbsp;&nbsp;<P>experience</P>: <S>'3+ years'</S>,</div>
         <div>&nbsp;&nbsp;<P>focus</P>: [<S>'React Native'</S>, <S>'0→1 mobile'</S>, <S>'architecture'</S>],</div>
         <div>&nbsp;&nbsp;<P>shipped</P>: {'{'} <P>appStore</P>: <K>true</K>, <P>playStore</P>: <K>true</K> {'}'},</div>
@@ -228,15 +242,17 @@ const FILES = {
           bullets: [
             'Lead React Native development — production iOS & Android apps',
             'Took apps from 0 → 1: architecture, features, testing, store releases',
-            'Migrated codebase from legacy → modern scalable architecture',
+            'Migrated mobile codebase to RN new architecture (Fabric / TurboModules) — completed',
+            'Currently building a unified mobile app for all Wylo communities',
             'Helped scale Wylo into a SaaS platform serving 200+ brands',
             'Core team for Product Hunt + AppSumo launches',
             'Implemented i18n + migrated build pipeline Webpack → Vite SWC',
           ]},
         { co: 'Wylo', role: 'Software Developer Intern', from: '2022-10', to: '2023-10', here: false,
           bullets: [
-            'Built + scaled React/Redux web app to 50,000+ active users',
-            'Owned event creation, community management, earnings dashboards',
+            'Full-stack React/Redux + Node — scaled web app to 50,000+ active users',
+            'Owned event creation, community management, earnings dashboards, payout preferences',
+            'Built backend APIs alongside frontend features — end-to-end ownership',
             'Performance + UX work via Redux Thunk, Axios, component opts',
           ]},
       ];
@@ -297,25 +313,25 @@ const FILES = {
           <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={v2Styles.jsx}>&lt;section&gt;</span></div>
           <div style={{ paddingLeft: 30 }}>
             <ProjectCard
+              name="Wylo · SaaS Web"
+              status="shipped"
+              statusColor="#7fa650"
+              tagline="Community SaaS web platform powering 200+ brands. Full-stack React/Redux + Node. Scaled to 50,000+ active users — event flows, community management, earnings dashboards, payout preferences."
+              stack={['react', 'redux', 'node', 'full-stack', 'saas']}
+            />
+            <ProjectCard
+              name="Wylo · Mobile App"
+              status="shipped"
+              statusColor="#7fa650"
+              tagline="Companion React Native app for Wylo communities. Architected from zero, shipped to App Store & Play Store, RN new architecture migration complete. Currently building a unified app for all communities. → wyloapp.com"
+              stack={['react-native', 'i18n', 'app-store', 'play-store', 'new-arch']}
+            />
+            <ProjectCard
               name="Dineary"
               status="beta"
               statusColor="#e6c07a"
               tagline="Restaurant discovery & review app, React Native. Google Maps Places API integration, location-based search, ratings, and reviews. → dineary.com"
               stack={['react-native', 'typescript', 'maps-api', 'google-places']}
-            />
-            <ProjectCard
-              name="Wylo · Mobile"
-              status="shipped"
-              statusColor="#7fa650"
-              tagline="Community SaaS mobile app powering 200+ brands. Architected from zero, shipped to App Store & Play Store, i18n + performance budgets. → wyloapp.com"
-              stack={['react-native', 'saas', 'i18n', 'app-store', 'play-store']}
-            />
-            <ProjectCard
-              name="Wylo · Web"
-              status="shipped"
-              statusColor="#7fa650"
-              tagline="React/Redux web app scaled to 50,000+ active users. Event creation, community management, earnings dashboards, payout flows."
-              stack={['react', 'redux', 'redux-thunk', 'axios']}
             />
           </div>
           <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={v2Styles.jsx}>&lt;/section&gt;</span></div>
@@ -365,9 +381,9 @@ const FILES = {
         <div><span style={{ color: '#cf8e6d' }}># /now</span></div>
         <div style={v2Styles.com}>{'<!-- last updated: 2026-04-30 -->'}</div>
         <div>&nbsp;</div>
-        <div>- Leading mobile at Wylo — shipping releases & evolving architecture</div>
-        <div>- Building <span style={v2Styles.str}>Dineary</span> toward production launch</div>
-        <div>- Reading: React Native New Architecture (Fabric / TurboModules)</div>
+        <div>- Leading mobile at Wylo — RN new architecture migration <span style={v2Styles.str}>complete</span> ✓</div>
+        <div>- Building a <span style={v2Styles.str}>unified mobile app</span> for all Wylo communities</div>
+        <div>- Pushing <span style={v2Styles.str}>Dineary</span> toward production launch</div>
         <div>- Tinkering: build pipelines, Vite/SWC, monorepo ergonomics</div>
         <div>&nbsp;</div>
         <div><span style={{ color: '#cf8e6d' }}>## status</span></div>
@@ -389,7 +405,7 @@ const FILES = {
         <div><F>github</F>=<S>"github.com/hkrobotics"</S></div>
         <div><F>twitter</F>=<S>"twitter.com/hkrobotics"</S></div>
         <div><F>linkedin</F>=<S>"linkedin.com/in/hkrobotics"</S></div>
-        <div><F>location</F>=<S>"Chennai, India · IST"</S></div>
+        <div><F>location</F>=<S>"New Delhi, India · IST"</S></div>
         <div>&nbsp;</div>
         <div><K>echo</K> <S>"reach out:"</S></div>
         <div><K>echo</K> <S>"  → <a style={{ color: '#56a8f5' }} href="mailto:kumarhemant24jan@gmail.com">$email</a>"</S></div>
@@ -400,6 +416,20 @@ const FILES = {
       </>
     ),
   },
+  'contributions.git': {
+    icon: '⎇',
+    lang: 'git',
+    breadcrumb: ['portfolio', 'contributions.git'],
+    render: () => (
+      <div style={{ fontFamily: 'Inter, system-ui, sans-serif', padding: '8px 4px', maxWidth: '100%' }}>
+        <div style={{ fontSize: 22, color: '#e8eaed', fontWeight: 600, marginBottom: 4 }}>contributions</div>
+        <div style={{ color: '#878a8f', fontSize: 12, marginBottom: 18, fontFamily: "'JetBrains Mono', monospace" }}>
+          last 12 months · gitlab + github · live
+        </div>
+        <ContribHeatmap theme="ide" />
+      </div>
+    ),
+  },
   'resume.pdf': {
     icon: '📄',
     lang: 'pdf',
@@ -408,11 +438,14 @@ const FILES = {
       <div style={{ fontFamily: 'Inter, system-ui, sans-serif', padding: '20px 4px', maxWidth: 720 }}>
         <div style={{ fontSize: 24, color: '#e8eaed', fontWeight: 600 }}>resume.pdf</div>
         <div style={{ color: '#878a8f', marginBottom: 24 }}>184 KB · last updated April 2026</div>
-        <button style={{
-          background: '#3574f0', color: 'white', border: 'none',
-          padding: '10px 20px', borderRadius: 4, cursor: 'pointer',
-          fontFamily: 'inherit', fontWeight: 500, fontSize: 14,
-        }}>↓ Download resume.pdf</button>
+        <a href="https://drive.google.com/file/d/1Az1Opn7orrgALlyRiGsAr9J-adqK8zdR/view?usp=sharing"
+           target="_blank" rel="noreferrer"
+           style={{
+             display: 'inline-block',
+             background: '#3574f0', color: 'white', textDecoration: 'none',
+             padding: '10px 20px', borderRadius: 4, cursor: 'pointer',
+             fontFamily: 'inherit', fontWeight: 500, fontSize: 14,
+           }}>↓ Download resume.pdf</a>
         <div style={{ marginTop: 24, color: '#bcbec4', fontSize: 13, lineHeight: 1.6 }}>
           One page. PDF preferred over DOCX. Includes work experience, selected projects,
           skills, and education — same content surfaced through the rest of this site.
@@ -450,6 +483,7 @@ const TREE = [
   { type: 'file', name: '_drafts.md', file: 'blog/_drafts.md', depth: 2 },
   { type: 'file', name: 'now.md', file: 'now.md', depth: 1 },
   { type: 'file', name: 'contact.sh', file: 'contact.sh', depth: 1 },
+  { type: 'file', name: 'contributions.git', file: 'contributions.git', depth: 1 },
   { type: 'file', name: 'resume.pdf', file: 'resume.pdf', depth: 1 },
 ];
 
@@ -462,6 +496,7 @@ function FileIcon({ name }) {
     json: { c: '#e6c07a', l: '{}' },
     sh: { c: '#7fa650', l: '$' },
     pdf: { c: '#e06c75', l: 'P' },
+    git: { c: '#56a877', l: '⎇' },
   };
   const { c, l } = map[ext] || { c: '#878a8f', l: '·' };
   return (
@@ -477,6 +512,7 @@ function FileIcon({ name }) {
 function V2IDE() {
   const [openFiles, setOpenFiles] = React.useState(['README.md', 'about.tsx', 'work.ts', 'projects.tsx']);
   const [active, setActive] = React.useState('README.md');
+  const isMobile = useIsMobile(700);
 
   const openFile = (f) => {
     if (!openFiles.includes(f)) setOpenFiles(o => [...o, f]);
@@ -500,61 +536,121 @@ function V2IDE() {
           <div style={v2Styles.dot('#febc2e')} />
           <div style={v2Styles.dot('#28c840')} />
         </div>
-        <div style={v2Styles.menu}>
-          <span style={v2Styles.menuItem}>File</span>
-          <span style={v2Styles.menuItem}>Edit</span>
-          <span style={v2Styles.menuItem}>Selection</span>
-          <span style={v2Styles.menuItem}>View</span>
-          <span style={v2Styles.menuItem}>Go</span>
-          <span style={v2Styles.menuItem}>Run</span>
-          <span style={v2Styles.menuItem}>Help</span>
-        </div>
+        {!isMobile && (
+          <div style={v2Styles.menu}>
+            <span style={v2Styles.menuItem}>File</span>
+            <span style={v2Styles.menuItem}>Edit</span>
+            <span style={v2Styles.menuItem}>Selection</span>
+            <span style={v2Styles.menuItem}>View</span>
+            <span style={v2Styles.menuItem}>Go</span>
+            <span style={v2Styles.menuItem}>Run</span>
+            <span style={v2Styles.menuItem}>Help</span>
+          </div>
+        )}
         <div style={{ flex: 1, textAlign: 'center', color: '#5d6166' }}>portfolio — hemant-kumar</div>
-        <div style={{ display: 'flex', gap: 12, color: '#5d6166', fontSize: 11 }}>
-          <span>⌘P</span><span>⌘⇧P</span>
-        </div>
+        {!isMobile && (
+          <div style={{ display: 'flex', gap: 12, color: '#5d6166', fontSize: 11 }}>
+            <span>⌘P</span><span>⌘⇧P</span>
+          </div>
+        )}
       </div>
 
-      <div style={v2Styles.body}>
-        <div style={v2Styles.sidebar}>
-          <div style={v2Styles.sideHead}>
-            <span>Explorer</span>
-            <span style={{ color: '#5d6166' }}>···</span>
-          </div>
-          {TREE.map((node, i) => {
-            if (node.type === 'folder') {
+      <div style={isMobile ? { ...v2Styles.body, display: 'flex', flexDirection: 'column' } : v2Styles.body}>
+        {isMobile ? (
+          // Mobile: horizontal-scroll file strip in place of the sidebar
+          <div style={{
+            display: 'flex', flexShrink: 0,
+            background: '#2b2d30', borderBottom: '1px solid #1e1f22',
+            overflowX: 'auto', padding: '6px 8px', gap: 4,
+          }}>
+            {TREE.filter(n => n.type === 'file').map((node, i) => {
+              const isActive = active === node.file;
               return (
-                <div key={i} style={{ ...v2Styles.treeItem(false, node.depth), color: '#bcbec4', fontWeight: 500 }}>
-                  <span style={{ color: '#878a8f', width: 10, fontSize: 9 }}>▾</span>
-                  <span style={{ color: '#e6c07a' }}>▣</span>
+                <div key={i}
+                  onClick={() => openFile(node.file)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '6px 10px',
+                    background: isActive ? '#2e436e' : '#1e1f22',
+                    color: isActive ? '#e8eaed' : '#bcbec4',
+                    borderRadius: 3, flexShrink: 0,
+                    fontSize: 12, cursor: 'pointer',
+                  }}>
+                  <FileIcon name={node.name} />
                   <span>{node.name}</span>
                 </div>
               );
-            }
-            return (
-              <div
-                key={i}
-                style={v2Styles.treeItem(active === node.file, node.depth)}
-                onClick={() => openFile(node.file)}
-                onMouseEnter={e => { if (active !== node.file) e.currentTarget.style.background = '#2e3033'; }}
-                onMouseLeave={e => { if (active !== node.file) e.currentTarget.style.background = 'transparent'; }}
-              >
-                <span style={{ width: 10 }} />
-                <FileIcon name={node.name} />
-                <span>{node.name}</span>
-              </div>
-            );
-          })}
-          <div style={{ ...v2Styles.sideHead, marginTop: 12 }}>
-            <span>Outline</span>
+            })}
           </div>
-          <div style={{ padding: '0 14px 12px', fontSize: 11, color: '#878a8f', lineHeight: 1.7 }}>
-            <div>⨍ summary</div>
-            <div>◇ experience</div>
-            <div>◇ projects</div>
-            <div>◇ skills</div>
+        ) : (
+          <div style={v2Styles.sidebar}>
+            <div style={v2Styles.sideHead}>
+              <span>Explorer</span>
+              <span style={{ color: '#5d6166' }}>···</span>
+            </div>
+            {TREE.map((node, i) => {
+              if (node.type === 'folder') {
+                return (
+                  <div key={i} style={{ ...v2Styles.treeItem(false, node.depth), color: '#bcbec4', fontWeight: 500 }}>
+                    <span style={{ color: '#878a8f', width: 10, fontSize: 9 }}>▾</span>
+                    <span style={{ color: '#e6c07a' }}>▣</span>
+                    <span>{node.name}</span>
+                  </div>
+                );
+              }
+              return (
+                <div
+                  key={i}
+                  style={v2Styles.treeItem(active === node.file, node.depth)}
+                  onClick={() => openFile(node.file)}
+                  onMouseEnter={e => { if (active !== node.file) e.currentTarget.style.background = '#2e3033'; }}
+                  onMouseLeave={e => { if (active !== node.file) e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <span style={{ width: 10 }} />
+                  <FileIcon name={node.name} />
+                  <span>{node.name}</span>
+                </div>
+              );
+            })}
+            <div style={{ ...v2Styles.sideHead, marginTop: 12 }}>
+              <span>Outline</span>
+            </div>
+            <div style={{ padding: '0 14px 12px', fontSize: 11, color: '#878a8f', lineHeight: 1.7 }}>
+              <div>⨍ summary</div>
+              <div>◇ experience</div>
+              <div>◇ projects</div>
+              <div>◇ skills</div>
+            </div>
+            <div style={{ ...v2Styles.sideHead, marginTop: 12 }}>
+              <span>Workspaces</span>
+            </div>
+            <div style={{ padding: '0 6px 12px' }}>
+              {[
+                { id: 'v1', name: 'terminal-cli', cur: false, key: '1' },
+                { id: 'v2', name: 'ide-editor', cur: true, key: '2' },
+                { id: 'v3', name: 'system-monitor', cur: false, key: '3' },
+              ].map(w => (
+                <div
+                  key={w.id}
+                  onClick={() => !w.cur && window.__switchVariant && window.__switchVariant(w.id)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '5px 8px', borderRadius: 4,
+                    fontSize: 11, cursor: w.cur ? 'default' : 'pointer',
+                    color: w.cur ? '#7fcf9a' : '#9aa19f',
+                    background: w.cur ? '#1a2418' : 'transparent',
+                  }}
+                  onMouseEnter={e => { if (!w.cur) { e.currentTarget.style.background = '#2e3033'; e.currentTarget.style.color = '#e8eaed'; } }}
+                  onMouseLeave={e => { if (!w.cur) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9aa19f'; } }}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: w.cur ? '#7fcf9a' : '#3d4347', flexShrink: 0 }} />
+                  <span style={{ flex: 1 }}>{w.name}</span>
+                  <span style={{ color: '#5d6166', fontSize: 9, padding: '1px 4px', border: '1px solid #3c3f44', borderRadius: 2 }}>{w.key}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div style={v2Styles.editorWrap}>
           <div style={v2Styles.tabs}>
@@ -597,16 +693,18 @@ function V2IDE() {
           </div>
         </div>
 
-        <div style={v2Styles.minimap}>
-          {Array.from({ length: 60 }, (_, i) => (
-            <div key={i} style={{
-              opacity: Math.random() > 0.3 ? 1 : 0,
-              color: i % 7 === 0 ? '#cf8e6d' : i % 5 === 0 ? '#6aab73' : '#3c3f44',
-            }}>
-              {'▬'.repeat(Math.floor(Math.random() * 18) + 2)}
-            </div>
-          ))}
-        </div>
+        {!isMobile && (
+          <div style={v2Styles.minimap}>
+            {Array.from({ length: 60 }, (_, i) => (
+              <div key={i} style={{
+                opacity: Math.random() > 0.3 ? 1 : 0,
+                color: i % 7 === 0 ? '#cf8e6d' : i % 5 === 0 ? '#6aab73' : '#3c3f44',
+              }}>
+                {'▬'.repeat(Math.floor(Math.random() * 18) + 2)}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div style={v2Styles.status}>
@@ -617,11 +715,27 @@ function V2IDE() {
           <span style={{ color: '#7fa650' }}>● 0</span>
           <span style={{ color: '#e6c07a' }}>⚠ 0</span>
         </div>
+        <div
+          style={{ ...v2Styles.statusItem, cursor: 'pointer', padding: '0 8px', display: 'flex', alignItems: 'center', gap: 6 }}
+          onClick={() => {
+            const next = window.prompt('switch to: terminal | ide | monitor');
+            if (!next) return;
+            const map = { terminal: 'v1', ide: 'v2', monitor: 'v3' };
+            const id = map[next.toLowerCase().trim()];
+            if (id && window.__switchVariant) window.__switchVariant(id);
+          }}
+          title="switch portfolio view (1·2·3)"
+          onMouseEnter={e => e.currentTarget.style.background = '#2b2d30'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <span style={{ color: '#7fcf9a' }}>◇</span>
+          <span>view: ide</span>
+        </div>
         <div style={{ flex: 1 }} />
-        <div style={v2Styles.statusItem}><span>Ln 12, Col 24</span></div>
-        <div style={v2Styles.statusItem}><span>Spaces: 2</span></div>
-        <div style={v2Styles.statusItem}><span>UTF-8</span></div>
-        <div style={v2Styles.statusItem}><span>LF</span></div>
+        {!isMobile && <div style={v2Styles.statusItem}><span>Ln 12, Col 24</span></div>}
+        {!isMobile && <div style={v2Styles.statusItem}><span>Spaces: 2</span></div>}
+        {!isMobile && <div style={v2Styles.statusItem}><span>UTF-8</span></div>}
+        {!isMobile && <div style={v2Styles.statusItem}><span>LF</span></div>}
         <div style={v2Styles.statusItem}><span>{file?.lang || 'plaintext'}</span></div>
         <div style={v2Styles.statusItem}><span style={{ color: '#7fa650' }}>● open to work</span></div>
       </div>

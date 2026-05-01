@@ -2,6 +2,20 @@
 // Dense grid of panels: header bar, ticking metrics, "process list" of work history,
 // project cards as resource panels, skills as bar graphs, contact panel, log feed.
 // Live-updating numbers and a pulsing accent give it that NOC-room energy.
+//
+// Responsive: on narrow viewports the 3-col grid collapses to 1 col, the header
+// stat strip wraps, and the "process list" + skills + log feed stack vertically.
+
+const v3UseIsMobile = (bp = 700) => {
+  const get = () => typeof window !== 'undefined' && window.innerWidth < bp;
+  const [m, setM] = React.useState(get);
+  React.useEffect(() => {
+    const r = () => setM(get());
+    window.addEventListener('resize', r);
+    return () => window.removeEventListener('resize', r);
+  }, []);
+  return m;
+};
 
 const v3Styles = {
   root: {
@@ -124,6 +138,7 @@ function Sparkline({ values, color = '#3fb950' }) {
 
 function V3Monitor() {
   const tick = useTick(1500);
+  const isMobile = v3UseIsMobile(700);
   const [series, setSeries] = React.useState(() =>
     Array.from({ length: 30 }, () => 60 + Math.random() * 30)
   );
@@ -139,13 +154,14 @@ function V3Monitor() {
   const ship = 92 + (Math.sin(tick * 0.3) * 3) | 0;
 
   const processes = [
+    { pid: '0131', cmd: 'wylo · unified mobile app for all communities', stat: 'RUNNING', cpu: 'now' },
     { pid: '0124', cmd: 'wylo-mobile · lead-mobile-dev', stat: 'RUNNING', cpu: 'oct 23—now' },
-    { pid: '0098', cmd: 'wylo-mobile · scale to 200+ brands', stat: 'RUNNING', cpu: 'live' },
+    { pid: '0112', cmd: 'rn new architecture migration · fabric/turbomodules', stat: 'DONE', cpu: 'q1 2026' },
+    { pid: '0098', cmd: 'wylo · scale to 200+ brands', stat: 'RUNNING', cpu: 'live' },
     { pid: '0091', cmd: 'webpack → vite/swc migration', stat: 'DONE', cpu: 'q3 2024' },
     { pid: '0087', cmd: 'i18n rollout · multi-language', stat: 'DONE', cpu: 'q1 2024' },
-    { pid: '0072', cmd: 'codebase modernization · 0→1 arch', stat: 'DONE', cpu: '2024' },
     { pid: '0061', cmd: 'producthunt + appsumo launches', stat: 'DONE', cpu: '2024' },
-    { pid: '0042', cmd: 'wylo-web · 50k+ users', stat: 'DONE', cpu: 'oct 22—oct 23' },
+    { pid: '0042', cmd: 'wylo-web saas · full-stack · 50k+ users', stat: 'DONE', cpu: 'oct 22—oct 23' },
   ];
 
   const skills = [
@@ -164,15 +180,15 @@ function V3Monitor() {
   ];
 
   const projects = [
+    { name: 'Wylo · SaaS Web', stat: 'PROD', col: '#3fb950',
+      desc: 'Community SaaS platform · full-stack React/Redux + Node · 200+ brands · 50k+ users.',
+      stack: ['react', 'redux', 'node', 'full-stack'], url: 'https://wyloapp.com/' },
+    { name: 'Wylo · Mobile App', stat: 'PROD', col: '#3fb950',
+      desc: 'React Native companion app · iOS + Android · i18n · RN new arch migrated. Building unified app for all communities.',
+      stack: ['react-native', 'i18n', 'new-arch'], url: 'https://wyloapp.com/' },
     { name: 'Dineary', stat: 'BETA', col: '#f0883e',
       desc: 'Restaurant discovery & review · React Native + Google Maps Places API.',
       stack: ['react-native', 'maps', 'typescript'], url: 'https://dineary.com/' },
-    { name: 'Wylo Mobile', stat: 'PROD', col: '#3fb950',
-      desc: 'Community SaaS app · 200+ brands · iOS + Android · i18n.',
-      stack: ['react-native', 'saas', 'i18n'], url: 'https://wyloapp.com/' },
-    { name: 'Wylo Web', stat: 'PROD', col: '#3fb950',
-      desc: 'React/Redux web app · 50,000+ active users · event flows + dashboards.',
-      stack: ['react', 'redux', 'axios'], url: 'https://wyloapp.com/' },
   ];
 
   const logs = [
@@ -196,31 +212,60 @@ function V3Monitor() {
         }
       `}</style>
 
-      <div style={v3Styles.header}>
-        <div>
+      <div style={isMobile ? { ...v3Styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : v3Styles.header}>
+        <div style={{ width: isMobile ? '100%' : 'auto' }}>
           <div style={v3Styles.headerName}>hemant kumar</div>
-          <div style={v3Styles.headerSub}>lead.mobile.engineer · react-native · chennai · ist</div>
+          <div style={v3Styles.headerSub}>lead.mobile.engineer · react-native · new-delhi · ist</div>
         </div>
-        <div style={{ flex: 1 }} />
+        {!isMobile && <div style={{ flex: 1 }} />}
         <div style={v3Styles.headerStat}>
           <div style={v3Styles.headerStatLabel}>uptime</div>
           <div style={v3Styles.headerStatValue}>3.2y shipping</div>
         </div>
-        <div style={v3Styles.headerStat}>
-          <div style={v3Styles.headerStatLabel}>users served</div>
-          <div style={v3Styles.headerStatValue}>200+ brands · 50k+</div>
-        </div>
+        {!isMobile && (
+          <div style={v3Styles.headerStat}>
+            <div style={v3Styles.headerStatLabel}>users served</div>
+            <div style={v3Styles.headerStatValue}>200+ brands · 50k+</div>
+          </div>
+        )}
         <div style={v3Styles.headerStat}>
           <div style={v3Styles.headerStatLabel}>local time</div>
           <div style={v3Styles.headerStatValue}>{time} IST</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: 16, borderLeft: '1px solid #1c232b' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b', marginLeft: isMobile ? 0 : 0 }}>
+          <span style={{ fontSize: 9, color: '#6e7681', textTransform: 'uppercase', letterSpacing: 1.2, marginRight: 4 }}>workspace</span>
+          {[
+            { id: 'v1', l: 'term', k: '1' },
+            { id: 'v2', l: 'ide', k: '2' },
+            { id: 'v3', l: 'mon', k: '3', cur: true },
+          ].map(w => (
+            <button
+              key={w.id}
+              onClick={() => !w.cur && window.__switchVariant && window.__switchVariant(w.id)}
+              title={`${w.l} · key ${w.k}`}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 10, padding: '4px 8px', borderRadius: 3,
+                background: w.cur ? '#0e4429' : 'transparent',
+                color: w.cur ? '#39d353' : '#7d8590',
+                border: `1px solid ${w.cur ? '#1f6e3a' : '#1c232b'}`,
+                cursor: w.cur ? 'default' : 'pointer',
+                fontWeight: w.cur ? 600 : 400,
+              }}
+              onMouseEnter={e => { if (!w.cur) { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#e6edf3'; } }}
+              onMouseLeave={e => { if (!w.cur) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7d8590'; } }}
+            >
+              {w.cur ? '● ' : ''}{w.l}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b' }}>
           <span style={v3Styles.pulse} />
           <span style={{ color: '#3fb950', fontSize: 11, fontWeight: 500 }}>OPEN TO OPPORTUNITIES</span>
         </div>
       </div>
 
-      <div style={v3Styles.body}>
+      <div style={isMobile ? { ...v3Styles.body, gridTemplateColumns: '1fr', gridTemplateRows: 'auto', overflowY: 'auto' } : v3Styles.body}>
         {/* Row 1 — three metric panels */}
         <div style={v3Styles.panel}>
           <div style={v3Styles.panelHead}>
@@ -242,10 +287,10 @@ function V3Monitor() {
           </div>
           <div style={v3Styles.metric}>
             <div style={v3Styles.metricNum}>{mem}</div>
-            <div style={v3Styles.metricUnit}>% · loaded with rn new architecture</div>
+            <div style={v3Styles.metricUnit}>% · loaded with unified-app architecture</div>
           </div>
           <div style={v3Styles.bar}><div style={v3Styles.barFill(mem, '#a371f7')} /></div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: 10 }}>currently swapping in: fabric · turbomodules · jsi</div>
+          <div style={{ ...v3Styles.metricLabel, marginTop: 10 }}>currently building: one app · all wylo communities</div>
         </div>
 
         <div style={v3Styles.panel}>
@@ -283,7 +328,7 @@ function V3Monitor() {
         ))}
 
         {/* Row 3 — process list (work) + skills bars */}
-        <div style={{ ...v3Styles.panel, gridColumn: 'span 2' }}>
+        <div style={{ ...v3Styles.panel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
           <div style={v3Styles.panelHead}>
             <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[ps]</span><span>process list · work history</span></div>
             <span>{processes.length} procs · 2 running</span>
@@ -300,10 +345,6 @@ function V3Monitor() {
                 <span style={{ color: '#6e7681' }}>{p.cpu}</span>
               </div>
             ))}
-          </div>
-          <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px dashed #1c232b', fontSize: 10, color: '#6e7681', fontFamily: 'Inter, system-ui, sans-serif' }}>
-            <span style={{ color: '#a371f7' }}>edu </span>
-            Savitribai Phule Pune University · BE Computer Engineering · CGPA 9.0/10 · ICEM Hackathon Winner '21
           </div>
         </div>
 
@@ -327,21 +368,13 @@ function V3Monitor() {
           </div>
         </div>
 
-        {/* Row 4 — log feed + contact */}
-        <div style={{ ...v3Styles.panel, gridColumn: 'span 2' }}>
+        {/* Row 4 — contribution heatmap + contact */}
+        <div style={{ ...v3Styles.panel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
           <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[tail]</span><span>activity log · /var/log/hemant.log</span></div>
-            <span>tailing · -f</span>
+            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[git]</span><span>contributions · 12mo · gitlab + github</span></div>
+            <span style={{ color: '#39d353' }}>● live</span>
           </div>
-          <div style={v3Styles.log}>
-            {logs.map((l, i) => (
-              <div key={i} style={v3Styles.logLine}>
-                <span style={v3Styles.logTime}>{l.t}</span>
-                <span style={v3Styles.logTag(l.c)}>[{l.tag}]</span>
-                <span>{l.msg}</span>
-              </div>
-            ))}
-          </div>
+          <ContribHeatmap theme="monitor" />
         </div>
 
         <div style={v3Styles.panel}>

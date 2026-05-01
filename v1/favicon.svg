@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#0a0a0a"></rect>
+  <rect x="6" y="6" width="52" height="52" rx="8" fill="none" stroke="#2e4528" stroke-width="1.5"></rect>
+  <text x="32" y="28" text-anchor="middle" font-family="ui-monospace, &#39;JetBrains Mono&#39;, monospace" font-size="14" font-weight="700" fill="#7fa650">&gt;_</text>
+  <text x="32" y="48" text-anchor="middle" font-family="ui-monospace, &#39;JetBrains Mono&#39;, monospace" font-size="18" font-weight="700" fill="#c8e6a8">hk</text>
+</svg>

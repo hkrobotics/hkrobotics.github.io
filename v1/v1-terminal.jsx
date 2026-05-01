@@ -133,13 +133,13 @@ if (typeof document !== 'undefined' && !document.getElementById('v1-responsive')
   document.head.appendChild(s);
 }
 
-const ASCII = `  _   _ _____ __  __    _    _   _ _____
- | | | | ____|  \\/  |  / \\  | \\ | |_   _|
- | |_| |  _| | |\\/| | / _ \\ |  \\| | | |
- |  _  | |___| |  | |/ ___ \\| |\\  | | |
- |_| |_|_____|_|  |_/_/   \\_\\_| \\_| |_|`;
+const ASCII = `  _     _                                
+ | |__ | | ___   _ _ __ ___   __ _ _ __ 
+ | '_ \\| |/ / | | | '_ \` _ \\ / _\` | '__|
+ | | | |   <| |_| | | | | | | (_| | |   
+ |_| |_|_|\\_\\\\__,_|_| |_| |_|\\__,_|_|   `;
 
-const COMMANDS = ['help', '?', 'about', 'work', 'projects', 'skills', 'now', 'contact', 'email', 'resume', 'blog', 'clear', 'c', 'cls', 'whoami', 'ls', 'cd', 'pwd', 'cat', 'open', 'echo', 'date', 'uname', 'history', 'neofetch', 'sudo'];
+const COMMANDS = ['help', '?', 'about', 'work', 'projects', 'skills', 'now', 'contact', 'email', 'resume', 'blog', 'stats', 'git', 'contributions', 'view', 'switch', 'theme', 'ide', 'monitor', 'clear', 'c', 'cls', 'whoami', 'ls', 'pwd', 'cat', 'open', 'echo', 'date', 'uname', 'history', 'neofetch', 'sudo'];
 
 function V1Prompt({ pwd = '~' }) {
   return (
@@ -238,12 +238,14 @@ function V1Terminal() {
               ['projects', 'selected projects'],
               ['skills', 'tech stack and tooling'],
               ['now', 'what i\'m working on right now'],
+              ['stats', 'gitlab + github contributions heatmap'],
+              ['view <ide|monitor|terminal>', 'switch to another portfolio variant'],
               ['contact', 'how to reach me'],
               ['email', 'alias for contact'],
               ['resume', 'download resume.pdf'],
               ['blog', 'writing (coming soon)'],
               ['neofetch', 'system info, but make it me'],
-              ['ls / cd / pwd', 'unix basics — they work too'],
+              ['ls / pwd', 'unix basics — they work too'],
               ['cat <file>', 'cat about | work | now | contact'],
               ['open <project>', 'open dineary | wylo in a new tab'],
               ['clear / c / cls', 'clear the terminal'],
@@ -274,14 +276,16 @@ function V1Terminal() {
               { co: 'Wylo', role: 'Lead Mobile Developer', when: 'Oct 2023 — Present', bullets: [
                 'Lead mobile dev in React Native — shipping production iOS + Android apps',
                 'Took apps 0→1: architecture, features, testing, store releases',
-                'Migrated codebase from legacy → modern scalable architecture',
+                'Migrated mobile codebase to RN new architecture (Fabric / TurboModules) — completed',
+                'Currently building a unified mobile app serving all Wylo communities',
                 'Helped scale Wylo into a SaaS platform serving 200+ brands',
                 'Core team for Product Hunt + AppSumo launches',
                 'i18n rollout · Webpack → Vite SWC migration',
               ]},
               { co: 'Wylo', role: 'Software Developer Intern', when: 'Oct 2022 — Oct 2023', bullets: [
-                'Built + scaled React/Redux web app to 50,000+ active users',
-                'Owned event creation, community management, earnings dashboards',
+                'Full-stack React/Redux + Node — scaled web app to 50,000+ active users',
+                'Owned event creation, community management, earnings dashboards, payout flows',
+                'Built backend APIs alongside frontend features — end-to-end ownership',
                 'Perf + UX work via Redux Thunk, Axios, component optimizations',
               ]},
               { co: 'ICEM Incubation Cell', role: 'Software Developer Intern', when: 'Dec 2021 — Apr 2022', bullets: [
@@ -312,18 +316,34 @@ function V1Terminal() {
           <div>
             <div style={v1Styles.card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <a style={{ ...v1Styles.accent, ...v1Styles.link }} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wylo · mobile ↗</a>
+                <a style={{ ...v1Styles.accent, ...v1Styles.link }} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wylo · saas web ↗</a>
                 <span style={v1Styles.dim}>[shipped]</span>
               </div>
-              <div style={{ color: '#b8bdba', marginBottom: 6 }}>Community SaaS mobile app for 200+ brands</div>
+              <div style={{ color: '#b8bdba', marginBottom: 6 }}>Community SaaS web platform — full-stack · 200+ brands</div>
               <div style={v1Styles.dim}>
-                Architected from 0. Production releases on App Store & Play Store. i18n, scalable patterns, perf budgets.
+                Full-stack work across React/Redux frontend and Node backend. Scaled to 50,000+ active users. Event creation, community management, earnings dashboards, payout flows.
               </div>
               <div style={{ marginTop: 8 }}>
                 <a style={v1Styles.link} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wyloapp.com</a>
               </div>
               <div style={{ marginTop: 8 }}>
-                {['react-native', 'saas', 'i18n', 'app-store', 'play-store'].map(t => <span key={t} style={v1Styles.badge}>{t}</span>)}
+                {['react', 'redux', 'node', 'full-stack', 'saas'].map(t => <span key={t} style={v1Styles.badge}>{t}</span>)}
+              </div>
+            </div>
+            <div style={v1Styles.card}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <a style={{ ...v1Styles.accent, ...v1Styles.link }} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wylo · mobile app ↗</a>
+                <span style={v1Styles.dim}>[shipped]</span>
+              </div>
+              <div style={{ color: '#b8bdba', marginBottom: 6 }}>Companion React Native mobile app for Wylo communities</div>
+              <div style={v1Styles.dim}>
+                Architected from 0. Production releases on App Store & Play Store. Migrated to RN's new architecture (Fabric / TurboModules). Currently building a unified mobile app for all Wylo communities.
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <a style={v1Styles.link} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wyloapp.com</a>
+              </div>
+              <div style={{ marginTop: 8 }}>
+                {['react-native', 'i18n', 'app-store', 'play-store', 'new-arch'].map(t => <span key={t} style={v1Styles.badge}>{t}</span>)}
               </div>
             </div>
             <div style={v1Styles.card}>
@@ -369,9 +389,9 @@ function V1Terminal() {
               <span style={v1Styles.accent}>●</span> currently
             </div>
             <ul style={{ margin: 0, paddingLeft: 18, color: '#b8bdba' }}>
-              <li>Leading mobile at Wylo — shipping releases & evolving architecture</li>
-              <li>Building Dineary toward production launch</li>
-              <li>Reading: React Native New Architecture (Fabric / TurboModules)</li>
+              <li>Leading mobile at Wylo — RN new architecture migration shipped ✓</li>
+              <li>Building a unified mobile app for all Wylo communities</li>
+              <li>Pushing Dineary toward production launch</li>
               <li>Tinkering: build pipelines, Vite/SWC, monorepo ergonomics</li>
             </ul>
             <div style={{ marginTop: 10, ...v1Styles.dim }}>last updated: 2026-04-30</div>
@@ -419,6 +439,37 @@ function V1Terminal() {
           </div>
         );
         break;
+      case 'stats':
+      case 'git':
+      case 'contributions':
+        out(
+          <div style={v1Styles.card}>
+            <div style={{ marginBottom: 10, color: '#b8bdba' }}>
+              <span style={v1Styles.accent}>●</span> contributions · last 12mo · gitlab + github
+            </div>
+            <ContribHeatmap theme="terminal" />
+          </div>
+        );
+        break;
+      case 'ide':
+        if (window.__switchVariant) {
+          out(<div style={v1Styles.dim}>switching to ide view...</div>);
+          setTimeout(() => window.__switchVariant('v2'), 250);
+        } else {
+          out(<div style={v1Styles.warn}>variant switcher not available</div>);
+        }
+        break;
+      case 'monitor':
+        if (window.__switchVariant) {
+          out(<div style={v1Styles.dim}>switching to monitor view...</div>);
+          setTimeout(() => window.__switchVariant('v3'), 250);
+        } else {
+          out(<div style={v1Styles.warn}>variant switcher not available</div>);
+        }
+        break;
+      case 'terminal':
+        out(<div style={v1Styles.dim}>already in terminal view ✓</div>);
+        break;
       case 'neofetch':
         out(
           <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 24px' }}>
@@ -428,7 +479,7 @@ function V1Terminal() {
    ╚═══╝`}</pre>
             <div style={v1Styles.table}>
               <span style={v1Styles.accent}>os</span><span>hkumar-os v3.2.1</span>
-              <span style={v1Styles.accent}>host</span><span>Wylo · Chennai</span>
+              <span style={v1Styles.accent}>host</span><span>Wylo · New Delhi</span>
               <span style={v1Styles.accent}>uptime</span><span>3+ years shipping mobile</span>
               <span style={v1Styles.accent}>shell</span><span>react-native@0.74</span>
               <span style={v1Styles.accent}>ide</span><span>vscode + vim mode</span>
@@ -448,24 +499,16 @@ function V1Terminal() {
       case 'ls':
         out(
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px 16px' }}>
-            <span style={v1Styles.accent}>about/</span>
-            <span style={v1Styles.accent}>work/</span>
-            <span style={v1Styles.accent}>projects/</span>
-            <span style={v1Styles.accent}>skills/</span>
+            <span style={v1Styles.accent}>about.md</span>
+            <span style={v1Styles.accent}>work.md</span>
+            <span style={v1Styles.accent}>projects.md</span>
+            <span style={v1Styles.accent}>skills.md</span>
             <span>now.md</span>
             <span>contact.txt</span>
             <span>resume.pdf</span>
-            <span>blog/</span>
+            <span>blog.md</span>
           </div>
         );
-        break;
-      case 'cd':
-      case 'cd ~':
-      case 'cd /':
-        out(<span style={v1Styles.dim}>(stayed in <span style={v1Styles.accent}>~/portfolio</span> — nothing else mounted)</span>);
-        break;
-      case 'cd ..':
-        out(<span style={v1Styles.dim}>nope. this is as far up as you go.</span>);
         break;
       case 'date':
         out(<span>{new Date().toString()}</span>);
@@ -488,13 +531,35 @@ function V1Terminal() {
         out(<span style={v1Styles.warn}>nice try. you're already root here.</span>);
         break;
       default: {
-        if (cmd.startsWith('cd ')) {
-          out(<span><span style={v1Styles.warn}>cd: {cmd.slice(3)}</span><span style={v1Styles.dim}>: no such directory. try </span><span style={v1Styles.accent}>ls</span></span>);
+        // view / switch / theme — variant switcher
+        const switchMatch = cmd.match(/^(?:view|switch|theme)(?:\s+(.+))?$/);
+        if (switchMatch) {
+          const target = (switchMatch[1] || '').trim();
+          const map = { 'terminal': 'v1', 'cli': 'v1', 'v1': 'v1', 'ide': 'v2', 'editor': 'v2', 'v2': 'v2', 'monitor': 'v3', 'dashboard': 'v3', 'v3': 'v3' };
+          const id = map[target];
+          if (!target) {
+            out(
+              <div>
+                <div style={v1Styles.dim}>usage: view &lt;terminal|ide|monitor&gt;</div>
+                <div style={{ marginTop: 6 }}>
+                  <span style={v1Styles.accent}>● terminal</span>
+                  <span style={v1Styles.dim}>  ·  ide  ·  monitor</span>
+                </div>
+              </div>
+            );
+          } else if (!id) {
+            out(<span style={v1Styles.warn}>unknown variant: {target}. try: terminal, ide, monitor</span>);
+          } else if (id === 'v1') {
+            out(<div style={v1Styles.dim}>already in terminal view ✓</div>);
+          } else {
+            out(<div style={v1Styles.dim}>switching to {target}...</div>);
+            setTimeout(() => window.__switchVariant && window.__switchVariant(id), 250);
+          }
           break;
         }
         if (cmd.startsWith('cat ')) {
-          const f = cmd.slice(4).replace(/\.(md|txt)$/, '');
-          const map = { about: 'about', work: 'work', now: 'now', contact: 'contact', skills: 'skills', projects: 'projects', readme: 'about' };
+          const f = cmd.slice(4).replace(/\.(md|txt|pdf)$/, '');
+          const map = { about: 'about', work: 'work', now: 'now', contact: 'contact', skills: 'skills', projects: 'projects', blog: 'blog', readme: 'about', resume: 'resume' };
           if (map[f]) { runCommand(map[f]); return; }
           out(<span><span style={v1Styles.warn}>cat: {cmd.slice(4)}</span><span style={v1Styles.dim}>: no such file</span></span>);
           break;
@@ -553,7 +618,7 @@ function V1Terminal() {
     }
   };
 
-  const quickCmds = ['about', 'work', 'projects', 'skills', 'now', 'contact', 'resume'];
+  const quickCmds = ['about', 'work', 'projects', 'skills', 'stats', 'now', 'contact', 'resume'];
 
   return (
     <div style={v1Styles.root} data-v1-root className="v1-root-cq">
@@ -583,11 +648,38 @@ function V1Terminal() {
                 <span style={{ color: '#3d4347', fontSize: 10 }}>↵</span>
               </div>
             ))}
+            <div style={v1Styles.sideHead}>views</div>
+            <div
+              style={{ ...v1Styles.sideItem, color: '#c8e6a8', background: '#1a2018' }}
+              title="current"
+            >
+              <span>● terminal</span>
+              <span style={{ color: '#3d4347', fontSize: 10 }}>1</span>
+            </div>
+            <div
+              style={v1Styles.sideItem}
+              onMouseEnter={e => Object.assign(e.currentTarget.style, v1Styles.sideItemActive)}
+              onMouseLeave={e => Object.assign(e.currentTarget.style, v1Styles.sideItem)}
+              onClick={() => window.__switchVariant && window.__switchVariant('v2')}
+            >
+              <span>○ ide</span>
+              <span style={{ color: '#3d4347', fontSize: 10 }}>2</span>
+            </div>
+            <div
+              style={v1Styles.sideItem}
+              onMouseEnter={e => Object.assign(e.currentTarget.style, v1Styles.sideItemActive)}
+              onMouseLeave={e => Object.assign(e.currentTarget.style, v1Styles.sideItem)}
+              onClick={() => window.__switchVariant && window.__switchVariant('v3')}
+            >
+              <span>○ monitor</span>
+              <span style={{ color: '#3d4347', fontSize: 10 }}>3</span>
+            </div>
             <div style={v1Styles.sideHead}>shortcuts</div>
             <div style={{ ...v1Styles.dim, fontSize: 11, lineHeight: 1.7 }}>
               <div>↑/↓ &nbsp; history</div>
               <div>tab &nbsp; complete</div>
               <div>⌘L &nbsp; clear</div>
+              <div>1·2·3 view</div>
             </div>
             <div style={v1Styles.sideHead}>status</div>
             <div style={{ fontSize: 11, color: '#7fa650' }}>● Open to interesting problems</div>
