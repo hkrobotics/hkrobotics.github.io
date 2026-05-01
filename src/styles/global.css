@@ -1,0 +1,27 @@
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  height: 100%;
+}
+
+body {
+  background: #0b0d0c;
+  color: #e6e6e6;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root,
+.portfolio-shell {
+  width: 100vw;
+  height: 100vh;
+}
+
+a {
+  color: inherit;
+}

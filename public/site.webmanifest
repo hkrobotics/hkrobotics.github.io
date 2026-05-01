@@ -1,0 +1,15 @@
+{
+  "name": "Hemant Kumar — Portfolio",
+  "short_name": "hkumar",
+  "description": "Lead Mobile Engineer · React Native · Full-stack. Three terminal-flavored portfolio takes — Terminal CLI, IDE, and System Monitor.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
