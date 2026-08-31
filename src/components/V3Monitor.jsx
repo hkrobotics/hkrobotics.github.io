@@ -444,11 +444,11 @@ export default function V3Monitor() {
             </div>
             <div>
               <div style={{ color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 }}>twitter</div>
-              <a href="https://twitter.com/hkrobotics" target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>@hkrobotics</a>
+              <a href="https://x.com/hkumarDev" target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>@hkumarDev</a>
             </div>
             <div>
               <div style={{ color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 }}>linkedin</div>
-              <a href="https://linkedin.com/in/hkrobotics" target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>linkedin.com/in/hkrobotics</a>
+              <a href="https://www.linkedin.com/in/hkumardev/" target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>linkedin.com/in/hkumardev</a>
             </div>
             <div>
               <div style={{ color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 }}>phone</div>

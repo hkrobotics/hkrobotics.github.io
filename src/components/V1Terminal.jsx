@@ -412,9 +412,9 @@ export default function V1Terminal() {
             <span style={v1Styles.dim}>github</span>
             <a style={v1Styles.link} href="https://github.com/hkrobotics" target="_blank" rel="noreferrer">github.com/hkrobotics</a>
             <span style={v1Styles.dim}>twitter</span>
-            <a style={v1Styles.link} href="https://twitter.com/hkrobotics" target="_blank" rel="noreferrer">@hkrobotics</a>
+            <a style={v1Styles.link} href="https://x.com/hkumarDev" target="_blank" rel="noreferrer">@hkumarDev</a>
             <span style={v1Styles.dim}>linkedin</span>
-            <a style={v1Styles.link} href="https://linkedin.com/in/hkrobotics" target="_blank" rel="noreferrer">linkedin.com/in/hkrobotics</a>
+            <a style={v1Styles.link} href="https://www.linkedin.com/in/hkumardev/" target="_blank" rel="noreferrer">linkedin.com/in/hkumardev</a>
             <span style={v1Styles.dim}>location</span>
             <span>New Delhi, India · IST (UTC+5:30)</span>
           </div>
@@ -569,7 +569,7 @@ export default function V1Terminal() {
         }
         if (cmd.startsWith('open ')) {
           const t = cmd.slice(5).trim();
-          const urls = { dineary: 'https://dineary.com/', wylo: 'https://wyloapp.com/', github: 'https://github.com/hkrobotics', twitter: 'https://twitter.com/hkrobotics', linkedin: 'https://linkedin.com/in/hkrobotics', resume: 'https://drive.google.com/file/d/1Az1Opn7orrgALlyRiGsAr9J-adqK8zdR/view?usp=sharing' };
+          const urls = { dineary: 'https://dineary.com/', wylo: 'https://wyloapp.com/', github: 'https://github.com/hkrobotics', twitter: 'https://x.com/hkumarDev', linkedin: 'https://www.linkedin.com/in/hkumardev/', resume: 'https://drive.google.com/file/d/1Az1Opn7orrgALlyRiGsAr9J-adqK8zdR/view?usp=sharing' };
           if (urls[t]) {
             window.open(urls[t], '_blank', 'noreferrer');
             out(<span><span style={v1Styles.accent}>↗</span> opening <a style={v1Styles.link} href={urls[t]} target="_blank" rel="noreferrer">{urls[t]}</a></span>);

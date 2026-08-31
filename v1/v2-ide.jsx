@@ -190,8 +190,8 @@ const FILES = {
         <div>&nbsp;</div>
         <div><span style={{ color: '#cf8e6d' }}>## quick links</span></div>
         <div>- <a style={{ color: '#56a8f5' }} href="https://github.com/hkrobotics" target="_blank" rel="noreferrer">github.com/hkrobotics</a></div>
-        <div>- <a style={{ color: '#56a8f5' }} href="https://twitter.com/hkrobotics" target="_blank" rel="noreferrer">twitter.com/hkrobotics</a></div>
-        <div>- <a style={{ color: '#56a8f5' }} href="https://linkedin.com/in/hkrobotics" target="_blank" rel="noreferrer">linkedin.com/in/hkrobotics</a></div>
+        <div>- <a style={{ color: '#56a8f5' }} href="https://x.com/hkumarDev" target="_blank" rel="noreferrer">x.com/hkumarDev</a></div>
+        <div>- <a style={{ color: '#56a8f5' }} href="https://www.linkedin.com/in/hkumardev/" target="_blank" rel="noreferrer">linkedin.com/in/hkumardev</a></div>
         <div>- <a style={{ color: '#56a8f5' }} href="https://dineary.com/" target="_blank" rel="noreferrer">dineary.com</a></div>
         <div>- <a style={{ color: '#56a8f5' }} href="https://wyloapp.com/" target="_blank" rel="noreferrer">wyloapp.com</a></div>
         <div>- <a style={{ color: '#56a8f5' }} href="mailto:kumarhemant24jan@gmail.com">kumarhemant24jan@gmail.com</a></div>
@@ -403,13 +403,13 @@ const FILES = {
         <div><F>email</F>=<S>"kumarhemant24jan@gmail.com"</S></div>
         <div><F>phone</F>=<S>"+91 7057 140 367"</S></div>
         <div><F>github</F>=<S>"github.com/hkrobotics"</S></div>
-        <div><F>twitter</F>=<S>"twitter.com/hkrobotics"</S></div>
-        <div><F>linkedin</F>=<S>"linkedin.com/in/hkrobotics"</S></div>
+        <div><F>twitter</F>=<S>"x.com/hkumarDev"</S></div>
+        <div><F>linkedin</F>=<S>"linkedin.com/in/hkumardev"</S></div>
         <div><F>location</F>=<S>"New Delhi, India · IST"</S></div>
         <div>&nbsp;</div>
         <div><K>echo</K> <S>"reach out:"</S></div>
         <div><K>echo</K> <S>"  → <a style={{ color: '#56a8f5' }} href="mailto:kumarhemant24jan@gmail.com">$email</a>"</S></div>
-        <div><K>echo</K> <S>"  → <a style={{ color: '#56a8f5' }} href="https://linkedin.com/in/hkrobotics" target="_blank" rel="noreferrer">$linkedin</a>"</S></div>
+        <div><K>echo</K> <S>"  → <a style={{ color: '#56a8f5' }} href="https://www.linkedin.com/in/hkumardev/" target="_blank" rel="noreferrer">$linkedin</a>"</S></div>
         <div><K>echo</K> <S>"  → $phone"</S></div>
         <div>&nbsp;</div>
         <div><C>{'# response time: usually within 24h'}</C></div>
