@@ -46,6 +46,6 @@
   <text x="1080" y="488" text-anchor="end" font-family="ui-monospace, &#39;JetBrains Mono&#39;, monospace" font-size="14" fill="#5a6065">three takes · one portfolio</text>
 
   
-  <circle cx="1060" cy="100" r="5" fill="#3fb950"></circle>
-  <text x="1078" y="105" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#3fb950">OPEN TO WORK</text>
+  <circle cx="990" cy="100" r="5" fill="#3fb950"></circle>
+  <text x="1104" y="105" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#3fb950">OPEN TO WORK</text>
 </svg>
