@@ -556,6 +556,7 @@ export default function V2IDE() {
 
   return (
     <div style={v2Styles.root} className="v2-root">
+      <h1 className="sr-only">Hemant Kumar — IDE Portfolio</h1>
       <div
         style={{
           ...v2Styles.topbar,

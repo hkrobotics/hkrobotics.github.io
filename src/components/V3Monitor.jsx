@@ -216,6 +216,7 @@ export default function V3Monitor() {
 
   return (
     <div style={v3Styles.root} className="v3-root">
+      <h1 className="sr-only">Hemant Kumar — System Monitor Portfolio</h1>
       <style>{`
         @keyframes v3pulse {
           0% { box-shadow: 0 0 0 0 rgba(63,185,80,0.6); }
@@ -229,7 +230,7 @@ export default function V3Monitor() {
         className="v3-header"
       >
         <div style={{ width: isMobile ? '100%' : 'auto' }}>
-          <div style={v3Styles.headerName}>hemant kumar</div>
+          <h1 style={{ ...v3Styles.headerName, margin: 0 }}>hemant kumar</h1>
           <div style={v3Styles.headerSub}>lead.mobile.engineer · react-native · new-delhi · ist</div>
         </div>
         {!isMobile && <div style={{ flex: 1 }} />}

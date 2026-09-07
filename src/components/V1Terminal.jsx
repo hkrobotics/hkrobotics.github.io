@@ -625,6 +625,7 @@ export default function V1Terminal() {
 
   return (
     <div style={v1Styles.root} data-v1-root className="v1-root-cq">
+      <h1 className="sr-only">Hemant Kumar — Terminal Portfolio</h1>
       <div style={v1Styles.scanlines} />
       <div style={v1Styles.topbar} className="v1-topbar">
         <div style={v1Styles.dot('#ff5f57')} />
