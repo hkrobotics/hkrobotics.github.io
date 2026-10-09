@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://hkumar.dev/sitemap.xml
+# AI assistants: see https://hkumar.dev/llms.txt
