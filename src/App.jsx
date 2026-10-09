@@ -1,24 +1,19 @@
 import React from 'react';
 import { useLocalStorage } from 'usehooks-ts';
-import V1Terminal from './components/V1Terminal.jsx';
-import V2IDE from './components/V2IDE.jsx';
-import V3Monitor from './components/V3Monitor.jsx';
+import { profile } from './data/profile.js';
+
+// Each view is its own chunk — visitors only download the one they're looking at.
+const Terminal = React.lazy(() => import('./variants/Terminal.jsx'));
+const IDE = React.lazy(() => import('./variants/IDE.jsx'));
+const Monitor = React.lazy(() => import('./variants/Monitor.jsx'));
 
 const STORAGE_KEY = 'portfolio:variant';
 
+// Variant ids (v1/v2/v3) are persisted in localStorage and used in ?view= — keep them stable.
 const variants = {
-  v1: {
-    title: 'Hemant Kumar - Terminal Portfolio',
-    component: V1Terminal,
-  },
-  v2: {
-    title: 'Hemant Kumar - IDE Portfolio',
-    component: V2IDE,
-  },
-  v3: {
-    title: 'Hemant Kumar - System Monitor Portfolio',
-    component: V3Monitor,
-  },
+  v1: { title: 'Terminal', component: Terminal },
+  v2: { title: 'IDE', component: IDE },
+  v3: { title: 'System Monitor', component: Monitor },
 };
 
 function getVariantFromQuery() {
@@ -29,13 +24,14 @@ function getVariantFromQuery() {
 
 export default function App() {
   const [variant, setVariant] = useLocalStorage(STORAGE_KEY, 'v1');
-  const ActiveVariant = variants[variant].component;
+  const active = variants[variant] ? variant : 'v1';
+  const ActiveVariant = variants[active].component;
 
   React.useEffect(() => {
-    // Allow query param override while still persisting future switches.
+    // ?view= overrides once on load; later switches still persist.
     const fromQuery = getVariantFromQuery();
-    if (fromQuery && fromQuery !== variant) setVariant(fromQuery);
-  }, [setVariant, variant]);
+    if (fromQuery) setVariant(fromQuery);
+  }, [setVariant]);
 
   React.useEffect(() => {
     window.__switchVariant = (next) => {
@@ -57,12 +53,14 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    document.title = variants[variant].title;
-  }, [variant]);
+    document.title = `${profile.name} — ${profile.headline} · ${variants[active].title}`;
+  }, [active]);
 
   return (
-    <main className="portfolio-shell" data-variant={variant}>
-      <ActiveVariant />
+    <main className="portfolio-shell" data-variant={active}>
+      <React.Suspense fallback={null}>
+        <ActiveVariant />
+      </React.Suspense>
     </main>
   );
 }
