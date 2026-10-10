@@ -1,66 +1,57 @@
 import React from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import { profile } from './data/profile.js';
+import { VIEWS, viewById } from './data/views.js';
+import { ViewContext } from './lib/view.js';
 
 // Each view is its own chunk — visitors only download the one they're looking at.
-const Terminal = React.lazy(() => import('./variants/Terminal.jsx'));
-const IDE = React.lazy(() => import('./variants/IDE.jsx'));
-const Monitor = React.lazy(() => import('./variants/Monitor.jsx'));
-
-const STORAGE_KEY = 'portfolio:variant';
-
-// Variant ids (v1/v2/v3) are persisted in localStorage and used in ?view= — keep them stable.
-const variants = {
-  v1: { title: 'Terminal', component: Terminal },
-  v2: { title: 'IDE', component: IDE },
-  v3: { title: 'System Monitor', component: Monitor },
+const COMPONENTS = {
+  terminal: React.lazy(() => import('./views/Terminal.jsx')),
+  ide: React.lazy(() => import('./views/IDE.jsx')),
+  monitor: React.lazy(() => import('./views/Monitor.jsx')),
 };
 
-function getVariantFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const fromQuery = params.get('view') || params.get('variant');
-  return variants[fromQuery] ? fromQuery : null;
-}
+const viewFromPath = (pathname) => (VIEWS.find((v) => pathname.startsWith(v.path)) || VIEWS[0]).id;
 
 export default function App() {
-  const [variant, setVariant] = useLocalStorage(STORAGE_KEY, 'v1');
-  const active = variants[variant] ? variant : 'v1';
-  const ActiveVariant = variants[active].component;
+  const [active, setActive] = React.useState(() => viewFromPath(window.location.pathname));
 
-  React.useEffect(() => {
-    // ?view= overrides once on load; later switches still persist.
-    const fromQuery = getVariantFromQuery();
-    if (fromQuery) setVariant(fromQuery);
-  }, [setVariant]);
-
-  React.useEffect(() => {
-    window.__switchVariant = (next) => {
-      if (!variants[next]) return;
-      setVariant(next);
-    };
-
-    const onKeyDown = (event) => {
-      if (event.target?.tagName === 'INPUT' || event.target?.isContentEditable) return;
-      const keyMap = { 1: 'v1', 2: 'v2', 3: 'v3' };
-      if (keyMap[event.key]) window.__switchVariant(keyMap[event.key]);
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      delete window.__switchVariant;
-    };
+  // Switch in place and keep the URL shareable.
+  const switchTo = React.useCallback((id) => {
+    const view = viewById(id);
+    if (!view) return;
+    if (window.location.pathname !== view.path) window.history.pushState({}, '', view.path);
+    setActive(id);
   }, []);
 
   React.useEffect(() => {
-    document.title = `${profile.name} — ${profile.headline} · ${variants[active].title}`;
+    const onPop = () => setActive(viewFromPath(window.location.pathname));
+    const onKeyDown = (event) => {
+      if (event.target?.tagName === 'INPUT' || event.target?.isContentEditable) return;
+      const view = VIEWS.find((v) => v.key === event.key);
+      if (view) switchTo(view.id);
+    };
+    window.addEventListener('popstate', onPop);
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [switchTo]);
+
+  React.useEffect(() => {
+    document.title = `${profile.name} — ${profile.headline} · ${viewById(active).title}`;
   }, [active]);
 
+  const ActiveView = COMPONENTS[active];
+  const context = React.useMemo(() => ({ active, switchTo }), [active, switchTo]);
+
   return (
-    <main className="portfolio-shell" data-variant={active}>
-      <React.Suspense fallback={null}>
-        <ActiveVariant />
-      </React.Suspense>
-    </main>
+    <ViewContext.Provider value={context}>
+      <main className="portfolio-shell" data-view={active}>
+        <React.Suspense fallback={null}>
+          <ActiveView />
+        </React.Suspense>
+      </main>
+    </ViewContext.Provider>
   );
 }

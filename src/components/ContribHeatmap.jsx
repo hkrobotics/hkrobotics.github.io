@@ -6,8 +6,8 @@ import { relativeDays } from '../lib/dates.js';
 // Data comes from src/data/activity.json, refreshed daily by CI
 // (scripts/fetch-activity.mjs) — no network requests at runtime.
 // Variants control colors via the `theme` prop:
-//   theme: 'monitor' (V3, github-style green), 'terminal' (V1, terminal-green),
-//          'ide' (V2, IDE-blue/green)
+//   theme: 'monitor' (monitor view), 'terminal' (terminal view),
+//          'ide' (ide view)
 
 const THEMES = {
   monitor: {

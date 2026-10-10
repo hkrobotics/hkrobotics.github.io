@@ -1,8 +1,14 @@
 import { execSync } from 'node:child_process';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { contributionsSvg } from './scripts/contrib-svg.js';
-import { aboutHtml, indexHead, indexNoscript, llmsFullTxt, llmsTxt, notFoundHtml, siteTitle, sitemapXml } from './scripts/site-files.js';
+import { VIEWS } from './src/data/views.js';
+import {
+  analyticsTag, homeHtml, llmsFullTxt, llmsTxt, notFoundHtml, redirectHtml,
+  sitemapXml, viewHead, viewNoscript, viewTitle,
+} from './scripts/site-files.js';
 
 const git = (cmd, fallback) => {
   try { return execSync(`git ${cmd}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return fallback; }
@@ -16,7 +22,8 @@ const buildInfo = {
 
 // Generated pages, keyed by output path. See scripts/site-files.js.
 const generatedFiles = () => ({
-  'about/index.html': { type: 'text/html', body: aboutHtml(buildInfo.date) },
+  'index.html': { type: 'text/html', body: homeHtml(buildInfo.date) },
+  'about/index.html': { type: 'text/html', body: redirectHtml('/') },
   'llms.txt': { type: 'text/plain', body: llmsTxt() },
   'llms-full.txt': { type: 'text/plain', body: llmsFullTxt(buildInfo.date) },
   'sitemap.xml': { type: 'application/xml', body: sitemapXml(buildInfo.date) },
@@ -26,20 +33,35 @@ const generatedFiles = () => ({
   'contributions-light.svg': { type: 'image/svg+xml', body: contributionsSvg('light') },
 });
 
-// Fills the <!-- profile:* --> markers in index.html and emits the generated
-// pages — all from src/data/profile.js.
+// Fills the <!-- profile:* --> markers in app.html for one interactive view.
+const fillView = (html, id) => html
+  .replace('<!-- profile:head -->', viewHead(buildInfo.date, id))
+  .replace('<!-- profile:title -->', viewTitle(id))
+  .replace('<!-- profile:noscript -->', viewNoscript())
+  .replace('<!-- profile:analytics -->', analyticsTag());
+
+const viewForUrl = (url) => VIEWS.find((v) => url === v.path || url === v.path.slice(0, -1))?.id;
+
+// Homepage + generated files from src/data/profile.js; app.html becomes
+// /terminal/, /ide/ and /monitor/.
 function siteFilesPlugin() {
+  let outDir;
   return {
     name: 'site-files',
-    transformIndexHtml(html) {
-      return html
-        .replace('<!-- profile:head -->', indexHead(buildInfo.date))
-        .replace('<!-- profile:title -->', siteTitle)
-        .replace('<!-- profile:noscript -->', indexNoscript());
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
     },
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        const path = req.url.split('?')[0].replace(/^\//, '').replace(/^about\/?$/, 'about/index.html');
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url.split('?')[0];
+        const view = viewForUrl(url);
+        if (view) {
+          const raw = await readFile(resolve(server.config.root, 'app.html'), 'utf8');
+          res.setHeader('content-type', 'text/html; charset=utf-8');
+          res.end(fillView(await server.transformIndexHtml(url, raw), view));
+          return;
+        }
+        const path = url === '/' ? 'index.html' : url.replace(/^\//, '').replace(/^about\/?$/, 'about/index.html');
         const file = generatedFiles()[path];
         if (!file) return next();
         res.setHeader('content-type', `${file.type}; charset=utf-8`);
@@ -51,12 +73,24 @@ function siteFilesPlugin() {
         this.emitFile({ type: 'asset', fileName, source: body });
       }
     },
+    async writeBundle() {
+      const app = await readFile(resolve(outDir, 'app.html'), 'utf8');
+      for (const { id, path } of VIEWS) {
+        await mkdir(resolve(outDir, path.slice(1)), { recursive: true });
+        await writeFile(resolve(outDir, path.slice(1), 'index.html'), fillView(app, id));
+      }
+      await rm(resolve(outDir, 'app.html'));
+    },
   };
 }
 
 export default defineConfig({
-  base: './',
+  // Absolute asset paths so the views work at /terminal/, /ide/, /monitor/.
+  base: '/',
   plugins: [react(), siteFilesPlugin()],
+  build: {
+    rollupOptions: { input: { app: 'app.html' } },
+  },
   define: {
     __BUILD_INFO__: JSON.stringify(buildInfo),
   },

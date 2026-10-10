@@ -28,21 +28,21 @@ a {
 }
 
 /* Short-height screens (laptops split view, mobile landscape):
-   reclaim vertical space so variants don't feel cramped. */
+   reclaim vertical space so views don't feel cramped. */
 @media (max-height: 720px) {
-  .v1-topbar {
+  .term-topbar {
     gap: 6px;
   }
 
-  .v2-topbar {
+  .ide-topbar {
     gap: 10px;
   }
 
-  .v2-status {
+  .ide-status {
     gap: 10px;
   }
 
-  .v3-header {
+  .mon-header {
     gap: 14px;
   }
 }
