@@ -145,8 +145,8 @@ const ABOUT_CSS = `
   li::marker { color: var(--accent); content: "› "; }
   a { color: var(--link); text-underline-offset: 3px; text-decoration-thickness: 1px; }
   a:hover { color: #fff; }
-  dl { display: grid; grid-template-columns: max-content 1fr; gap: .55rem 1.25rem; margin: 0; }
-  dt { color: var(--dim); font: .85rem var(--mono); padding-top: .15rem; }
+  dl { display: grid; grid-template-columns: max-content 1fr; align-items: baseline; gap: .55rem 1.25rem; margin: 0; }
+  dt { color: var(--dim); font: .85rem var(--mono); }
   dd { margin: 0; }
   .tags { display: flex; flex-wrap: wrap; gap: .35rem; }
   .tags span { font: .78rem var(--mono); padding: .1rem .5rem; border: 1px solid var(--faint); border-radius: 3px; }
