@@ -15,7 +15,7 @@ export const profile = {
   careerStart: '2022-10',
   site: 'https://hkumar.dev/',
   // Served from public/; resume.hkumar.dev redirects here (Cloudflare redirect rule).
-  resume: { url: 'https://hkumar.dev/hemant-kumar-resume.pdf', share: 'https://resume.hkumar.dev', updated: '2026-09' },
+  resume: { url: 'https://hkumar.dev/hemant-kumar-resume.pdf', share: 'https://resume.hkumar.dev', updated: '2026-10' },
 
   // Shown publicly as "open to …". Flip to false to hide every badge at once.
   status: { open: true, label: 'open to interesting opportunities' },
