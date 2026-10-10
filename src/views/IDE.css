@@ -1,8 +1,5 @@
 /* IDE view — JetBrains-style dark editor.
-   Mobile breakpoint matches useIsMobile(700): `window.innerWidth < 700`.
-   This file loads with the lazy IDE chunk (after global.css), so the single-class
-   rules for .ide-topbar / .ide-status below take precedence over the
-   short-height overrides in global.css, exactly as the old inline styles did. */
+   Mobile breakpoint matches useIsMobile(700): `window.innerWidth < 700`. */
 
 /* ── Shell ─────────────────────────────────────────────────────────────── */
 
@@ -748,4 +745,10 @@
     border: 1px solid #3c3f44;
     border-radius: 4px;
   }
+}
+
+/* Short screens (split-view laptops, phones in landscape): tighter bars. */
+@media (max-height: 720px) {
+  .ide-topbar,
+  .ide-status { gap: 10px; }
 }

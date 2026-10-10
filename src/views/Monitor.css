@@ -21,8 +21,6 @@
 
 /* ── Header ─────────────────────────────────────────────────────────── */
 
-/* Scoped under .mon-root so it outranks the short-screen `.mon-header`
-   gap tweak in global.css, which the old inline styles always overrode. */
 .mon-root .mon-header {
   height: clamp(44px, 8vh, 56px);
   flex-shrink: 0;
@@ -499,3 +497,9 @@
 /* Contact reveal buttons/links: plain blue, no underline (overrides .reveal). */
 .reveal.mon-reveal,
 a.mon-reveal { color: #58a6ff; text-decoration: none; }
+
+/* Short, wide screens (split-view laptops, phones in landscape): tighter header.
+   Phone-width layouts keep their own spacing from the mobile rules above. */
+@media (max-height: 720px) and (min-width: 700px) {
+  .mon-root .mon-header { gap: 14px; }
+}
