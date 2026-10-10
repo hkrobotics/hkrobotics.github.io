@@ -1,9 +1,11 @@
 import React from 'react';
 import ContribHeatmap from '../components/ContribHeatmap.jsx';
 import RevealContact from '../components/RevealContact.jsx';
+import WindowControls from '../components/WindowControls.jsx';
 import { profile } from '../data/profile.js';
 import { VIEWS } from '../data/views.js';
 import { build } from '../lib/build.js';
+import { cx } from '../lib/cx.js';
 import { experienceLabel, formatMonth } from '../lib/dates.js';
 import { useIsMobile } from '../lib/useIsMobile.js';
 import { useView } from '../lib/view.js';
@@ -307,9 +309,6 @@ function FileIcon({ name }) {
   );
 }
 
-const cx = (...names) => names.filter(Boolean).join(' ');
-
-const TRAFFIC_LIGHTS = ['close', 'minimize', 'zoom'];
 const MENU = ['File', 'Edit', 'Selection', 'View', 'Go', 'Run', 'Help'];
 const OUTLINE = ['⨍ summary', '◇ experience', '◇ projects', '◇ skills'];
 const GUTTER_LINES = 60; // approximate gutter
@@ -424,7 +423,7 @@ export default function IDE() {
       <h1 className="sr-only">Hemant Kumar — IDE Portfolio</h1>
       <div className="ide-topbar">
         <div className="ide-traffic">
-          {TRAFFIC_LIGHTS.map(t => <div key={t} className={`ide-traffic-dot is-${t}`} />)}
+          <WindowControls />
         </div>
         {!isMobile && (
           <div className="ide-menu">

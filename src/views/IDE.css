@@ -38,16 +38,6 @@
   gap: 6px;
 }
 
-.ide-traffic-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-}
-
-.ide-traffic-dot.is-close { background: #ff5f57; }
-.ide-traffic-dot.is-minimize { background: #febc2e; }
-.ide-traffic-dot.is-zoom { background: #28c840; }
-
 .ide-menu {
   display: flex;
   gap: 14px;

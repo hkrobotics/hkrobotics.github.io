@@ -1,10 +1,11 @@
 import React from 'react';
 import ContribHeatmap from '../components/ContribHeatmap.jsx';
+import WindowControls from '../components/WindowControls.jsx';
 import { profile } from '../data/profile.js';
 import { VIEWS } from '../data/views.js';
-import { useView } from '../lib/view.js';
 import { contact, formatPhone } from '../lib/contact.js';
 import { experienceLabel, formatRange, uptime } from '../lib/dates.js';
+import { useView } from '../lib/view.js';
 import './Terminal.css';
 
 // Terminal CLI portfolio
@@ -492,9 +493,7 @@ export default function Terminal() {
       <h1 className="sr-only">Hemant Kumar — Terminal Portfolio</h1>
       <div className="term-scanlines" />
       <div className="term-topbar">
-        <div className="term-dot is-close" />
-        <div className="term-dot is-minimize" />
-        <div className="term-dot is-zoom" />
+        <WindowControls />
         <div className="term-topbar-title">
           hkumar@portfolio: ~ — zsh
         </div>

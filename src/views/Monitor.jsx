@@ -5,6 +5,7 @@ import { profile } from '../data/profile.js';
 import { VIEWS } from '../data/views.js';
 import { contributions, recentDays, weeklySeries } from '../lib/activity.js';
 import { build } from '../lib/build.js';
+import { cx } from '../lib/cx.js';
 import { formatMonth, relativeDays, uptime } from '../lib/dates.js';
 import { useView } from '../lib/view.js';
 import './Monitor.css';
@@ -49,7 +50,6 @@ function Sparkline({ values, color = '#3fb950' }) {
 const SKILL_COLORS = ['#3fb950', '#a371f7', '#f0883e', '#58a6ff'];
 
 // RevealContact only accepts inline styles, so its link colour is passed here.
-const REVEAL_STYLE = { color: '#58a6ff', textDecoration: 'none' };
 
 // Static for the page's lifetime — computed once at module load.
 const SERIES = weeklySeries(26);
@@ -57,7 +57,6 @@ const RECENT = recentDays(6);
 const LAST_4_WEEKS = SERIES.slice(-4).reduce((s, n) => s + n, 0);
 const PREV_4_WEEKS = SERIES.slice(-8, -4).reduce((s, n) => s + n, 0);
 
-const cx = (...names) => names.filter(Boolean).join(' ');
 const tone = (color) => (color ? { '--tone': color } : undefined);
 
 function Stat({ label, className, children }) {
@@ -267,8 +266,8 @@ export default function Monitor() {
 
         <Panel label="[net]" title="endpoints · contact" status="● 200 ok" statusColor="#3fb950">
           <div className="mon-contact">
-            <ContactRow label="email"><RevealContact kind="email" style={REVEAL_STYLE} /></ContactRow>
-            <ContactRow label="phone"><RevealContact kind="phone" style={REVEAL_STYLE} /></ContactRow>
+            <ContactRow label="email"><RevealContact kind="email" className="mon-reveal" /></ContactRow>
+            <ContactRow label="phone"><RevealContact kind="phone" className="mon-reveal" /></ContactRow>
             {profile.links.map(l => (
               <ContactRow key={l.id} label={l.id}>
                 <a href={l.url} target="_blank" rel="noreferrer" className="mon-link">{l.label}</a>

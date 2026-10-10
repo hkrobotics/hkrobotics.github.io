@@ -495,3 +495,7 @@
     white-space: nowrap;
   }
 }
+
+/* Contact reveal buttons/links: plain blue, no underline (overrides .reveal). */
+.reveal.mon-reveal,
+a.mon-reveal { color: #58a6ff; text-decoration: none; }
