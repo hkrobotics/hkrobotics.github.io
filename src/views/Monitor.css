@@ -1,0 +1,497 @@
+/* System monitor view. Mobile overrides (< 700px) live in the media query at
+   the bottom. Dynamic colours come in through the --tone custom property. */
+
+@keyframes mon-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(63, 185, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
+}
+
+.mon-root {
+  width: 100%;
+  height: 100%;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+
+/* Scoped under .mon-root so it outranks the short-screen `.mon-header`
+   gap tweak in global.css, which the old inline styles always overrode. */
+.mon-root .mon-header {
+  height: clamp(44px, 8vh, 56px);
+  flex-shrink: 0;
+  background: #0a0d12;
+  border-bottom: 1px solid #1c232b;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(12px, 3vw, 18px);
+  gap: 24px;
+}
+
+.mon-name {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #e6edf3;
+  letter-spacing: -0.2px;
+}
+
+.mon-sub {
+  color: #7d8590;
+  font-size: 11px;
+}
+
+.mon-spacer {
+  flex: 1;
+}
+
+.mon-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mon-stat-label {
+  color: #6e7681;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.mon-stat-value {
+  color: #e6edf3;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mon-header-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 16px;
+  border-left: 1px solid #1c232b;
+}
+
+.mon-workspace-label {
+  font-size: 9px;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-right: 4px;
+}
+
+.mon-view-btn,
+.mon-view-link {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  color: #7d8590;
+  border: 1px solid #1c232b;
+}
+
+.mon-view-btn {
+  font-family: 'JetBrains Mono', monospace;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.mon-view-btn:not(.is-current):hover,
+.mon-view-btn:not(.is-current):focus-visible {
+  background: #161b22;
+  color: #e6edf3;
+}
+
+.mon-view-btn.is-current {
+  background: #0e4429;
+  color: #39d353;
+  border-color: #1f6e3a;
+  cursor: default;
+  font-weight: 600;
+}
+
+.mon-view-link {
+  text-decoration: none;
+}
+
+.mon-open {
+  gap: 8px;
+}
+
+.mon-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3fb950;
+  box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7);
+  animation: mon-pulse 1.6s infinite;
+}
+
+.mon-open-label {
+  color: #3fb950;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── Panel grid ─────────────────────────────────────────────────────── */
+
+.mon-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 1px;
+  background: #1c232b;
+  padding: 1px;
+}
+
+.mon-panel {
+  background: #0d1117;
+  padding: 12px 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mon-panel--wide {
+  grid-column: span 2;
+}
+
+.mon-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: #6e7681;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #1c232b;
+}
+
+.mon-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mon-panel-key {
+  color: #a371f7;
+  font-weight: 600;
+}
+
+.mon-panel-status {
+  color: var(--tone, inherit);
+}
+
+.mon-badge {
+  color: #3fb950;
+  padding: 1px 6px;
+  border: 1px solid #3fb95055;
+  border-radius: 2px;
+  font-size: 9px;
+}
+
+/* Shared scroll region: fills the panel and scrolls on desktop. */
+.mon-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Metrics ────────────────────────────────────────────────────────── */
+
+.mon-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.mon-metric-num {
+  font-size: 32px;
+  color: #e6edf3;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1;
+}
+
+.mon-metric-unit {
+  font-size: 12px;
+  color: #7d8590;
+}
+
+.mon-metric-label {
+  font-size: 10px;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.mon-metric-label--list,
+.mon-metric-label--note {
+  margin-top: 10px;
+}
+
+.mon-metric-label--list {
+  line-height: 1.6;
+}
+
+.mon-metric-label--note {
+  line-height: 1.4;
+}
+
+.mon-sparkline {
+  margin-top: 6px;
+}
+
+.mon-sparkline svg {
+  width: 100%;
+  height: 60px;
+  display: block;
+}
+
+/* ── Projects + chips ───────────────────────────────────────────────── */
+
+.mon-project-link {
+  color: #e6edf3;
+  text-decoration: none;
+}
+
+.mon-project-desc {
+  color: #c9d1d9;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.mon-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mon-chips--bottom {
+  margin-top: auto;
+}
+
+.mon-chip {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: #161b22;
+  color: #c9d1d9;
+  border: 1px solid #1c232b;
+  border-radius: 2px;
+}
+
+.mon-chip--muted {
+  color: #7d8590;
+}
+
+/* ── Activity log ───────────────────────────────────────────────────── */
+
+.mon-log {
+  font-size: 11px;
+  color: #7d8590;
+  line-height: 1.6;
+}
+
+.mon-log-line {
+  display: flex;
+  gap: 8px;
+}
+
+.mon-log-time {
+  color: #484f58;
+}
+
+.mon-log-tag {
+  color: var(--tone);
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.mon-ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mon-link {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+/* ── Process list ───────────────────────────────────────────────────── */
+
+.mon-proc {
+  display: grid;
+  grid-template-columns: 60px 1fr 70px 90px;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #c9d1d9;
+  border-bottom: 1px dashed #161b22;
+}
+
+.mon-proc--head {
+  color: #6e7681;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.mon-proc-dim {
+  color: #6e7681;
+}
+
+.mon-proc-status {
+  color: #7d8590;
+  white-space: nowrap;
+}
+
+.mon-proc-status.is-running {
+  color: #3fb950;
+}
+
+.mon-nowrap {
+  white-space: nowrap;
+}
+
+/* ── Skills ─────────────────────────────────────────────────────────── */
+
+.mon-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mon-skill-group {
+  font-size: 9px;
+  color: var(--tone);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
+}
+
+/* ── Contact ────────────────────────────────────────────────────────── */
+
+.mon-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.mon-contact-label {
+  color: #6e7681;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.mon-resume {
+  margin-top: 6px;
+  background: #1f6feb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── Mobile: header wraps, grid collapses to one scrolling column ───── */
+
+@media (max-width: 699.98px) {
+  .mon-root .mon-header {
+    height: auto;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .mon-identity {
+    width: 100%;
+  }
+
+  .mon-spacer,
+  .mon-desktop-only {
+    display: none;
+  }
+
+  .mon-header-group {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .mon-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-content: start;
+  }
+
+  .mon-panel {
+    padding: 14px 16px;
+    overflow: visible;
+    min-height: auto;
+  }
+
+  .mon-panel--wide {
+    grid-column: span 1;
+  }
+
+  /* Panels grow with their content; only .mon-body scrolls. */
+  .mon-scroll {
+    overflow: visible;
+  }
+
+  .mon-metric {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .mon-metric-unit {
+    line-height: 1.35;
+  }
+
+  .mon-metric-label--list,
+  .mon-metric-label--note {
+    margin-top: 12px;
+  }
+
+  .mon-sparkline {
+    margin-top: 10px;
+  }
+
+  .mon-proc {
+    grid-template-columns: 48px 1fr 64px 64px;
+  }
+
+  .mon-proc-cmd {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
