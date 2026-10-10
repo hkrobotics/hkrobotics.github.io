@@ -5,9 +5,10 @@ import { profile } from '../data/profile.js';
 import { VIEWS } from '../data/views.js';
 import { contributions, recentDays, weeklySeries } from '../lib/activity.js';
 import { build } from '../lib/build.js';
+import { cx } from '../lib/cx.js';
 import { formatMonth, relativeDays, uptime } from '../lib/dates.js';
-import { useIsMobile } from '../lib/useIsMobile.js';
 import { useView } from '../lib/view.js';
+import './Monitor.css';
 
 // System monitor / htop-style dashboard portfolio
 // Dense grid of panels: header bar, ticking metrics, "process list" of work history,
@@ -15,100 +16,9 @@ import { useView } from '../lib/view.js';
 // Every number is real: contributions come from src/data/activity.json (synced
 // daily in CI), uptime from profile.careerStart, the clock from the browser.
 //
-// Responsive: on narrow viewports the 3-col grid collapses to 1 col, the header
-// stat strip wraps, and the "process list" + skills + log feed stack vertically.
-
-const styles = {
-  root: {
-    width: '100%', height: '100%',
-    background: '#0d1117',
-    color: '#c9d1d9',
-    fontFamily: "'JetBrains Mono', ui-monospace, monospace",
-    fontSize: 12,
-    display: 'flex', flexDirection: 'column',
-    overflow: 'hidden',
-  },
-  header: {
-    height: 'clamp(44px, 8vh, 56px)', flexShrink: 0,
-    background: '#0a0d12',
-    borderBottom: '1px solid #1c232b',
-    display: 'flex', alignItems: 'center',
-    padding: '0 clamp(12px, 3vw, 18px)',
-    gap: 24,
-  },
-  headerName: {
-    fontFamily: 'Inter, system-ui, sans-serif',
-    fontSize: 18, fontWeight: 600, color: '#e6edf3',
-    letterSpacing: -0.2,
-  },
-  headerSub: {
-    color: '#7d8590', fontSize: 11,
-  },
-  headerStat: {
-    display: 'flex', flexDirection: 'column', gap: 2,
-  },
-  headerStatLabel: { color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 },
-  headerStatValue: { color: '#e6edf3', fontSize: 13, fontWeight: 500 },
-  pulse: {
-    width: 8, height: 8, borderRadius: '50%',
-    background: '#3fb950',
-    boxShadow: '0 0 0 0 rgba(63,185,80,0.7)',
-    animation: 'mon-pulse 1.6s infinite',
-  },
-  body: {
-    flex: 1, minHeight: 0,
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr',
-    gridTemplateRows: 'auto auto 1fr auto',
-    gap: 1,
-    background: '#1c232b',
-    padding: 1,
-  },
-  panel: {
-    background: '#0d1117',
-    padding: '12px 14px',
-    overflow: 'hidden',
-    display: 'flex', flexDirection: 'column',
-    minHeight: 0,
-  },
-  panelHead: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.4,
-    color: '#6e7681',
-    marginBottom: 10,
-    paddingBottom: 6,
-    borderBottom: '1px dashed #1c232b',
-  },
-  panelTitle: { display: 'flex', alignItems: 'center', gap: 8 },
-  panelKey: { color: '#a371f7', fontWeight: 600 },
-  metric: {
-    display: 'flex', alignItems: 'baseline', gap: 6,
-  },
-  metricNum: { fontSize: 32, color: '#e6edf3', fontWeight: 600, fontFamily: 'inherit', lineHeight: 1 },
-  metricUnit: { fontSize: 12, color: '#7d8590' },
-  metricLabel: { fontSize: 10, color: '#6e7681', textTransform: 'uppercase', letterSpacing: 1, marginTop: 4 },
-  bar: {
-    height: 6, background: '#1c232b', borderRadius: 1,
-    overflow: 'hidden', marginTop: 6,
-  },
-  barFill: (pct, color = '#3fb950') => ({
-    height: '100%', width: `${pct}%`, background: color,
-    transition: 'width 0.6s ease',
-  }),
-  proc: {
-    display: 'grid',
-    gridTemplateColumns: '60px 1fr 70px 90px',
-    gap: 8, padding: '4px 0',
-    fontSize: 11, color: '#c9d1d9',
-    borderBottom: '1px dashed #161b22',
-  },
-  procHead: { color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 },
-  log: { fontSize: 11, color: '#7d8590', lineHeight: 1.6 },
-  logLine: { display: 'flex', gap: 8 },
-  logTime: { color: '#484f58' },
-  logTag: (c) => ({ color: c, width: 50, flexShrink: 0 }),
-  graphSvg: { width: '100%', height: 60, display: 'block' },
-};
+// Responsive (see Monitor.css): on narrow viewports the 3-col grid collapses to
+// 1 col, the header stat strip wraps, and the "process list" + skills + log feed
+// stack vertically.
 
 const useTick = (interval = 1000) => {
   const [tick, setTick] = React.useState(0);
@@ -130,7 +40,7 @@ function Sparkline({ values, color = '#3fb950' }) {
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   return (
-    <svg viewBox={`0 0 ${w} ${vh}`} preserveAspectRatio="none" style={styles.graphSvg}>
+    <svg viewBox={`0 0 ${w} ${vh}`} preserveAspectRatio="none">
       <polyline points={pts} fill="none" stroke={color} strokeWidth="1.2" />
       <polyline points={`0,${vh} ${pts} ${w},${vh}`} fill={color} opacity="0.08" />
     </svg>
@@ -139,309 +49,235 @@ function Sparkline({ values, color = '#3fb950' }) {
 
 const SKILL_COLORS = ['#3fb950', '#a371f7', '#f0883e', '#58a6ff'];
 
+// RevealContact only accepts inline styles, so its link colour is passed here.
+
 // Static for the page's lifetime — computed once at module load.
 const SERIES = weeklySeries(26);
 const RECENT = recentDays(6);
 const LAST_4_WEEKS = SERIES.slice(-4).reduce((s, n) => s + n, 0);
 const PREV_4_WEEKS = SERIES.slice(-8, -4).reduce((s, n) => s + n, 0);
 
+const tone = (color) => (color ? { '--tone': color } : undefined);
+
+function Stat({ label, className, children }) {
+  return (
+    <div className={cx('mon-stat', className)}>
+      <div className="mon-stat-label">{label}</div>
+      <div className="mon-stat-value">{children}</div>
+    </div>
+  );
+}
+
+// A dashboard panel: "[key] title" on the left of the header, a status on the right.
+function Panel({ label, title, status, statusColor, statusClassName, wide = false, children }) {
+  return (
+    <div className={cx('mon-panel', wide && 'mon-panel--wide')}>
+      <div className="mon-panel-head">
+        <div className="mon-panel-title">
+          <span className="mon-panel-key">{label}</span>
+          <span>{title}</span>
+        </div>
+        <span className={cx('mon-panel-status', statusClassName)} style={tone(statusColor)}>{status}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Metric({ value, children }) {
+  return (
+    <div className="mon-metric">
+      <div className="mon-metric-num">{value}</div>
+      <div className="mon-metric-unit">{children}</div>
+    </div>
+  );
+}
+
+function Chips({ items, muted = false, className }) {
+  return (
+    <div className={cx('mon-chips', className)}>
+      {items.map(item => (
+        <span key={item} className={cx('mon-chip', muted && 'mon-chip--muted')}>{item}</span>
+      ))}
+    </div>
+  );
+}
+
+function LogLine({ time, tag, color, ellipsis = false, children }) {
+  return (
+    <div className="mon-log-line">
+      <span className="mon-log-time">{time}</span>
+      <span className="mon-log-tag" style={tone(color)}>{tag}</span>
+      <span className={ellipsis ? 'mon-ellipsis' : undefined}>{children}</span>
+    </div>
+  );
+}
+
+function ContactRow({ label, children }) {
+  return (
+    <div>
+      <div className="mon-contact-label">{label}</div>
+      {children}
+    </div>
+  );
+}
+
 export default function Monitor() {
   const { switchTo } = useView();
   useTick(1000); // re-render for the clock
-  const isMobile = useIsMobile(700);
 
   const time = new Date().toLocaleTimeString('en-GB', { hour12: false, timeZone: profile.location.timezone });
   const running = profile.milestones.filter(m => m.running).length;
   const trend = PREV_4_WEEKS ? Math.round(((LAST_4_WEEKS - PREV_4_WEEKS) / PREV_4_WEEKS) * 100) : 0;
-
-  const mobilePanel = isMobile
-    ? {
-        ...styles.panel,
-        padding: '14px 16px',
-        overflow: 'visible',
-        minHeight: 'auto',
-      }
-    : styles.panel;
+  const skillCount = profile.skills.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <div style={styles.root} className="mon-root">
+    <div className="mon-root">
       <h1 className="sr-only">Hemant Kumar — System Monitor Portfolio</h1>
-      <style>{`
-        @keyframes mon-pulse {
-          0% { box-shadow: 0 0 0 0 rgba(63,185,80,0.6); }
-          70% { box-shadow: 0 0 0 10px rgba(63,185,80,0); }
-          100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
-        }
-      `}</style>
 
-      <div
-        style={isMobile ? { ...styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : styles.header}
-        className="mon-header"
-      >
-        <div style={{ width: isMobile ? '100%' : 'auto' }}>
-          <h1 style={{ ...styles.headerName, margin: 0 }}>{profile.name.toLowerCase()}</h1>
-          <div style={styles.headerSub}>software.engineer · react-native · {profile.location.city.toLowerCase().replace(' ', '-')} · remote · {profile.location.tz.toLowerCase()}</div>
+      <div className="mon-header">
+        <div className="mon-identity">
+          <h1 className="mon-name">{profile.name.toLowerCase()}</h1>
+          <div className="mon-sub">software.engineer · react-native · {profile.location.city.toLowerCase().replace(' ', '-')} · remote · {profile.location.tz.toLowerCase()}</div>
         </div>
-        {!isMobile && <div style={{ flex: 1 }} />}
-        <div style={styles.headerStat}>
-          <div style={styles.headerStatLabel}>uptime</div>
-          <div style={styles.headerStatValue}>{uptime()} shipping</div>
-        </div>
-        {!isMobile && (
-          <div style={styles.headerStat}>
-            <div style={styles.headerStatLabel}>users served</div>
-            <div style={styles.headerStatValue}>{profile.stats.brands} brands · {profile.stats.users}</div>
-          </div>
-        )}
-        <div style={styles.headerStat}>
-          <div style={styles.headerStatLabel}>local time</div>
-          <div style={styles.headerStatValue}>{time} {profile.location.tz}</div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b', marginLeft: isMobile ? 0 : 0 }}>
-          <span style={{ fontSize: 9, color: '#6e7681', textTransform: 'uppercase', letterSpacing: 1.2, marginRight: 4 }}>workspace</span>
-          {VIEWS.map(v => ({ ...v, cur: v.id === 'monitor' })).map(w => (
-            <button
-              type="button"
-              key={w.id}
-              aria-current={w.cur ? 'page' : undefined}
-              onClick={() => !w.cur && switchTo(w.id)}
-              title={`${w.label} · key ${w.key}`}
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 10, padding: '4px 8px', borderRadius: 3,
-                background: w.cur ? '#0e4429' : 'transparent',
-                color: w.cur ? '#39d353' : '#7d8590',
-                border: `1px solid ${w.cur ? '#1f6e3a' : '#1c232b'}`,
-                cursor: w.cur ? 'default' : 'pointer',
-                fontWeight: w.cur ? 600 : 400,
-              }}
-              onMouseEnter={e => { if (!w.cur) { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#e6edf3'; } }}
-              onMouseLeave={e => { if (!w.cur) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7d8590'; } }}
-            >
-              {w.cur ? '● ' : ''}{w.short}
-            </button>
-          ))}
-          <a
-            href="/"
-            title="plain view (home)"
-            style={{ fontSize: 10, padding: '4px 8px', borderRadius: 3, color: '#7d8590', border: '1px solid #1c232b', textDecoration: 'none' }}
-          >
-            txt
-          </a>
+        <div className="mon-spacer" />
+        <Stat label="uptime">{uptime()} shipping</Stat>
+        <Stat label="users served" className="mon-desktop-only">{profile.stats.brands} brands · {profile.stats.users}</Stat>
+        <Stat label="local time">{time} {profile.location.tz}</Stat>
+        <div className="mon-header-group">
+          <span className="mon-workspace-label">workspace</span>
+          {VIEWS.map(v => {
+            const cur = v.id === 'monitor';
+            return (
+              <button
+                type="button"
+                key={v.id}
+                className={cx('mon-view-btn', cur && 'is-current')}
+                aria-current={cur ? 'page' : undefined}
+                onClick={() => !cur && switchTo(v.id)}
+                title={`${v.label} · key ${v.key}`}
+              >
+                {cur ? '● ' : ''}{v.short}
+              </button>
+            );
+          })}
+          <a href="/" title="plain view (home)" className="mon-view-link">txt</a>
         </div>
         {profile.status.open && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b' }}>
-            <span style={styles.pulse} />
-            <span style={{ color: '#3fb950', fontSize: 11, fontWeight: 500 }}>OPEN TO OPPORTUNITIES</span>
+          <div className="mon-header-group mon-open">
+            <span className="mon-pulse" />
+            <span className="mon-open-label">OPEN TO OPPORTUNITIES</span>
           </div>
         )}
       </div>
 
-      <div
-        style={
-          isMobile
-            ? {
-                ...styles.body,
-                gridTemplateColumns: '1fr',
-                gridTemplateRows: 'auto',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                alignContent: 'start',
-              }
-            : styles.body
-        }
-      >
+      <div className="mon-body">
         {/* Row 1 — three metric panels, all real numbers */}
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[01]</span><span>cpu · contributions</span></div>
-            <span style={{ color: '#3fb950' }}>● last active {relativeDays(contributions.lastActive)}</span>
-          </div>
-          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
-            <div style={styles.metricNum}>{LAST_4_WEEKS}</div>
-            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>
-              in the last 4 weeks · {trend >= 0 ? '▲' : '▼'} {Math.abs(trend)}% vs prior 4
-            </div>
-          </div>
-          <div style={isMobile ? { marginTop: 10 } : { marginTop: 6 }}>
+        <Panel label="[01]" title="cpu · contributions" status={<>● last active {relativeDays(contributions.lastActive)}</>} statusColor="#3fb950">
+          <Metric value={LAST_4_WEEKS}>
+            in the last 4 weeks · {trend >= 0 ? '▲' : '▼'} {Math.abs(trend)}% vs prior 4
+          </Metric>
+          <div className="mon-sparkline">
             <Sparkline values={SERIES} />
           </div>
-          <div style={{ ...styles.metricLabel, marginTop: 4 }}>weekly · last 26 weeks · gitlab + github</div>
-        </div>
+          <div className="mon-metric-label">weekly · last 26 weeks · gitlab + github</div>
+        </Panel>
 
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[02]</span><span>uptime · experience</span></div>
-            <span style={{ color: '#a371f7' }}>● since {formatMonth(profile.careerStart)}</span>
-          </div>
-          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
-            <div style={styles.metricNum}>{uptime()}</div>
-            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>professional · mobile, web, backend, cloud</div>
-          </div>
-          <div style={{ ...styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.6 }}>
+        <Panel label="[02]" title="uptime · experience" status={<>● since {formatMonth(profile.careerStart)}</>} statusColor="#a371f7">
+          <Metric value={uptime()}>professional · mobile, web, backend, cloud</Metric>
+          <div className="mon-metric-label mon-metric-label--list">
             {profile.experience.map(j => (
               <div key={j.from}>{j.company.toLowerCase()} · {j.role.toLowerCase()} · {formatMonth(j.from)}—{j.to ? formatMonth(j.to) : 'now'}</div>
             ))}
           </div>
-        </div>
+        </Panel>
 
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[03]</span><span>net · reach</span></div>
-            <span style={{ color: '#f0883e' }}>● in production</span>
-          </div>
-          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
-            <div style={styles.metricNum}>{profile.stats.brands}</div>
-            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>brands on the platform · {profile.stats.users} users on web</div>
-          </div>
-          <div style={{ ...styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.4 }}>
+        <Panel label="[03]" title="net · reach" status="● in production" statusColor="#f0883e">
+          <Metric value={profile.stats.brands}>brands on the platform · {profile.stats.users} users on web</Metric>
+          <div className="mon-metric-label mon-metric-label--note">
             white-label ios + android · app store ✓ google play ✓
           </div>
-        </div>
+        </Panel>
 
         {/* Row 2 — projects + activity log */}
         {profile.projects.map(p => (
-          <div key={p.id} style={mobilePanel}>
-            <div style={styles.panelHead}>
-              <div style={styles.panelTitle}>
-                <span style={styles.panelKey}>◇</span>
-                <a href={p.url} target="_blank" rel="noreferrer" style={{ color: '#e6edf3', textDecoration: 'none' }}>{p.name} ↗</a>
-              </div>
-              <span style={{ color: '#3fb950', padding: '1px 6px', border: '1px solid #3fb95055', borderRadius: 2, fontSize: 9 }}>{p.status.toUpperCase()}</span>
-            </div>
-            <div style={{ color: '#c9d1d9', fontSize: 12, lineHeight: 1.5, marginBottom: 10, fontFamily: 'Inter, system-ui, sans-serif' }}>
-              {p.tagline}. {p.description}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 'auto' }}>
-              {p.stack.map(s => (
-                <span key={s} style={{ fontSize: 10, padding: '2px 6px', background: '#161b22', color: '#7d8590', border: '1px solid #1c232b', borderRadius: 2 }}>{s}</span>
-              ))}
-            </div>
-          </div>
+          <Panel
+            key={p.id}
+            label="◇"
+            title={<a href={p.url} target="_blank" rel="noreferrer" className="mon-project-link">{p.name} ↗</a>}
+            status={p.status.toUpperCase()}
+            statusClassName="mon-badge"
+          >
+            <div className="mon-project-desc">{p.tagline}. {p.description}</div>
+            <Chips items={p.stack} muted className="mon-chips--bottom" />
+          </Panel>
         ))}
 
         {/* Activity log — real active days from the contribution data */}
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[log]</span><span>activity · most recent days</span></div>
-            <span>synced {relativeDays(contributions.fetchedAt)}</span>
-          </div>
-          <div style={{ ...styles.log, overflowY: isMobile ? 'visible' : 'auto', flex: 1 }}>
+        <Panel label="[log]" title="activity · most recent days" status={<>synced {relativeDays(contributions.fetchedAt)}</>}>
+          <div className="mon-log mon-scroll">
             {RECENT.map(d => (
-              <div key={d.day} style={styles.logLine}>
-                <span style={styles.logTime}>{d.day}</span>
-                <span style={styles.logTag('#3fb950')}>COMMIT</span>
-                <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {d.total} contribution{d.total === 1 ? '' : 's'}
-                  {d.gitlab ? ` · gitlab ${d.gitlab}` : ''}
-                  {d.github ? ` · github ${d.github}` : ''}
-                </span>
-              </div>
+              <LogLine key={d.day} time={d.day} tag="COMMIT" color="#3fb950" ellipsis>
+                {d.total} contribution{d.total === 1 ? '' : 's'}
+                {d.gitlab ? ` · gitlab ${d.gitlab}` : ''}
+                {d.github ? ` · github ${d.github}` : ''}
+              </LogLine>
             ))}
-            <div style={styles.logLine}>
-              <span style={styles.logTime}>{build.date.slice(0, 10)}</span>
-              <span style={styles.logTag('#a371f7')}>DEPLOY</span>
-              <span>
-                this site @ <a href={`https://github.com/hkrobotics/hkrobotics.github.io/commit/${build.sha}`} target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>{build.sha}</a>
-              </span>
-            </div>
+            <LogLine time={build.date.slice(0, 10)} tag="DEPLOY" color="#a371f7">
+              this site @ <a href={`https://github.com/hkrobotics/hkrobotics.github.io/commit/${build.sha}`} target="_blank" rel="noreferrer" className="mon-link">{build.sha}</a>
+            </LogLine>
           </div>
-        </div>
-
+        </Panel>
 
         {/* Row 3 — process list (work) + skills */}
-        <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[ps]</span><span>process list · work history</span></div>
-            <span>{profile.milestones.length} procs · {running} running</span>
-          </div>
-          <div
-            style={{
-              ...styles.proc,
-              ...styles.procHead,
-              ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
-            }}
-          >
+        <Panel label="[ps]" title="process list · work history" status={<>{profile.milestones.length} procs · {running} running</>} wide>
+          <div className="mon-proc mon-proc--head">
             <span>PID</span><span>CMD</span><span>STATUS</span><span>WHEN</span>
           </div>
-          <div style={isMobile ? { overflow: 'visible' } : { overflowY: 'auto', flex: 1 }}>
+          <div className="mon-scroll">
             {profile.milestones.map((p, i) => (
-              <div
-                key={p.what}
-                style={{
-                  ...styles.proc,
-                  ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
-                }}
-              >
-                <span style={{ color: '#6e7681' }}>{String(profile.milestones.length - i).padStart(4, '0')}</span>
-                <span style={isMobile ? { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : null}>
-                  {p.what}
-                </span>
-                <span style={{ color: p.running ? '#3fb950' : '#7d8590', whiteSpace: 'nowrap' }}>
+              <div key={p.what} className="mon-proc">
+                <span className="mon-proc-dim">{String(profile.milestones.length - i).padStart(4, '0')}</span>
+                <span className="mon-proc-cmd">{p.what}</span>
+                <span className={cx('mon-proc-status', p.running && 'is-running')}>
                   {p.running ? '● RUNNING' : '✓ DONE'}
                 </span>
-                <span style={{ color: '#6e7681', whiteSpace: 'nowrap' }}>{p.when}</span>
+                <span className="mon-proc-dim mon-nowrap">{p.when}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Panel>
 
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[mods]</span><span>loaded modules · skills</span></div>
-            <span>{profile.skills.reduce((n, g) => n + g.items.length, 0)} loaded</span>
-          </div>
-          <div style={isMobile ? { display: 'flex', flexDirection: 'column', gap: 10 } : { overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+        <Panel label="[mods]" title="loaded modules · skills" status={<>{skillCount} loaded</>}>
+          <div className="mon-skills mon-scroll">
             {profile.skills.map((g, i) => (
               <div key={g.group}>
-                <div style={{ fontSize: 9, color: SKILL_COLORS[i % SKILL_COLORS.length], textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 4 }}>{g.group}</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                  {g.items.map(item => (
-                    <span key={item} style={{ fontSize: 10, padding: '2px 6px', background: '#161b22', color: '#c9d1d9', border: '1px solid #1c232b', borderRadius: 2 }}>{item}</span>
-                  ))}
-                </div>
+                <div className="mon-skill-group" style={tone(SKILL_COLORS[i % SKILL_COLORS.length])}>{g.group}</div>
+                <Chips items={g.items} />
               </div>
             ))}
           </div>
-        </div>
+        </Panel>
 
         {/* Row 4 — contribution heatmap + contact */}
-        <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[git]</span><span>contributions · 12mo · gitlab + github</span></div>
-            <span style={{ color: '#39d353' }}>● synced daily</span>
-          </div>
+        <Panel label="[git]" title="contributions · 12mo · gitlab + github" status="● synced daily" statusColor="#39d353" wide>
           <ContribHeatmap theme="monitor" />
-        </div>
+        </Panel>
 
-        <div style={mobilePanel}>
-          <div style={styles.panelHead}>
-            <div style={styles.panelTitle}><span style={styles.panelKey}>[net]</span><span>endpoints · contact</span></div>
-            <span style={{ color: '#3fb950' }}>● 200 ok</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 11 }}>
-            {[
-              { id: 'email', value: <RevealContact kind="email" style={{ color: '#58a6ff', textDecoration: 'none' }} /> },
-              { id: 'phone', value: <RevealContact kind="phone" style={{ color: '#58a6ff', textDecoration: 'none' }} /> },
-              ...profile.links.map(l => ({
-                id: l.id,
-                value: <a href={l.url} target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>{l.label}</a>,
-              })),
-            ].map(row => (
-              <div key={row.id}>
-                <div style={{ color: '#6e7681', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1.2 }}>{row.id}</div>
-                {row.value}
-              </div>
+        <Panel label="[net]" title="endpoints · contact" status="● 200 ok" statusColor="#3fb950">
+          <div className="mon-contact">
+            <ContactRow label="email"><RevealContact kind="email" className="mon-reveal" /></ContactRow>
+            <ContactRow label="phone"><RevealContact kind="phone" className="mon-reveal" /></ContactRow>
+            {profile.links.map(l => (
+              <ContactRow key={l.id} label={l.id}>
+                <a href={l.url} target="_blank" rel="noreferrer" className="mon-link">{l.label}</a>
+              </ContactRow>
             ))}
-            <button onClick={() => window.open(profile.resume.url, '_blank', 'noreferrer')} style={{
-              marginTop: 6,
-              background: '#1f6feb', color: 'white', border: 'none',
-              padding: '8px 12px', cursor: 'pointer', borderRadius: 3,
-              fontFamily: 'inherit', fontSize: 11, fontWeight: 500,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}>↗ open resume.pdf</button>
+            <button type="button" className="mon-resume" onClick={() => window.open(profile.resume.url, '_blank', 'noreferrer')}>
+              ↗ open resume.pdf
+            </button>
           </div>
-        </div>
+        </Panel>
       </div>
     </div>
   );

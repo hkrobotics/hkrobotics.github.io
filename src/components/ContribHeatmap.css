@@ -1,0 +1,82 @@
+/* Contribution heatmap — themed per view via custom properties. */
+
+.heatmap {
+  --l0: #161b22; --l1: #0e4429; --l2: #006d32; --l3: #26a641; --l4: #39d353;
+  --stat: #e6edf3; --label: #6e7681;
+  --gitlab: #fc6d26; --github: #a371f7; --peak: #39d353;
+
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.heatmap--terminal {
+  --l0: #15191a; --l1: #1f3019; --l2: #3b5d2c; --l3: #7fa650; --l4: #c8e6a8;
+  --stat: #e6e6e6; --label: #5a6065;
+  --gitlab: #e6c07a; --github: #7fb8d4; --peak: #c8e6a8;
+}
+
+.heatmap--ide {
+  --l0: #1e1f22; --l1: #1f3a2a; --l2: #3d6b4a; --l3: #56a877; --l4: #7fcf9a;
+  --stat: #e8eaed; --label: #878a8f;
+  --gitlab: #e6c07a; --github: #56a8f5; --peak: #7fcf9a;
+}
+
+.heatmap-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.heatmap-stat-label {
+  font-size: 9px;
+  color: var(--label);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.heatmap-stat-label.is-gitlab { color: var(--gitlab); }
+.heatmap-stat-label.is-github { color: var(--github); }
+
+.heatmap-stat-value {
+  font: 600 22px/1 Inter, system-ui, sans-serif;
+  color: var(--stat);
+}
+
+.heatmap-peak { color: var(--peak); }
+
+.heatmap-grid { overflow-x: hidden; flex: 1; }
+.heatmap-grid svg { display: block; }
+.heatmap-grid text { fill: var(--label); font-family: 'JetBrains Mono', monospace; }
+
+.heatmap-l0 { fill: var(--l0); background: var(--l0); }
+.heatmap-l1 { fill: var(--l1); background: var(--l1); }
+.heatmap-l2 { fill: var(--l2); background: var(--l2); }
+.heatmap-l3 { fill: var(--l3); background: var(--l3); }
+.heatmap-l4 { fill: var(--l4); background: var(--l4); }
+
+.heatmap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 9px;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--label);
+}
+
+.heatmap-swatch { display: inline-block; width: 9px; height: 9px; border-radius: 1.5px; }
+.heatmap-synced { margin-left: auto; }
+
+@container (max-width: 479.98px) {
+  .heatmap-stats { gap: 14px; }
+  .heatmap-stat-value { font-size: 18px; }
+}

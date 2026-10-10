@@ -1,28 +1,22 @@
 import React from 'react';
+import { cx } from '../lib/cx.js';
 import { contact, formatPhone } from '../lib/contact.js';
+import './RevealContact.css';
 
-// Renders a "show email" button; the real address is decoded and turned into
+// Renders a "click to reveal" button; the real address is decoded and turned into
 // a mailto/tel link only after a click, so bots that don't interact never see it.
-export default function RevealContact({ kind = 'email', style, buttonStyle, label }) {
+// `className` styles both the button and the resulting link.
+export default function RevealContact({ kind = 'email', className }) {
   const [value, setValue] = React.useState(null);
 
   if (!value) {
     return (
-      <button
-        type="button"
-        onClick={() => setValue(contact[kind]())}
-        style={{
-          background: 'none', border: 'none', padding: 0, margin: 0,
-          font: 'inherit', color: 'inherit', cursor: 'pointer',
-          textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: 3,
-          ...style, ...buttonStyle,
-        }}
-      >
-        {label || (kind === 'email' ? 'click to reveal email' : 'click to reveal phone')}
+      <button type="button" className={cx('reveal', className)} onClick={() => setValue(contact[kind]())}>
+        {kind === 'email' ? 'click to reveal email' : 'click to reveal phone'}
       </button>
     );
   }
 
   const href = kind === 'email' ? `mailto:${value}` : `tel:${value}`;
-  return <a href={href} style={style}>{kind === 'phone' ? formatPhone(value) : value}</a>;
+  return <a href={href} className={className}>{kind === 'phone' ? formatPhone(value) : value}</a>;
 }

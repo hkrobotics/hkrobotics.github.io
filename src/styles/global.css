@@ -27,26 +27,6 @@ a {
   color: inherit;
 }
 
-/* Short-height screens (laptops split view, mobile landscape):
-   reclaim vertical space so views don't feel cramped. */
-@media (max-height: 720px) {
-  .term-topbar {
-    gap: 6px;
-  }
-
-  .ide-topbar {
-    gap: 10px;
-  }
-
-  .ide-status {
-    gap: 10px;
-  }
-
-  .mon-header {
-    gap: 14px;
-  }
-}
-
 /* Screen-reader-only: exposes headings to crawlers/assistive tech
    with zero visual footprint. */
 .sr-only {

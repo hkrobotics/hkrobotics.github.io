@@ -11,6 +11,7 @@
 //
 // Used by the `site-files` plugin in vite.config.js.
 
+import { readFileSync } from 'node:fs';
 import { profile } from '../src/data/profile.js';
 import { experienceLabel, formatRange } from '../src/lib/dates.js';
 import { VIEWS, viewById } from '../src/data/views.js';
@@ -125,50 +126,9 @@ export function viewNoscript() {
 
 // ── / — the homepage: plain, semantic, crawlable ────────────────────────────
 
-const ABOUT_CSS = `
-  :root { color-scheme: dark; --bg: #0b0d0c; --fg: #d8dad6; --dim: #8a918d; --faint: #232825; --accent: #c8e6a8; --link: #9cc7dc; --mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace; }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; }
-  main { max-width: 44rem; margin: 0 auto; padding: clamp(2rem, 6vw, 4.5rem) 1.25rem 4rem; }
-  .prompt { color: var(--dim); font: .85rem var(--mono); margin: 0 0 .75rem; }
-  .prompt b { color: var(--accent); font-weight: 400; }
-  h1 { font-size: clamp(2rem, 6vw, 2.75rem); line-height: 1.1; letter-spacing: -.02em; margin: 0; color: #f2f3f1; }
-  .role { color: var(--accent); font: .95rem var(--mono); margin: .5rem 0 1.5rem; }
-  h2 { font: 500 .75rem var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--dim); margin: 3rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--faint); }
-  h3 { font-size: 1.05rem; margin: 0; color: #f2f3f1; font-weight: 600; }
-  article { margin: 0 0 2rem; }
-  article p { margin: .4rem 0 0; }
-  .meta { color: var(--dim); font: .8rem var(--mono); margin: .15rem 0 .6rem; }
-  ul { padding-left: 1.1rem; margin: .5rem 0 0; }
-  li { margin: .3rem 0; }
-  li::marker { color: var(--accent); content: "› "; }
-  a { color: var(--link); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-  a:hover { color: #fff; }
-  dl { display: grid; grid-template-columns: max-content 1fr; gap: .55rem 1.25rem; margin: 0; }
-  dt { color: var(--dim); font: .85rem var(--mono); padding-top: .15rem; }
-  dd { margin: 0; }
-  .tags { display: flex; flex-wrap: wrap; gap: .35rem; }
-  .tags span { font: .78rem var(--mono); padding: .1rem .5rem; border: 1px solid var(--faint); border-radius: 3px; }
-  button.reveal { all: unset; cursor: pointer; color: var(--link); border-bottom: 1px dotted currentColor; }
-  :focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
-  .cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.75rem 0 1rem; }
-  .btn { font: 500 .9rem var(--mono); padding: .55rem 1rem; border-radius: 6px; border: 1px solid var(--faint); color: var(--fg); background: #121614; text-decoration: none; cursor: pointer; transition: border-color .15s, background .15s; }
-  .btn:hover { border-color: #3b5d2c; background: #151b17; color: #fff; }
-  .btn.primary { background: var(--accent); color: #0b0d0c; border-color: var(--accent); }
-  .btn.primary:hover { background: #d8f0bd; color: #0b0d0c; }
-  .views { color: var(--dim); font: .82rem var(--mono); }
-  .views a { margin-left: .6rem; }
-  .activity { display: block; margin-top: .5rem; border-radius: 8px; overflow: hidden; }
-  .activity img { display: block; width: 100%; height: auto; }
-  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
-  footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--faint); color: var(--dim); font: .8rem var(--mono); }
-  @media (max-width: 30rem) { dl { grid-template-columns: 1fr; gap: .2rem; } dd { margin-bottom: .6rem; } }
-  @media print {
-    :root { --bg: #fff; --fg: #111; --dim: #555; --faint: #ddd; --accent: #2f5d14; --link: #0b4a6e; }
-    h1, h3 { color: #000; } nav, footer, .prompt { display: none; } h2 { margin-top: 1.5rem; }
-  }
-`;
+// Homepage styles live in a real stylesheet, inlined so the page needs no extra request.
+// Read on every call so the dev server picks up edits without a restart.
+const homeCss = () => readFileSync(new URL('../src/styles/home.css', import.meta.url), 'utf8');
 
 // Decodes profile.contact on click — same scheme as src/lib/contact.js.
 const REVEAL_SCRIPT = `
@@ -230,7 +190,7 @@ export function homeHtml(buildDate) {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <style>${ABOUT_CSS}</style>
+    <style>${homeCss()}</style>
   </head>
   <body>
     <main>

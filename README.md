@@ -53,9 +53,10 @@ bun run og-image         # render design/og-image.svg → public/og-image.png
 ```
 src/
   data/        profile.js (content), views.js (view list), activity.json (generated)
-  views/       Terminal.jsx, IDE.jsx, Monitor.jsx — switch via useView() from lib/view.js
-  components/  shared UI (ContribHeatmap, RevealContact)
-  lib/         helpers (dates, activity, contact decoding, build info, view context)
+  views/       Terminal, IDE, Monitor — each a .jsx + co-located .css; switch via useView()
+  components/  shared UI, each with its own .css (ContribHeatmap, RevealContact, WindowControls)
+  styles/      global.css (app shell), home.css (homepage, inlined at build)
+  lib/         helpers (dates, activity, contact decoding, build info, view context, cx)
 scripts/       build-time scripts (activity fetch, SEO/llms.txt pages, og-image)
 design/        source SVGs
 public/        static files; v0/ is the archived first portfolio, v1/ redirects to /

@@ -1,0 +1,419 @@
+/* Terminal view. Every class is prefixed `term-`. Narrow layouts are driven by
+   container queries, with a `[data-term-root][data-narrow]` fallback that the
+   component sets from a ResizeObserver (see the bottom of this file). */
+
+/* ── Shell ─────────────────────────────────────────────────────────────── */
+
+.term-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0d0c;
+  color: #d8dad6;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.term-root-cq {
+  container-type: inline-size;
+}
+
+/* CRT scanline overlay */
+.term-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.012) 0,
+    rgba(255, 255, 255, 0.012) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* ── Title bar ─────────────────────────────────────────────────────────── */
+
+.term-topbar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  height: clamp(26px, 4vh, 30px);
+  padding: 0 12px;
+  background: #15181a;
+  border-bottom: 1px solid #1f2326;
+  color: #6b7378;
+  font-size: 11px;
+}
+
+.term-topbar-title {
+  flex: 1;
+  overflow: hidden;
+  color: #5a6065;
+  font-size: 11px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.term-topbar-dots {
+  color: #3d4347;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────────── */
+
+.term-body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 220px 1fr;
+  min-height: 0;
+}
+
+.term-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 18px 0;
+  overflow: hidden;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────────── */
+
+.term-sidebar {
+  padding: 16px 14px;
+  overflow-y: auto;
+  background: #0d1010;
+  border-right: 1px solid #1a1d1e;
+  color: #6b7378;
+  font-size: 11px;
+}
+
+.term-sidebar-mobile-only { display: none; }
+.term-sidebar-desktop-only { display: block; }
+
+.term-side-head {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  color: #3d4347;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.term-side-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  border-radius: 3px;
+  color: #9aa19f;
+  cursor: pointer;
+}
+
+.term-side-btn:hover,
+.term-side-btn:focus-visible,
+.term-side-btn.is-current {
+  background: #1a2018;
+  color: #c8e6a8;
+}
+
+.term-side-key {
+  color: #3d4347;
+  font-size: 10px;
+}
+
+.term-side-shortcuts {
+  color: #5a6065;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.term-side-status {
+  color: #7fa650;
+  font-size: 11px;
+}
+
+.term-side-location {
+  margin-top: 2px;
+  color: #9aa19f;
+  font-size: 11px;
+}
+
+.term-side-item-mobile {
+  background: none;
+  font: inherit;
+  text-decoration: none;
+}
+
+/* ── Output ────────────────────────────────────────────────────────────── */
+
+.term-output {
+  flex: 1;
+  padding-right: 8px;
+  padding-bottom: 12px;
+  overflow-y: auto;
+}
+
+.term-line-cmd { margin-top: 6px; }
+.term-boot-hint { display: block; margin-top: 8px; }
+
+.term-ascii {
+  margin: 6px 0 14px;
+  overflow-x: auto;
+  color: #7fa650;
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: pre;
+}
+
+/* Text tones */
+.term-dim { color: #5a6065; }
+.term-accent { color: #c8e6a8; }
+.term-warn { color: #e6c07a; }
+.term-soft { color: #b8bdba; }
+.term-faint { color: #7a8085; }
+.term-typed { color: #e6e6e6; }
+
+.term-link {
+  color: #7fb8d4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Prompt */
+.term-prompt-user { color: #7fa650; }
+.term-prompt-host { color: #5a7a3d; }
+.term-prompt-path { color: #a8a47f; }
+
+/* Clickable command chip */
+.term-cmd {
+  all: unset;
+  margin: 0 2px;
+  border-bottom: 1px dotted #3b5d2c;
+  color: #c8e6a8;
+  cursor: pointer;
+}
+
+.term-cmd:hover,
+.term-cmd:focus-visible {
+  border-bottom-color: #c8e6a8;
+  color: #e6e6e6;
+}
+
+/* ── Output building blocks ────────────────────────────────────────────── */
+
+.term-table {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 18px;
+  margin: 6px 0;
+}
+
+.term-card {
+  margin: 8px 0;
+  padding: 10px 12px;
+  background: #0e1212;
+  border: 1px solid #1f2326;
+}
+
+.term-card-title {
+  margin-bottom: 8px;
+  color: #b8bdba;
+}
+
+.term-card-title.is-spaced { margin-bottom: 10px; }
+
+.term-badge {
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 1px 6px;
+  border: 1px solid #2a3025;
+  border-radius: 2px;
+  color: #9aa19f;
+  font-size: 11px;
+}
+
+/* about */
+.term-about-summary {
+  max-width: 680px;
+  margin: 4px 0 10px;
+}
+
+/* work */
+.term-work { margin-top: 4px; }
+
+.term-job-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.term-job-location { margin-bottom: 6px; }
+
+.term-bullet {
+  position: relative;
+  padding-left: 14px;
+  color: #b8bdba;
+}
+
+.term-bullet::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: #7fa650;
+}
+
+/* projects */
+.term-project-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.term-project-tagline,
+.term-project-role { margin-bottom: 6px; }
+
+.term-project-url,
+.term-project-stack { margin-top: 8px; }
+
+/* skills */
+.term-skill-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #1a1d1e;
+}
+
+/* now */
+.term-now-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #b8bdba;
+}
+
+.term-now-updated { margin-top: 10px; }
+
+/* blog */
+.term-blog-note { margin-top: 6px; }
+.term-blog-drafts { margin-top: 10px; }
+
+/* education */
+.term-edu-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.term-edu-degree { margin-top: 4px; }
+
+/* neofetch */
+.term-neofetch {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 24px;
+}
+
+.term-neofetch-art {
+  margin: 0;
+  color: #7fa650;
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: pre;
+}
+
+/* ls */
+.term-ls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px 16px;
+}
+
+/* ── Input line ────────────────────────────────────────────────────────── */
+
+.term-input-line {
+  display: flex;
+  align-items: center;
+  padding: clamp(8px, 1.8vh, 10px) 0 clamp(10px, 2.2vh, 14px);
+  border-top: 1px dashed #1a1d1e;
+}
+
+/* font-size: inherit keeps the input at the body's 13px on every width. */
+.term-input {
+  flex: 1;
+  margin-left: 8px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e6e6e6;
+  caret-color: #c8e6a8;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.term-input:focus-visible { outline: none; }
+
+.term-caret {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  margin-left: 2px;
+  background: #c8e6a8;
+  animation: term-blink 1s steps(2) infinite;
+}
+
+.term-caret.is-hidden { display: none; }
+
+@keyframes term-blink {
+  50% { opacity: 0; }
+}
+
+/* ── Narrow: collapse the sidebar to a horizontal strip, tighten padding,
+   shrink the ASCII banner. Container queries first… ────────────────────── */
+
+@container (max-width: 720px) {
+  .term-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .term-sidebar { display: flex; gap: 6px; padding: 8px 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #1a1d1e; scrollbar-width: none; }
+  .term-sidebar::-webkit-scrollbar { display: none; }
+  .term-sidebar-desktop-only { display: none; }
+  .term-sidebar-mobile-only { display: flex; gap: 6px; }
+  .term-side-item-mobile { flex-shrink: 0; padding: 5px 10px; border: 1px solid #1f2326; border-radius: 3px; color: #9aa19f; font-size: 11px; white-space: nowrap; cursor: pointer; }
+  .term-side-item-mobile:active { background: #1a2018; color: #c8e6a8; }
+  .term-main { padding: 12px 12px 0; }
+  .term-ascii { font-size: 7px; }
+  .term-topbar-title { font-size: 10px; }
+}
+
+@container (max-width: 420px) {
+  .term-ascii { font-size: 5.5px; }
+}
+
+/* …then the same rules keyed off data-narrow, for browsers without them. */
+[data-term-root][data-narrow="1"] .term-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+[data-term-root][data-narrow="1"] .term-sidebar { display: flex; gap: 6px; padding: 8px 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #1a1d1e; scrollbar-width: none; }
+[data-term-root][data-narrow="1"] .term-sidebar::-webkit-scrollbar { display: none; }
+[data-term-root][data-narrow="1"] .term-sidebar-desktop-only { display: none; }
+[data-term-root][data-narrow="1"] .term-sidebar-mobile-only { display: flex; gap: 6px; }
+[data-term-root][data-narrow="1"] .term-side-item-mobile { flex-shrink: 0; padding: 5px 10px; border: 1px solid #1f2326; border-radius: 3px; color: #9aa19f; font-size: 11px; white-space: nowrap; cursor: pointer; }
+[data-term-root][data-narrow="1"] .term-main { padding: 12px 12px 0; }
+[data-term-root][data-narrow="1"] .term-ascii { font-size: 7px; }
+[data-term-root][data-narrow="1"] .term-topbar-title { font-size: 10px; }
+[data-term-root][data-narrow="2"] .term-ascii { font-size: 5.5px; }

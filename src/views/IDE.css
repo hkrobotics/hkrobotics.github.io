@@ -1,0 +1,751 @@
+/* IDE view — JetBrains-style dark editor.
+   Mobile breakpoint matches useIsMobile(700): `window.innerWidth < 700`.
+   This file loads with the lazy IDE chunk (after global.css), so the single-class
+   rules for .ide-topbar / .ide-status below take precedence over the
+   short-height overrides in global.css, exactly as the old inline styles did. */
+
+/* ── Shell ─────────────────────────────────────────────────────────────── */
+
+.ide-root {
+  width: 100%;
+  height: 100%;
+  background: #1e1f22;
+  color: #bcbec4;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Top bar ───────────────────────────────────────────────────────────── */
+
+.ide-topbar {
+  height: clamp(26px, 4vh, 30px);
+  flex-shrink: 0;
+  background: #2b2d30;
+  border-bottom: 1px solid #1e1f22;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 11px;
+  color: #878a8f;
+  gap: 14px;
+}
+
+.ide-traffic {
+  display: flex;
+  gap: 6px;
+}
+
+.ide-menu {
+  display: flex;
+  gap: 14px;
+}
+
+.ide-menu-item {
+  cursor: pointer;
+}
+
+.ide-title {
+  flex: 1;
+  text-align: center;
+  color: #5d6166;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ide-shortcuts {
+  display: flex;
+  gap: 12px;
+  color: #5d6166;
+  font-size: 11px;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────────── */
+
+.ide-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px 1fr 100px;
+}
+
+/* ── Explorer sidebar (desktop) ────────────────────────────────────────── */
+
+.ide-sidebar {
+  background: #2b2d30;
+  border-right: 1px solid #1e1f22;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+.ide-side-head {
+  padding: 10px 14px 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6f7479;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ide-side-head.is-spaced {
+  margin-top: 12px;
+}
+
+.ide-side-head-more {
+  color: #5d6166;
+}
+
+.ide-tree-item {
+  --depth: 0;
+  padding: 4px 10px 4px calc(10px + var(--depth) * 14px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #bcbec4;
+}
+
+.ide-tree-folder {
+  font-weight: 500;
+}
+
+.ide-tree-chevron {
+  color: #878a8f;
+  width: 10px;
+  font-size: 9px;
+}
+
+.ide-tree-folder-icon {
+  color: #e6c07a;
+}
+
+.ide-tree-spacer {
+  width: 10px;
+}
+
+.ide-tree-file:hover {
+  background: #2e3033;
+}
+
+.ide-tree-file.is-active {
+  background: #2e436e;
+  color: #e8eaed;
+}
+
+.ide-outline {
+  padding: 0 14px 12px;
+  font-size: 11px;
+  color: #878a8f;
+  line-height: 1.7;
+}
+
+.ide-workspaces {
+  padding: 0 6px 12px;
+}
+
+.ide-workspace {
+  width: 100%;
+  border: none;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #9aa19f;
+  background: transparent;
+}
+
+.ide-workspace:hover,
+.ide-workspace:focus-visible {
+  background: #2e3033;
+  color: #e8eaed;
+}
+
+.ide-workspace.is-current {
+  cursor: default;
+  color: #7fcf9a;
+  background: #1a2418;
+}
+
+.ide-workspace-label {
+  flex: 1;
+}
+
+.ide-plain-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  font-size: 11px;
+  color: #9aa19f;
+  text-decoration: none;
+}
+
+.ide-plain-link-icon {
+  width: 8px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ide-plain-link-label {
+  flex: 1;
+}
+
+.ide-plain-link-arrow {
+  color: #5d6166;
+  font-size: 9px;
+}
+
+/* Shared by the sidebar workspaces and the status-bar view menu. */
+.ide-view-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3d4347;
+  flex-shrink: 0;
+}
+
+.ide-view-dot.is-current {
+  background: #7fcf9a;
+}
+
+.ide-view-key {
+  color: #5d6166;
+  font-size: 9px;
+  padding: 1px 4px;
+  border: 1px solid #3c3f44;
+  border-radius: 2px;
+}
+
+/* ── File strip (mobile) ───────────────────────────────────────────────── */
+
+.ide-strip {
+  display: flex;
+  flex-shrink: 0;
+  background: #2b2d30;
+  border-bottom: 1px solid #1e1f22;
+  overflow-x: auto;
+  padding: 6px 8px;
+  gap: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ide-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #1e1f22;
+  color: #bcbec4;
+  border-radius: 3px;
+  flex-shrink: 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ide-strip-item.is-active {
+  background: #2e436e;
+  color: #e8eaed;
+}
+
+/* ── File icons ────────────────────────────────────────────────────────── */
+
+.ide-file-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #878a8f;
+  border: 1px solid #878a8f55;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ide-file-icon.is-code { color: #56a8f5; border-color: #56a8f555; }
+.ide-file-icon.is-json { color: #e6c07a; border-color: #e6c07a55; }
+.ide-file-icon.is-shell { color: #7fa650; border-color: #7fa65055; }
+.ide-file-icon.is-pdf { color: #e06c75; border-color: #e06c7555; }
+.ide-file-icon.is-git { color: #56a877; border-color: #56a87755; }
+
+/* ── Editor: tabs, breadcrumb, gutter, code ────────────────────────────── */
+
+.ide-editor-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.ide-tabs {
+  display: flex;
+  height: clamp(28px, 4.5vh, 32px);
+  flex-shrink: 0;
+  background: #2b2d30;
+  border-bottom: 1px solid #1e1f22;
+  overflow-x: auto;
+}
+
+.ide-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: transparent;
+  color: #878a8f;
+  cursor: pointer;
+  border-right: 1px solid #1e1f22;
+  font-size: 12px;
+  flex-shrink: 0;
+  border-top: 1.5px solid transparent;
+  height: 100%;
+}
+
+.ide-tab.is-active {
+  background: #1e1f22;
+  color: #e8eaed;
+  border-top-color: #c8e6a8;
+}
+
+.ide-tab-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ide-tab-close {
+  color: #5d6166;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.ide-breadcrumb {
+  height: clamp(24px, 4vh, 28px);
+  flex-shrink: 0;
+  background: #1e1f22;
+  border-bottom: 1px solid #1a1b1e;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  color: #6f7479;
+  gap: 6px;
+}
+
+.ide-crumb-sep {
+  color: #3c3f44;
+}
+
+.ide-crumb {
+  color: #6f7479;
+}
+
+.ide-crumb.is-current {
+  color: #bcbec4;
+}
+
+.ide-editor {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  background: #1e1f22;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+}
+
+.ide-gutter {
+  background: #1e1f22;
+  color: #3c3f44;
+  padding: clamp(10px, 2.4vh, 14px) 0;
+  text-align: right;
+  font-size: 12px;
+  line-height: 20px;
+  user-select: none;
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+.ide-gutter-line {
+  padding: 0 12px;
+}
+
+.ide-code {
+  flex: 1;
+  padding: clamp(10px, 2.4vh, 14px) clamp(12px, 3vw, 18px);
+  font-size: 13px;
+  line-height: 20px;
+  color: #bcbec4;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.ide-empty {
+  color: #878a8f;
+  padding: 40px;
+  text-align: center;
+}
+
+.ide-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+/* ── Syntax tokens ─────────────────────────────────────────────────────── */
+
+.ide-tok-kw { color: #cf8e6d; }
+.ide-tok-str { color: #6aab73; }
+.ide-tok-com { color: #7a7e85; }
+.ide-tok-fn { color: #56a8f5; }
+.ide-tok-num { color: #2aacb8; }
+.ide-tok-prop { color: #c77dbb; }
+.ide-tok-punc { color: #bcbec4; }
+.ide-tok-type { color: #e8c97f; }
+.ide-tok-jsx { color: #67a37c; }
+
+/* ── File content ──────────────────────────────────────────────────────── */
+
+.ide-link {
+  color: #56a8f5;
+}
+
+.ide-prose {
+  max-width: 720px;
+}
+
+/* Wrapped string items in work.ts: continuation lines align past the quote. */
+.ide-hanging {
+  padding-left: 6ch;
+  text-indent: -1ch;
+}
+
+.ide-jsx-children {
+  padding-left: 30px;
+}
+
+.ide-project {
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: #26282c;
+  border: 1px solid #393b40;
+  border-radius: 4px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.ide-project-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ide-project-name {
+  color: #e8eaed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ide-project-status {
+  font-size: 10px;
+  color: #7fa650;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ide-project-tagline {
+  color: #e8eaed;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.ide-project-role {
+  color: #878a8f;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.ide-project-desc {
+  color: #bcbec4;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.ide-project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ide-project-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 7px;
+  background: #1e1f22;
+  border: 1px solid #393b40;
+  color: #bcbec4;
+  border-radius: 3px;
+}
+
+.ide-contrib {
+  font-family: Inter, system-ui, sans-serif;
+  padding: 8px 4px;
+  max-width: 100%;
+}
+
+.ide-contrib-title {
+  font-size: 22px;
+  color: #e8eaed;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ide-contrib-meta {
+  color: #878a8f;
+  font-size: 12px;
+  margin-bottom: 18px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.ide-resume {
+  font-family: Inter, system-ui, sans-serif;
+  padding: 20px 4px;
+  max-width: 720px;
+}
+
+.ide-resume-title {
+  font-size: 24px;
+  color: #e8eaed;
+  font-weight: 600;
+}
+
+.ide-resume-meta {
+  color: #878a8f;
+  margin-bottom: 24px;
+}
+
+.ide-resume-btn {
+  display: inline-block;
+  background: #3574f0;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.ide-resume-note {
+  margin-top: 24px;
+  color: #bcbec4;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ── Minimap (desktop) ─────────────────────────────────────────────────── */
+
+.ide-minimap {
+  background: #2b2d30;
+  border-left: 1px solid #1e1f22;
+  padding: 8px 6px;
+  font-size: 4px;
+  line-height: 5px;
+  color: #3c3f44;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.ide-minimap-line.is-kw { color: #cf8e6d; }
+.ide-minimap-line.is-str { color: #6aab73; }
+.ide-minimap-line.is-blank { opacity: 0; }
+
+/* ── Status bar ────────────────────────────────────────────────────────── */
+
+.ide-status {
+  height: clamp(22px, 3.6vh, 24px);
+  flex-shrink: 0;
+  background: #2b2d30;
+  border-top: 1px solid #1e1f22;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 11px;
+  color: #878a8f;
+  gap: 14px;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+}
+
+.ide-status-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ide-status-branch {
+  background: #3574f0;
+  color: white;
+  padding: 0 8px;
+  height: 100%;
+}
+
+.ide-status-ok { color: #7fa650; }
+.ide-status-warn { color: #e6c07a; }
+
+.ide-status-spacer {
+  flex: 1;
+}
+
+.ide-status-lang {
+  white-space: nowrap;
+}
+
+.ide-status-open {
+  color: #7fa650;
+  white-space: nowrap;
+}
+
+/* View switcher + its popover menu */
+.ide-view-switch {
+  cursor: pointer;
+  padding: 0 8px;
+  gap: 6px;
+  position: relative;
+}
+
+.ide-view-switch-icon {
+  color: #7fcf9a;
+}
+
+.ide-view-switch-label {
+  white-space: nowrap;
+}
+
+.ide-view-switch-caret {
+  color: #5d6166;
+  margin-left: 2px;
+}
+
+.ide-view-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 168px;
+  background: #2b2d30;
+  border: 1px solid #1e1f22;
+  border-radius: 2px;
+  padding: 4px;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.32);
+  z-index: 50;
+}
+
+.ide-view-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #bcbec4;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ide-view-menu-item:hover,
+.ide-view-menu-item:focus-visible {
+  background: #2e3033;
+  border-color: #1e1f22;
+}
+
+.ide-view-menu-item.is-current {
+  border-color: #1e1f22;
+  background: #1e1f22;
+  color: #e8eaed;
+  cursor: default;
+}
+
+.ide-view-menu-item-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ide-view-menu .ide-view-dot.is-current {
+  box-shadow: 0 0 0 2px rgba(127, 207, 154, 0.18);
+}
+
+.ide-view-menu .ide-view-key {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+/* Hover tint on the switcher is desktop-only (on mobile it's a chip). */
+@media (min-width: 700px) {
+  .ide-view-switch:hover {
+    background: #2b2d30;
+  }
+}
+
+/* ── Mobile ────────────────────────────────────────────────────────────── */
+
+@media (max-width: 699.98px) {
+  .ide-topbar {
+    padding: 0 10px;
+    gap: 10px;
+  }
+
+  .ide-title {
+    font-size: 10px;
+  }
+
+  .ide-body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  .ide-status {
+    height: auto;
+    padding: 8px 10px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ide-status-branch {
+    padding: 6px 8px;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .ide-status-spacer {
+    flex: 1 1 auto;
+  }
+
+  /* Status items render as bordered chips on mobile. */
+  .ide-status-chip {
+    padding: 6px 8px;
+    background: #1e1f22;
+    border: 1px solid #3c3f44;
+    border-radius: 4px;
+  }
+}
