@@ -1,3 +1,4 @@
 logo_svg_animation.code
 node_modules
 dist
+.claude/worktrees
