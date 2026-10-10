@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { contributionsSvg } from './scripts/contrib-svg.js';
 import { aboutHtml, indexHead, indexNoscript, llmsFullTxt, llmsTxt, notFoundHtml, siteTitle, sitemapXml } from './scripts/site-files.js';
 
 const git = (cmd, fallback) => {
@@ -20,6 +21,9 @@ const generatedFiles = () => ({
   'llms-full.txt': { type: 'text/plain', body: llmsFullTxt(buildInfo.date) },
   'sitemap.xml': { type: 'application/xml', body: sitemapXml(buildInfo.date) },
   '404.html': { type: 'text/html', body: notFoundHtml() },
+  // Embedded in the GitHub profile README (refreshed by the daily build).
+  'contributions.svg': { type: 'image/svg+xml', body: contributionsSvg('dark') },
+  'contributions-light.svg': { type: 'image/svg+xml', body: contributionsSvg('light') },
 });
 
 // Fills the <!-- profile:* --> markers in index.html and emits the generated
