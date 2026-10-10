@@ -13,6 +13,7 @@
 
 import { profile } from '../src/data/profile.js';
 import { experienceLabel, formatRange } from '../src/lib/dates.js';
+import { VIEWS, viewById } from '../src/data/views.js';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const abs = (path) => new URL(path, profile.site).href;
@@ -27,13 +28,7 @@ const description = () =>
 
 const PAGES = { home: abs('./'), llms: abs('llms.txt'), llmsFull: abs('llms-full.txt') };
 
-// Interactive views, served from app.html. Ids match src/App.jsx.
-export const VIEWS = {
-  v1: { slug: 'terminal', title: 'Terminal' },
-  v2: { slug: 'ide', title: 'IDE' },
-  v3: { slug: 'monitor', title: 'System Monitor' },
-};
-const viewUrl = (id) => abs(`${VIEWS[id].slug}/`);
+const viewUrl = (id) => abs(viewById(id).path.slice(1));
 
 // Cloudflare Web Analytics beacon — only emitted when a token is configured.
 export function analyticsTag() {
@@ -115,7 +110,7 @@ function metaTags({ pageTitle, pageUrl, buildDate }) {
     <script type="application/ld+json">${JSON.stringify(jsonLd(buildDate, pageUrl, pageTitle))}</script>`;
 }
 
-export const viewTitle = (id) => `${siteTitle} · ${VIEWS[id].title}`;
+export const viewTitle = (id) => `${siteTitle} · ${viewById(id).title}`;
 export const viewHead = (buildDate, id) => metaTags({ pageTitle: viewTitle(id), pageUrl: viewUrl(id), buildDate });
 
 // Short no-JS fallback for the interactive views; the full content is on /.
@@ -197,10 +192,11 @@ const REVEAL_SCRIPT = `
   });
 `;
 
-// Old links like /?view=v3 now land on the homepage — forward them to the view.
+// Old links like /?view=v3 (from before the views had their own URLs) land on
+// the homepage — forward them. v1/v2/v3 are the old ids, in VIEWS order.
 const LEGACY_VIEW_REDIRECT = `(function () {
     var v = new URLSearchParams(location.search).get('view');
-    var map = ${JSON.stringify(Object.fromEntries(Object.entries(VIEWS).map(([id, v]) => [id, `/${v.slug}/`])))};
+    var map = ${JSON.stringify(Object.fromEntries(VIEWS.map((v, i) => [`v${i + 1}`, v.path])))};
     if (map[v]) location.replace(map[v]);
   })();`;
 
@@ -249,7 +245,7 @@ export function homeHtml(buildDate) {
           <a class="btn" href="${profile.resume.url}">Resume ↓</a>
         </div>
         <nav class="views" aria-label="Interactive views">
-          view as:${Object.values(VIEWS).map((v) => `<a href="/${v.slug}/">${v.slug}</a>`).join('')}
+          view as:${VIEWS.map((v) => `<a href="${v.path}">${v.label}</a>`).join('')}
         </nav>
       </header>
 
@@ -334,7 +330,7 @@ ${profile.links.map((l) => `- [${l.name}](${l.url})`).join('\n')}
 
 ## Optional
 
-- [Interactive views](${viewUrl('v1')}): terminal, IDE (${viewUrl('v2')}), and system-monitor (${viewUrl('v3')}) takes on the same content (requires JavaScript)
+${VIEWS.map((v) => `- [${v.title} view](${viewUrl(v.id)}): interactive take on the same content (requires JavaScript)`).join('\n')}
 `;
 }
 
@@ -392,7 +388,7 @@ export function sitemapXml(buildDate) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${url(PAGES.home, '1.0')}
-${Object.keys(VIEWS).map((id) => url(viewUrl(id), '0.5')).join('\n')}
+${VIEWS.map((v) => url(viewUrl(v.id), '0.5')).join('\n')}
 </urlset>
 `;
 }

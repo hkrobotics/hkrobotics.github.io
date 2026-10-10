@@ -2,12 +2,14 @@ import React from 'react';
 import ContribHeatmap from '../components/ContribHeatmap.jsx';
 import RevealContact from '../components/RevealContact.jsx';
 import { profile } from '../data/profile.js';
+import { VIEWS } from '../data/views.js';
 import { contributions, recentDays, weeklySeries } from '../lib/activity.js';
 import { build } from '../lib/build.js';
 import { formatMonth, relativeDays, uptime } from '../lib/dates.js';
 import { useIsMobile } from '../lib/useIsMobile.js';
+import { useView } from '../lib/view.js';
 
-// V3 — System monitor / htop-style dashboard portfolio
+// System monitor / htop-style dashboard portfolio
 // Dense grid of panels: header bar, ticking metrics, "process list" of work history,
 // project cards as resource panels, skills as bar graphs, contact panel, log feed.
 // Every number is real: contributions come from src/data/activity.json (synced
@@ -16,7 +18,7 @@ import { useIsMobile } from '../lib/useIsMobile.js';
 // Responsive: on narrow viewports the 3-col grid collapses to 1 col, the header
 // stat strip wraps, and the "process list" + skills + log feed stack vertically.
 
-const v3Styles = {
+const styles = {
   root: {
     width: '100%', height: '100%',
     background: '#0d1117',
@@ -51,7 +53,7 @@ const v3Styles = {
     width: 8, height: 8, borderRadius: '50%',
     background: '#3fb950',
     boxShadow: '0 0 0 0 rgba(63,185,80,0.7)',
-    animation: 'v3pulse 1.6s infinite',
+    animation: 'mon-pulse 1.6s infinite',
   },
   body: {
     flex: 1, minHeight: 0,
@@ -128,7 +130,7 @@ function Sparkline({ values, color = '#3fb950' }) {
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   return (
-    <svg viewBox={`0 0 ${w} ${vh}`} preserveAspectRatio="none" style={v3Styles.graphSvg}>
+    <svg viewBox={`0 0 ${w} ${vh}`} preserveAspectRatio="none" style={styles.graphSvg}>
       <polyline points={pts} fill="none" stroke={color} strokeWidth="1.2" />
       <polyline points={`0,${vh} ${pts} ${w},${vh}`} fill={color} opacity="0.08" />
     </svg>
@@ -144,6 +146,7 @@ const LAST_4_WEEKS = SERIES.slice(-4).reduce((s, n) => s + n, 0);
 const PREV_4_WEEKS = SERIES.slice(-8, -4).reduce((s, n) => s + n, 0);
 
 export default function Monitor() {
+  const { switchTo } = useView();
   useTick(1000); // re-render for the clock
   const isMobile = useIsMobile(700);
 
@@ -153,18 +156,18 @@ export default function Monitor() {
 
   const mobilePanel = isMobile
     ? {
-        ...v3Styles.panel,
+        ...styles.panel,
         padding: '14px 16px',
         overflow: 'visible',
         minHeight: 'auto',
       }
-    : v3Styles.panel;
+    : styles.panel;
 
   return (
-    <div style={v3Styles.root} className="v3-root">
+    <div style={styles.root} className="mon-root">
       <h1 className="sr-only">Hemant Kumar — System Monitor Portfolio</h1>
       <style>{`
-        @keyframes v3pulse {
+        @keyframes mon-pulse {
           0% { box-shadow: 0 0 0 0 rgba(63,185,80,0.6); }
           70% { box-shadow: 0 0 0 10px rgba(63,185,80,0); }
           100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
@@ -172,39 +175,37 @@ export default function Monitor() {
       `}</style>
 
       <div
-        style={isMobile ? { ...v3Styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : v3Styles.header}
-        className="v3-header"
+        style={isMobile ? { ...styles.header, height: 'auto', padding: '12px 14px', flexWrap: 'wrap', gap: 12 } : styles.header}
+        className="mon-header"
       >
         <div style={{ width: isMobile ? '100%' : 'auto' }}>
-          <h1 style={{ ...v3Styles.headerName, margin: 0 }}>{profile.name.toLowerCase()}</h1>
-          <div style={v3Styles.headerSub}>software.engineer · react-native · {profile.location.city.toLowerCase().replace(' ', '-')} · remote · {profile.location.tz.toLowerCase()}</div>
+          <h1 style={{ ...styles.headerName, margin: 0 }}>{profile.name.toLowerCase()}</h1>
+          <div style={styles.headerSub}>software.engineer · react-native · {profile.location.city.toLowerCase().replace(' ', '-')} · remote · {profile.location.tz.toLowerCase()}</div>
         </div>
         {!isMobile && <div style={{ flex: 1 }} />}
-        <div style={v3Styles.headerStat}>
-          <div style={v3Styles.headerStatLabel}>uptime</div>
-          <div style={v3Styles.headerStatValue}>{uptime()} shipping</div>
+        <div style={styles.headerStat}>
+          <div style={styles.headerStatLabel}>uptime</div>
+          <div style={styles.headerStatValue}>{uptime()} shipping</div>
         </div>
         {!isMobile && (
-          <div style={v3Styles.headerStat}>
-            <div style={v3Styles.headerStatLabel}>users served</div>
-            <div style={v3Styles.headerStatValue}>{profile.stats.brands} brands · {profile.stats.users}</div>
+          <div style={styles.headerStat}>
+            <div style={styles.headerStatLabel}>users served</div>
+            <div style={styles.headerStatValue}>{profile.stats.brands} brands · {profile.stats.users}</div>
           </div>
         )}
-        <div style={v3Styles.headerStat}>
-          <div style={v3Styles.headerStatLabel}>local time</div>
-          <div style={v3Styles.headerStatValue}>{time} {profile.location.tz}</div>
+        <div style={styles.headerStat}>
+          <div style={styles.headerStatLabel}>local time</div>
+          <div style={styles.headerStatValue}>{time} {profile.location.tz}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b', marginLeft: isMobile ? 0 : 0 }}>
           <span style={{ fontSize: 9, color: '#6e7681', textTransform: 'uppercase', letterSpacing: 1.2, marginRight: 4 }}>workspace</span>
-          {[
-            { id: 'v1', l: 'term', k: '1' },
-            { id: 'v2', l: 'ide', k: '2' },
-            { id: 'v3', l: 'mon', k: '3', cur: true },
-          ].map(w => (
+          {VIEWS.map(v => ({ ...v, cur: v.id === 'monitor' })).map(w => (
             <button
+              type="button"
               key={w.id}
-              onClick={() => !w.cur && window.__switchVariant && window.__switchVariant(w.id)}
-              title={`${w.l} · key ${w.k}`}
+              aria-current={w.cur ? 'page' : undefined}
+              onClick={() => !w.cur && switchTo(w.id)}
+              title={`${w.label} · key ${w.key}`}
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10, padding: '4px 8px', borderRadius: 3,
@@ -217,7 +218,7 @@ export default function Monitor() {
               onMouseEnter={e => { if (!w.cur) { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#e6edf3'; } }}
               onMouseLeave={e => { if (!w.cur) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7d8590'; } }}
             >
-              {w.cur ? '● ' : ''}{w.l}
+              {w.cur ? '● ' : ''}{w.short}
             </button>
           ))}
           <a
@@ -230,7 +231,7 @@ export default function Monitor() {
         </div>
         {profile.status.open && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingLeft: isMobile ? 0 : 16, borderLeft: isMobile ? 'none' : '1px solid #1c232b' }}>
-            <span style={v3Styles.pulse} />
+            <span style={styles.pulse} />
             <span style={{ color: '#3fb950', fontSize: 11, fontWeight: 500 }}>OPEN TO OPPORTUNITIES</span>
           </div>
         )}
@@ -240,44 +241,44 @@ export default function Monitor() {
         style={
           isMobile
             ? {
-                ...v3Styles.body,
+                ...styles.body,
                 gridTemplateColumns: '1fr',
                 gridTemplateRows: 'auto',
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 alignContent: 'start',
               }
-            : v3Styles.body
+            : styles.body
         }
       >
         {/* Row 1 — three metric panels, all real numbers */}
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[01]</span><span>cpu · contributions</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[01]</span><span>cpu · contributions</span></div>
             <span style={{ color: '#3fb950' }}>● last active {relativeDays(contributions.lastActive)}</span>
           </div>
-          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
-            <div style={v3Styles.metricNum}>{LAST_4_WEEKS}</div>
-            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>
+          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
+            <div style={styles.metricNum}>{LAST_4_WEEKS}</div>
+            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>
               in the last 4 weeks · {trend >= 0 ? '▲' : '▼'} {Math.abs(trend)}% vs prior 4
             </div>
           </div>
           <div style={isMobile ? { marginTop: 10 } : { marginTop: 6 }}>
             <Sparkline values={SERIES} />
           </div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: 4 }}>weekly · last 26 weeks · gitlab + github</div>
+          <div style={{ ...styles.metricLabel, marginTop: 4 }}>weekly · last 26 weeks · gitlab + github</div>
         </div>
 
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[02]</span><span>uptime · experience</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[02]</span><span>uptime · experience</span></div>
             <span style={{ color: '#a371f7' }}>● since {formatMonth(profile.careerStart)}</span>
           </div>
-          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
-            <div style={v3Styles.metricNum}>{uptime()}</div>
-            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>professional · mobile, web, backend, cloud</div>
+          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
+            <div style={styles.metricNum}>{uptime()}</div>
+            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>professional · mobile, web, backend, cloud</div>
           </div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.6 }}>
+          <div style={{ ...styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.6 }}>
             {profile.experience.map(j => (
               <div key={j.from}>{j.company.toLowerCase()} · {j.role.toLowerCase()} · {formatMonth(j.from)}—{j.to ? formatMonth(j.to) : 'now'}</div>
             ))}
@@ -285,15 +286,15 @@ export default function Monitor() {
         </div>
 
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[03]</span><span>net · reach</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[03]</span><span>net · reach</span></div>
             <span style={{ color: '#f0883e' }}>● in production</span>
           </div>
-          <div style={isMobile ? { ...v3Styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : v3Styles.metric}>
-            <div style={v3Styles.metricNum}>{profile.stats.brands}</div>
-            <div style={isMobile ? { ...v3Styles.metricUnit, lineHeight: 1.35 } : v3Styles.metricUnit}>brands on the platform · {profile.stats.users} users on web</div>
+          <div style={isMobile ? { ...styles.metric, flexDirection: 'column', alignItems: 'flex-start', gap: 6 } : styles.metric}>
+            <div style={styles.metricNum}>{profile.stats.brands}</div>
+            <div style={isMobile ? { ...styles.metricUnit, lineHeight: 1.35 } : styles.metricUnit}>brands on the platform · {profile.stats.users} users on web</div>
           </div>
-          <div style={{ ...v3Styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.4 }}>
+          <div style={{ ...styles.metricLabel, marginTop: isMobile ? 12 : 10, lineHeight: 1.4 }}>
             white-label ios + android · app store ✓ google play ✓
           </div>
         </div>
@@ -301,9 +302,9 @@ export default function Monitor() {
         {/* Row 2 — projects + activity log */}
         {profile.projects.map(p => (
           <div key={p.id} style={mobilePanel}>
-            <div style={v3Styles.panelHead}>
-              <div style={v3Styles.panelTitle}>
-                <span style={v3Styles.panelKey}>◇</span>
+            <div style={styles.panelHead}>
+              <div style={styles.panelTitle}>
+                <span style={styles.panelKey}>◇</span>
                 <a href={p.url} target="_blank" rel="noreferrer" style={{ color: '#e6edf3', textDecoration: 'none' }}>{p.name} ↗</a>
               </div>
               <span style={{ color: '#3fb950', padding: '1px 6px', border: '1px solid #3fb95055', borderRadius: 2, fontSize: 9 }}>{p.status.toUpperCase()}</span>
@@ -321,15 +322,15 @@ export default function Monitor() {
 
         {/* Activity log — real active days from the contribution data */}
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[log]</span><span>activity · most recent days</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[log]</span><span>activity · most recent days</span></div>
             <span>synced {relativeDays(contributions.fetchedAt)}</span>
           </div>
-          <div style={{ ...v3Styles.log, overflowY: isMobile ? 'visible' : 'auto', flex: 1 }}>
+          <div style={{ ...styles.log, overflowY: isMobile ? 'visible' : 'auto', flex: 1 }}>
             {RECENT.map(d => (
-              <div key={d.day} style={v3Styles.logLine}>
-                <span style={v3Styles.logTime}>{d.day}</span>
-                <span style={v3Styles.logTag('#3fb950')}>COMMIT</span>
+              <div key={d.day} style={styles.logLine}>
+                <span style={styles.logTime}>{d.day}</span>
+                <span style={styles.logTag('#3fb950')}>COMMIT</span>
                 <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {d.total} contribution{d.total === 1 ? '' : 's'}
                   {d.gitlab ? ` · gitlab ${d.gitlab}` : ''}
@@ -337,9 +338,9 @@ export default function Monitor() {
                 </span>
               </div>
             ))}
-            <div style={v3Styles.logLine}>
-              <span style={v3Styles.logTime}>{build.date.slice(0, 10)}</span>
-              <span style={v3Styles.logTag('#a371f7')}>DEPLOY</span>
+            <div style={styles.logLine}>
+              <span style={styles.logTime}>{build.date.slice(0, 10)}</span>
+              <span style={styles.logTag('#a371f7')}>DEPLOY</span>
               <span>
                 this site @ <a href={`https://github.com/hkrobotics/hkrobotics.github.io/commit/${build.sha}`} target="_blank" rel="noreferrer" style={{ color: '#58a6ff', textDecoration: 'none' }}>{build.sha}</a>
               </span>
@@ -350,14 +351,14 @@ export default function Monitor() {
 
         {/* Row 3 — process list (work) + skills */}
         <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[ps]</span><span>process list · work history</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[ps]</span><span>process list · work history</span></div>
             <span>{profile.milestones.length} procs · {running} running</span>
           </div>
           <div
             style={{
-              ...v3Styles.proc,
-              ...v3Styles.procHead,
+              ...styles.proc,
+              ...styles.procHead,
               ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
             }}
           >
@@ -368,7 +369,7 @@ export default function Monitor() {
               <div
                 key={p.what}
                 style={{
-                  ...v3Styles.proc,
+                  ...styles.proc,
                   ...(isMobile ? { gridTemplateColumns: '48px 1fr 64px 64px' } : null),
                 }}
               >
@@ -386,8 +387,8 @@ export default function Monitor() {
         </div>
 
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[mods]</span><span>loaded modules · skills</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[mods]</span><span>loaded modules · skills</span></div>
             <span>{profile.skills.reduce((n, g) => n + g.items.length, 0)} loaded</span>
           </div>
           <div style={isMobile ? { display: 'flex', flexDirection: 'column', gap: 10 } : { overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
@@ -406,16 +407,16 @@ export default function Monitor() {
 
         {/* Row 4 — contribution heatmap + contact */}
         <div style={{ ...mobilePanel, gridColumn: isMobile ? 'span 1' : 'span 2' }}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[git]</span><span>contributions · 12mo · gitlab + github</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[git]</span><span>contributions · 12mo · gitlab + github</span></div>
             <span style={{ color: '#39d353' }}>● synced daily</span>
           </div>
           <ContribHeatmap theme="monitor" />
         </div>
 
         <div style={mobilePanel}>
-          <div style={v3Styles.panelHead}>
-            <div style={v3Styles.panelTitle}><span style={v3Styles.panelKey}>[net]</span><span>endpoints · contact</span></div>
+          <div style={styles.panelHead}>
+            <div style={styles.panelTitle}><span style={styles.panelKey}>[net]</span><span>endpoints · contact</span></div>
             <span style={{ color: '#3fb950' }}>● 200 ok</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 11 }}>

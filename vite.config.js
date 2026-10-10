@@ -4,8 +4,9 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { contributionsSvg } from './scripts/contrib-svg.js';
+import { VIEWS } from './src/data/views.js';
 import {
-  VIEWS, analyticsTag, homeHtml, llmsFullTxt, llmsTxt, notFoundHtml, redirectHtml,
+  analyticsTag, homeHtml, llmsFullTxt, llmsTxt, notFoundHtml, redirectHtml,
   sitemapXml, viewHead, viewNoscript, viewTitle,
 } from './scripts/site-files.js';
 
@@ -39,7 +40,7 @@ const fillView = (html, id) => html
   .replace('<!-- profile:noscript -->', viewNoscript())
   .replace('<!-- profile:analytics -->', analyticsTag());
 
-const viewForUrl = (url) => Object.keys(VIEWS).find((id) => url === `/${VIEWS[id].slug}/` || url === `/${VIEWS[id].slug}`);
+const viewForUrl = (url) => VIEWS.find((v) => url === v.path || url === v.path.slice(0, -1))?.id;
 
 // Homepage + generated files from src/data/profile.js; app.html becomes
 // /terminal/, /ide/ and /monitor/.
@@ -74,9 +75,9 @@ function siteFilesPlugin() {
     },
     async writeBundle() {
       const app = await readFile(resolve(outDir, 'app.html'), 'utf8');
-      for (const [id, { slug }] of Object.entries(VIEWS)) {
-        await mkdir(resolve(outDir, slug), { recursive: true });
-        await writeFile(resolve(outDir, slug, 'index.html'), fillView(app, id));
+      for (const { id, path } of VIEWS) {
+        await mkdir(resolve(outDir, path.slice(1)), { recursive: true });
+        await writeFile(resolve(outDir, path.slice(1), 'index.html'), fillView(app, id));
       }
       await rm(resolve(outDir, 'app.html'));
     },

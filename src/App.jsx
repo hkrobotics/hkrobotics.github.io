@@ -1,64 +1,57 @@
 import React from 'react';
 import { profile } from './data/profile.js';
+import { VIEWS, viewById } from './data/views.js';
+import { ViewContext } from './lib/view.js';
 
 // Each view is its own chunk — visitors only download the one they're looking at.
-const Terminal = React.lazy(() => import('./variants/Terminal.jsx'));
-const IDE = React.lazy(() => import('./variants/IDE.jsx'));
-const Monitor = React.lazy(() => import('./variants/Monitor.jsx'));
-
-// Variant ids (v1/v2/v3) are used by the views' switchers and old ?view= links — keep them stable.
-// Each view lives at its own path; the plain-text homepage is at /.
-export const variants = {
-  v1: { title: 'Terminal', path: '/terminal/', component: Terminal },
-  v2: { title: 'IDE', path: '/ide/', component: IDE },
-  v3: { title: 'System Monitor', path: '/monitor/', component: Monitor },
+const COMPONENTS = {
+  terminal: React.lazy(() => import('./views/Terminal.jsx')),
+  ide: React.lazy(() => import('./views/IDE.jsx')),
+  monitor: React.lazy(() => import('./views/Monitor.jsx')),
 };
 
-function variantFromPath(pathname) {
-  const entry = Object.entries(variants).find(([, v]) => pathname.startsWith(v.path));
-  return entry ? entry[0] : 'v1';
-}
+const viewFromPath = (pathname) => (VIEWS.find((v) => pathname.startsWith(v.path)) || VIEWS[0]).id;
 
 export default function App() {
-  const [variant, setVariant] = React.useState(() => variantFromPath(window.location.pathname));
-  const ActiveVariant = variants[variant].component;
+  const [active, setActive] = React.useState(() => viewFromPath(window.location.pathname));
 
-  React.useEffect(() => {
-    const onPop = () => setVariant(variantFromPath(window.location.pathname));
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
+  // Switch in place and keep the URL shareable.
+  const switchTo = React.useCallback((id) => {
+    const view = viewById(id);
+    if (!view) return;
+    if (window.location.pathname !== view.path) window.history.pushState({}, '', view.path);
+    setActive(id);
   }, []);
 
   React.useEffect(() => {
-    // Switch views in place and keep the URL shareable.
-    window.__switchVariant = (next) => {
-      if (!variants[next]) return;
-      if (window.location.pathname !== variants[next].path) window.history.pushState({}, '', variants[next].path);
-      setVariant(next);
-    };
-
+    const onPop = () => setActive(viewFromPath(window.location.pathname));
     const onKeyDown = (event) => {
       if (event.target?.tagName === 'INPUT' || event.target?.isContentEditable) return;
-      const keyMap = { 1: 'v1', 2: 'v2', 3: 'v3' };
-      if (keyMap[event.key]) window.__switchVariant(keyMap[event.key]);
+      const view = VIEWS.find((v) => v.key === event.key);
+      if (view) switchTo(view.id);
     };
-
+    window.addEventListener('popstate', onPop);
     window.addEventListener('keydown', onKeyDown);
     return () => {
+      window.removeEventListener('popstate', onPop);
       window.removeEventListener('keydown', onKeyDown);
-      delete window.__switchVariant;
     };
-  }, []);
+  }, [switchTo]);
 
   React.useEffect(() => {
-    document.title = `${profile.name} — ${profile.headline} · ${variants[variant].title}`;
-  }, [variant]);
+    document.title = `${profile.name} — ${profile.headline} · ${viewById(active).title}`;
+  }, [active]);
+
+  const ActiveView = COMPONENTS[active];
+  const context = React.useMemo(() => ({ active, switchTo }), [active, switchTo]);
 
   return (
-    <main className="portfolio-shell" data-variant={variant}>
-      <React.Suspense fallback={null}>
-        <ActiveVariant />
-      </React.Suspense>
-    </main>
+    <ViewContext.Provider value={context}>
+      <main className="portfolio-shell" data-view={active}>
+        <React.Suspense fallback={null}>
+          <ActiveView />
+        </React.Suspense>
+      </main>
+    </ViewContext.Provider>
   );
 }

@@ -2,11 +2,13 @@ import React from 'react';
 import ContribHeatmap from '../components/ContribHeatmap.jsx';
 import RevealContact from '../components/RevealContact.jsx';
 import { profile } from '../data/profile.js';
+import { VIEWS } from '../data/views.js';
 import { build } from '../lib/build.js';
 import { experienceLabel, formatMonth } from '../lib/dates.js';
 import { useIsMobile } from '../lib/useIsMobile.js';
+import { useView } from '../lib/view.js';
 
-// V2 — IDE / code editor portfolio
+// IDE / code editor portfolio
 // File tree on left, tabbed editor middle, minimap right. Each "file" reveals
 // a section of the portfolio rendered as syntax-highlighted code with prose layered in.
 // Status bar at bottom (git branch, line:col, encoding).
@@ -14,7 +16,7 @@ import { useIsMobile } from '../lib/useIsMobile.js';
 // Responsive: on narrow viewports (<700px) the file tree becomes a horizontal
 // scroll strip above the editor, the minimap is hidden, and the topbar collapses.
 
-const v2Styles = {
+const styles = {
   root: {
     width: '100%', height: '100%',
     background: '#1e1f22',
@@ -158,13 +160,13 @@ const v2Styles = {
 };
 
 // Token helpers
-const K = ({ children }) => <span style={v2Styles.kw}>{children}</span>;
-const S = ({ children }) => <span style={v2Styles.str}>{children}</span>;
-const C = ({ children }) => <span style={v2Styles.com}>{children}</span>;
-const F = ({ children }) => <span style={v2Styles.fn}>{children}</span>;
-const N = ({ children }) => <span style={v2Styles.num}>{children}</span>;
-const P = ({ children }) => <span style={v2Styles.prop}>{children}</span>;
-const T = ({ children }) => <span style={v2Styles.type}>{children}</span>;
+const K = ({ children }) => <span style={styles.kw}>{children}</span>;
+const S = ({ children }) => <span style={styles.str}>{children}</span>;
+const C = ({ children }) => <span style={styles.com}>{children}</span>;
+const F = ({ children }) => <span style={styles.fn}>{children}</span>;
+const N = ({ children }) => <span style={styles.num}>{children}</span>;
+const P = ({ children }) => <span style={styles.prop}>{children}</span>;
+const T = ({ children }) => <span style={styles.type}>{children}</span>;
 
 const linkStyle = { color: '#56a8f5' };
 const host = (url) => url.replace(/^https:\/\/(www\.)?|\/$/g, '');
@@ -190,7 +192,7 @@ const FILES = {
         <div style={{ maxWidth: 720 }}>{profile.summary}</div>
         <Blank />
         <H1>## currently</H1>
-        <div>- Software Developer at <span style={v2Styles.str}>Wylo</span> — SaaS for {profile.stats.brands} brands</div>
+        <div>- Software Developer at <span style={styles.str}>Wylo</span> — SaaS for {profile.stats.brands} brands</div>
         {profile.now.items.slice(0, 2).map(item => <div key={item}>- {item}</div>)}
         {profile.status.open && <div>- {profile.status.label[0].toUpperCase() + profile.status.label.slice(1)}</div>}
         <Blank />
@@ -210,7 +212,7 @@ const FILES = {
     breadcrumb: ['portfolio', 'src', 'about.tsx'],
     render: () => (
       <>
-        <div><K>import</K> <span style={v2Styles.punc}>{'{ '}</span>Engineer<span style={v2Styles.punc}>{' }'}</span> <K>from</K> <S>'./types'</S>;</div>
+        <div><K>import</K> <span style={styles.punc}>{'{ '}</span>Engineer<span style={styles.punc}>{' }'}</span> <K>from</K> <S>'./types'</S>;</div>
         <Blank />
         <div><K>export const</K> <P>hemant</P>: <T>Engineer</T> = {'{'}</div>
         <div>&nbsp;&nbsp;<P>name</P>: <S>'{profile.name}'</S>,</div>
@@ -289,15 +291,15 @@ const FILES = {
       );
       return (
         <>
-          <div><K>import</K> <span style={v2Styles.punc}>{'{ '}</span>ProjectCard<span style={v2Styles.punc}>{' }'}</span> <K>from</K> <S>'./components'</S>;</div>
+          <div><K>import</K> <span style={styles.punc}>{'{ '}</span>ProjectCard<span style={styles.punc}>{' }'}</span> <K>from</K> <S>'./components'</S>;</div>
           <Blank />
           <div><K>export default function</K> <F>Projects</F>() {'{'}</div>
           <div>&nbsp;&nbsp;<K>return</K> (</div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={v2Styles.jsx}>&lt;section&gt;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={styles.jsx}>&lt;section&gt;</span></div>
           <div style={{ paddingLeft: 30 }}>
             {profile.projects.map(p => <ProjectCard key={p.id} {...p} />)}
           </div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={v2Styles.jsx}>&lt;/section&gt;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style={styles.jsx}>&lt;/section&gt;</span></div>
           <div>&nbsp;&nbsp;);</div>
           <div>{'}'}</div>
         </>
@@ -329,14 +331,14 @@ const FILES = {
     render: () => (
       <>
         <H1># /now</H1>
-        <div style={v2Styles.com}>{`<!-- last updated: ${profile.now.updated} -->`}</div>
+        <div style={styles.com}>{`<!-- last updated: ${profile.now.updated} -->`}</div>
         <Blank />
         {profile.now.items.map(item => <div key={item}>- {item}</div>)}
         {profile.status.open && (
           <>
             <Blank />
             <H1>## status</H1>
-            <div>● <span style={v2Styles.str}>{profile.status.label}</span></div>
+            <div>● <span style={styles.str}>{profile.status.label}</span></div>
           </>
         )}
       </>
@@ -406,7 +408,7 @@ const FILES = {
     render: () => (
       <>
         <H1># Drafts</H1>
-        <div style={v2Styles.com}>{'<!-- nothing published yet — these are in progress -->'}</div>
+        <div style={styles.com}>{'<!-- nothing published yet — these are in progress -->'}</div>
         <Blank />
         {profile.drafts.map(d => <div key={d}>- {d}</div>)}
       </>
@@ -455,11 +457,13 @@ function FileIcon({ name }) {
   );
 }
 
-export default function V2IDE() {
+export default function IDE() {
   const [openFiles, setOpenFiles] = React.useState(['README.md', 'about.tsx', 'work.ts', 'projects.tsx']);
   const [active, setActive] = React.useState('README.md');
   const isMobile = useIsMobile(700);
   const [viewMenuOpen, setViewMenuOpen] = React.useState(false);
+  const { switchTo } = useView();
+  const views = VIEWS.map(v => ({ ...v, cur: v.id === 'ide' }));
   const viewMenuRef = React.useRef(null);
 
   const openFile = (f) => {
@@ -495,11 +499,11 @@ export default function V2IDE() {
   }, [viewMenuOpen]);
 
   return (
-    <div style={v2Styles.root} className="v2-root">
+    <div style={styles.root} className="ide-root">
       <h1 className="sr-only">Hemant Kumar — IDE Portfolio</h1>
       <div
         style={{
-          ...v2Styles.topbar,
+          ...styles.topbar,
           ...(isMobile
             ? {
                 padding: '0 10px',
@@ -507,22 +511,22 @@ export default function V2IDE() {
               }
             : null),
         }}
-        className="v2-topbar"
+        className="ide-topbar"
       >
         <div style={{ display: 'flex', gap: 6 }}>
-          <div style={v2Styles.dot('#ff5f57')} />
-          <div style={v2Styles.dot('#febc2e')} />
-          <div style={v2Styles.dot('#28c840')} />
+          <div style={styles.dot('#ff5f57')} />
+          <div style={styles.dot('#febc2e')} />
+          <div style={styles.dot('#28c840')} />
         </div>
         {!isMobile && (
-          <div style={v2Styles.menu}>
-            <span style={v2Styles.menuItem}>File</span>
-            <span style={v2Styles.menuItem}>Edit</span>
-            <span style={v2Styles.menuItem}>Selection</span>
-            <span style={v2Styles.menuItem}>View</span>
-            <span style={v2Styles.menuItem}>Go</span>
-            <span style={v2Styles.menuItem}>Run</span>
-            <span style={v2Styles.menuItem}>Help</span>
+          <div style={styles.menu}>
+            <span style={styles.menuItem}>File</span>
+            <span style={styles.menuItem}>Edit</span>
+            <span style={styles.menuItem}>Selection</span>
+            <span style={styles.menuItem}>View</span>
+            <span style={styles.menuItem}>Go</span>
+            <span style={styles.menuItem}>Run</span>
+            <span style={styles.menuItem}>Help</span>
           </div>
         )}
         <div
@@ -549,14 +553,14 @@ export default function V2IDE() {
         style={
           isMobile
             ? {
-                ...v2Styles.body,
+                ...styles.body,
                 display: 'flex',
                 flexDirection: 'column',
                 flex: 1,
                 minHeight: 0,
                 overflowX: 'hidden',
               }
-            : v2Styles.body
+            : styles.body
         }
       >
         {isMobile ? (
@@ -587,15 +591,15 @@ export default function V2IDE() {
             })}
           </div>
         ) : (
-          <div style={v2Styles.sidebar}>
-            <div style={v2Styles.sideHead}>
+          <div style={styles.sidebar}>
+            <div style={styles.sideHead}>
               <span>Explorer</span>
               <span style={{ color: '#5d6166' }}>···</span>
             </div>
             {TREE.map((node, i) => {
               if (node.type === 'folder') {
                 return (
-                  <div key={i} style={{ ...v2Styles.treeItem(false, node.depth), color: '#bcbec4', fontWeight: 500 }}>
+                  <div key={i} style={{ ...styles.treeItem(false, node.depth), color: '#bcbec4', fontWeight: 500 }}>
                     <span style={{ color: '#878a8f', width: 10, fontSize: 9 }}>▾</span>
                     <span style={{ color: '#e6c07a' }}>▣</span>
                     <span>{node.name}</span>
@@ -605,7 +609,7 @@ export default function V2IDE() {
               return (
                 <div
                   key={i}
-                  style={v2Styles.treeItem(active === node.file, node.depth)}
+                  style={styles.treeItem(active === node.file, node.depth)}
                   onClick={() => openFile(node.file)}
                   onMouseEnter={e => { if (active !== node.file) e.currentTarget.style.background = '#2e3033'; }}
                   onMouseLeave={e => { if (active !== node.file) e.currentTarget.style.background = 'transparent'; }}
@@ -616,7 +620,7 @@ export default function V2IDE() {
                 </div>
               );
             })}
-            <div style={{ ...v2Styles.sideHead, marginTop: 12 }}>
+            <div style={{ ...styles.sideHead, marginTop: 12 }}>
               <span>Outline</span>
             </div>
             <div style={{ padding: '0 14px 12px', fontSize: 11, color: '#878a8f', lineHeight: 1.7 }}>
@@ -625,19 +629,18 @@ export default function V2IDE() {
               <div>◇ projects</div>
               <div>◇ skills</div>
             </div>
-            <div style={{ ...v2Styles.sideHead, marginTop: 12 }}>
+            <div style={{ ...styles.sideHead, marginTop: 12 }}>
               <span>Workspaces</span>
             </div>
             <div style={{ padding: '0 6px 12px' }}>
-              {[
-                { id: 'v1', name: 'terminal-cli', cur: false, key: '1' },
-                { id: 'v2', name: 'ide-editor', cur: true, key: '2' },
-                { id: 'v3', name: 'system-monitor', cur: false, key: '3' },
-              ].map(w => (
-                <div
+              {views.map(w => (
+                <button
+                  type="button"
                   key={w.id}
-                  onClick={() => !w.cur && window.__switchVariant && window.__switchVariant(w.id)}
+                  aria-current={w.cur ? 'page' : undefined}
+                  onClick={() => !w.cur && switchTo(w.id)}
                   style={{
+                    width: '100%', border: 'none', font: 'inherit', textAlign: 'left',
                     display: 'flex', alignItems: 'center', gap: 8,
                     padding: '5px 8px', borderRadius: 4,
                     fontSize: 11, cursor: w.cur ? 'default' : 'pointer',
@@ -648,9 +651,9 @@ export default function V2IDE() {
                   onMouseLeave={e => { if (!w.cur) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9aa19f'; } }}
                 >
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: w.cur ? '#7fcf9a' : '#3d4347', flexShrink: 0 }} />
-                  <span style={{ flex: 1 }}>{w.name}</span>
+                  <span style={{ flex: 1 }}>{w.label}</span>
                   <span style={{ color: '#5d6166', fontSize: 9, padding: '1px 4px', border: '1px solid #3c3f44', borderRadius: 2 }}>{w.key}</span>
-                </div>
+                </button>
               ))}
               <a
                 href="/"
@@ -664,24 +667,24 @@ export default function V2IDE() {
           </div>
         )}
 
-        <div style={v2Styles.editorWrap}>
-          <div style={v2Styles.tabs} className="v2-tabs">
+        <div style={styles.editorWrap}>
+          <div style={styles.tabs} className="ide-tabs">
             {openFiles.map(f => (
               <div
                 key={f}
-                style={v2Styles.tab(active === f)}
+                style={styles.tab(active === f)}
                 onClick={() => setActive(f)}
               >
                 <FileIcon name={f.split('/').pop()} />
                 <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {f.split('/').pop()}
                 </span>
-                <span style={v2Styles.tabClose} onClick={e => closeFile(e, f)}>×</span>
+                <span style={styles.tabClose} onClick={e => closeFile(e, f)}>×</span>
               </div>
             ))}
           </div>
           {file && (
-            <div style={v2Styles.breadcrumb} className="v2-breadcrumb">
+            <div style={styles.breadcrumb} className="ide-breadcrumb">
               {file.breadcrumb.map((b, i) => (
                 <React.Fragment key={i}>
                   {i > 0 && <span style={{ color: '#3c3f44' }}>›</span>}
@@ -690,13 +693,13 @@ export default function V2IDE() {
               ))}
             </div>
           )}
-          <div style={{ ...v2Styles.editor, overflowX: 'hidden' }}>
-            <div style={v2Styles.gutter}>
+          <div style={{ ...styles.editor, overflowX: 'hidden' }}>
+            <div style={styles.gutter}>
               {Array.from({ length: lineCount }, (_, i) => (
                 <div key={i} style={{ padding: '0 12px' }}>{i + 1}</div>
               ))}
             </div>
-            <div style={v2Styles.code}>
+            <div style={styles.code}>
               {file ? file.render() : (
                 <div style={{ color: '#878a8f', padding: 40, textAlign: 'center' }}>
                   <div style={{ fontSize: 48, marginBottom: 12 }}>⌨</div>
@@ -708,7 +711,7 @@ export default function V2IDE() {
         </div>
 
         {!isMobile && (
-          <div style={v2Styles.minimap}>
+          <div style={styles.minimap}>
             {MINIMAP.map((len, i) => (
               <div key={i} style={{
                 opacity: len ? 1 : 0,
@@ -723,7 +726,7 @@ export default function V2IDE() {
 
       <div
         style={{
-          ...v2Styles.status,
+          ...styles.status,
           position: 'sticky',
           bottom: 0,
           zIndex: 20,
@@ -737,11 +740,11 @@ export default function V2IDE() {
               }
             : null),
         }}
-        className="v2-status"
+        className="ide-status"
       >
         <div
           style={{
-            ...v2Styles.statusItem,
+            ...styles.statusItem,
             background: '#3574f0',
             color: 'white',
             padding: isMobile ? '6px 8px' : '0 8px',
@@ -754,7 +757,7 @@ export default function V2IDE() {
           <span title={`deployed ${build.date}`}>⎇ {build.branch} @ {build.sha}</span>
         </div>
         {!isMobile && (
-          <div style={v2Styles.statusItem}>
+          <div style={styles.statusItem}>
             <span style={{ color: '#7fa650' }}>● 0</span>
             <span style={{ color: '#e6c07a' }}>⚠ 0</span>
           </div>
@@ -762,7 +765,7 @@ export default function V2IDE() {
         <div
           ref={viewMenuRef}
           style={{
-            ...v2Styles.statusItem,
+            ...styles.statusItem,
             cursor: 'pointer',
             padding: isMobile ? '6px 8px' : '0 8px',
             display: 'flex',
@@ -799,17 +802,13 @@ export default function V2IDE() {
               role="menu"
               aria-label="Switch view"
             >
-              {[
-                { id: 'v1', label: 'terminal', key: '1' },
-                { id: 'v2', label: 'ide', key: '2', cur: true },
-                { id: 'v3', label: 'monitor', key: '3' },
-              ].map((it) => (
+              {views.map((it) => (
                 <button
                   key={it.id}
                   type="button"
                   onClick={() => {
                     setViewMenuOpen(false);
-                    if (!it.cur && window.__switchVariant) window.__switchVariant(it.id);
+                    if (!it.cur) switchTo(it.id);
                   }}
                   disabled={it.cur}
                   style={{
@@ -860,13 +859,13 @@ export default function V2IDE() {
           )}
         </div>
         <div style={isMobile ? { flex: '1 1 auto' } : { flex: 1 }} />
-        {!isMobile && <div style={v2Styles.statusItem}><span>Ln 12, Col 24</span></div>}
-        {!isMobile && <div style={v2Styles.statusItem}><span>Spaces: 2</span></div>}
-        {!isMobile && <div style={v2Styles.statusItem}><span>UTF-8</span></div>}
-        {!isMobile && <div style={v2Styles.statusItem}><span>LF</span></div>}
+        {!isMobile && <div style={styles.statusItem}><span>Ln 12, Col 24</span></div>}
+        {!isMobile && <div style={styles.statusItem}><span>Spaces: 2</span></div>}
+        {!isMobile && <div style={styles.statusItem}><span>UTF-8</span></div>}
+        {!isMobile && <div style={styles.statusItem}><span>LF</span></div>}
         <div
           style={{
-            ...v2Styles.statusItem,
+            ...styles.statusItem,
             padding: isMobile ? '6px 8px' : 0,
             background: isMobile ? '#1e1f22' : 'transparent',
             border: isMobile ? '1px solid #3c3f44' : 'none',
@@ -877,7 +876,7 @@ export default function V2IDE() {
           <span>{file?.lang || 'plaintext'}</span>
         </div>
         {profile.status.open && (
-          <div style={v2Styles.statusItem}>
+          <div style={styles.statusItem}>
             <span style={{ color: '#7fa650', whiteSpace: 'nowrap' }}>● open to work</span>
           </div>
         )}
