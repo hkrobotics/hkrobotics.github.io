@@ -221,8 +221,8 @@ export default function Monitor() {
             </button>
           ))}
           <a
-            href="./about/"
-            title="plain-text version"
+            href="/"
+            title="plain view (home)"
             style={{ fontSize: 10, padding: '4px 8px', borderRadius: 3, color: '#7d8590', border: '1px solid #1c232b', textDecoration: 'none' }}
           >
             txt

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLocalStorage } from 'usehooks-ts';
 import { profile } from './data/profile.js';
 
 // Each view is its own chunk — visitors only download the one they're looking at.
@@ -7,35 +6,34 @@ const Terminal = React.lazy(() => import('./variants/Terminal.jsx'));
 const IDE = React.lazy(() => import('./variants/IDE.jsx'));
 const Monitor = React.lazy(() => import('./variants/Monitor.jsx'));
 
-const STORAGE_KEY = 'portfolio:variant';
-
-// Variant ids (v1/v2/v3) are persisted in localStorage and used in ?view= — keep them stable.
-const variants = {
-  v1: { title: 'Terminal', component: Terminal },
-  v2: { title: 'IDE', component: IDE },
-  v3: { title: 'System Monitor', component: Monitor },
+// Variant ids (v1/v2/v3) are used by the views' switchers and old ?view= links — keep them stable.
+// Each view lives at its own path; the plain-text homepage is at /.
+export const variants = {
+  v1: { title: 'Terminal', path: '/terminal/', component: Terminal },
+  v2: { title: 'IDE', path: '/ide/', component: IDE },
+  v3: { title: 'System Monitor', path: '/monitor/', component: Monitor },
 };
 
-function getVariantFromQuery() {
-  const params = new URLSearchParams(window.location.search);
-  const fromQuery = params.get('view') || params.get('variant');
-  return variants[fromQuery] ? fromQuery : null;
+function variantFromPath(pathname) {
+  const entry = Object.entries(variants).find(([, v]) => pathname.startsWith(v.path));
+  return entry ? entry[0] : 'v1';
 }
 
 export default function App() {
-  const [variant, setVariant] = useLocalStorage(STORAGE_KEY, 'v1');
-  const active = variants[variant] ? variant : 'v1';
-  const ActiveVariant = variants[active].component;
+  const [variant, setVariant] = React.useState(() => variantFromPath(window.location.pathname));
+  const ActiveVariant = variants[variant].component;
 
   React.useEffect(() => {
-    // ?view= overrides once on load; later switches still persist.
-    const fromQuery = getVariantFromQuery();
-    if (fromQuery) setVariant(fromQuery);
-  }, [setVariant]);
+    const onPop = () => setVariant(variantFromPath(window.location.pathname));
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   React.useEffect(() => {
+    // Switch views in place and keep the URL shareable.
     window.__switchVariant = (next) => {
       if (!variants[next]) return;
+      if (window.location.pathname !== variants[next].path) window.history.pushState({}, '', variants[next].path);
       setVariant(next);
     };
 
@@ -53,11 +51,11 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    document.title = `${profile.name} — ${profile.headline} · ${variants[active].title}`;
-  }, [active]);
+    document.title = `${profile.name} — ${profile.headline} · ${variants[variant].title}`;
+  }, [variant]);
 
   return (
-    <main className="portfolio-shell" data-variant={active}>
+    <main className="portfolio-shell" data-variant={variant}>
       <React.Suspense fallback={null}>
         <ActiveVariant />
       </React.Suspense>

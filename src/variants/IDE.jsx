@@ -653,11 +653,11 @@ export default function V2IDE() {
                 </div>
               ))}
               <a
-                href="./about/"
+                href="/"
                 style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 8px', fontSize: 11, color: '#9aa19f', textDecoration: 'none' }}
               >
                 <span style={{ width: 8, textAlign: 'center', flexShrink: 0 }}>≡</span>
-                <span style={{ flex: 1 }}>plain-text.md</span>
+                <span style={{ flex: 1 }}>plain-view.md</span>
                 <span style={{ color: '#5d6166', fontSize: 9 }}>↗</span>
               </a>
             </div>

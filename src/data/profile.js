@@ -17,6 +17,10 @@ export const profile = {
   // Served from public/; resume.hkumar.dev redirects here (Cloudflare redirect rule).
   resume: { url: 'https://hkumar.dev/hemant-kumar-resume.pdf', share: 'https://resume.hkumar.dev', updated: '2026-10' },
 
+  // Cloudflare Web Analytics beacon token (Cloudflare → Analytics & Logs → Web Analytics).
+  // Leave empty to ship no analytics script at all.
+  analytics: { cloudflareToken: '' },
+
   // Shown publicly as "open to …". Flip to false to hide every badge at once.
   status: { open: true, label: 'open to interesting opportunities' },
 

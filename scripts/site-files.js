@@ -1,8 +1,9 @@
 // Build-time generators for everything crawlers and LLMs read, all derived
 // from src/data/profile.js so nothing drifts from the site content:
 //
-//   index.html <head>   title, description, Open Graph, JSON-LD (ProfilePage)
-//   /about/             plain, crawlable HTML version of the whole portfolio
+//   /index.html         the homepage: plain, crawlable HTML version of everything
+//   view <head>s        meta + JSON-LD for /terminal/, /ide/, /monitor/ (app.html)
+//   /about/             redirect to / (the old plain-page URL)
 //   /llms.txt           llmstxt.org index for AI assistants
 //   /llms-full.txt      full profile as Markdown
 //   /sitemap.xml        with lastmod
@@ -24,7 +25,22 @@ export const siteTitle = `${profile.name} — ${profile.headline}`;
 const description = () =>
   `${profile.name} is a ${profile.title.toLowerCase()} with ${experienceLabel()} of experience, focused on React Native: white-label iOS/Android apps, the New Architecture, full-stack web and AWS infrastructure. Based in ${profile.location.city}, ${profile.location.country}.`;
 
-const PAGES = { home: abs('./'), about: abs('about/'), llms: abs('llms.txt'), llmsFull: abs('llms-full.txt') };
+const PAGES = { home: abs('./'), llms: abs('llms.txt'), llmsFull: abs('llms-full.txt') };
+
+// Interactive views, served from app.html. Ids match src/App.jsx.
+export const VIEWS = {
+  v1: { slug: 'terminal', title: 'Terminal' },
+  v2: { slug: 'ide', title: 'IDE' },
+  v3: { slug: 'monitor', title: 'System Monitor' },
+};
+const viewUrl = (id) => abs(`${VIEWS[id].slug}/`);
+
+// Cloudflare Web Analytics beacon — only emitted when a token is configured.
+export function analyticsTag() {
+  const token = profile.analytics?.cloudflareToken;
+  if (!token) return '';
+  return `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token })}'></script>`;
+}
 
 // ── <head> ──────────────────────────────────────────────────────────────────
 
@@ -99,19 +115,20 @@ function metaTags({ pageTitle, pageUrl, buildDate }) {
     <script type="application/ld+json">${JSON.stringify(jsonLd(buildDate, pageUrl, pageTitle))}</script>`;
 }
 
-export const indexHead = (buildDate) => metaTags({ pageTitle: siteTitle, pageUrl: PAGES.home, buildDate });
+export const viewTitle = (id) => `${siteTitle} · ${VIEWS[id].title}`;
+export const viewHead = (buildDate, id) => metaTags({ pageTitle: viewTitle(id), pageUrl: viewUrl(id), buildDate });
 
-// Short no-JS fallback for the app shell; the full content lives at /about/.
-export function indexNoscript() {
+// Short no-JS fallback for the interactive views; the full content is on /.
+export function viewNoscript() {
   return `
     <noscript>
       <h1>${esc(siteTitle)}</h1>
       <p>${esc(profile.summary)}</p>
-      <p><a href="./about/">Read the full portfolio as plain text →</a></p>
+      <p><a href="/">Read the full portfolio →</a></p>
     </noscript>`;
 }
 
-// ── /about/ — plain, semantic, crawlable ────────────────────────────────────
+// ── / — the homepage: plain, semantic, crawlable ────────────────────────────
 
 const ABOUT_CSS = `
   :root { color-scheme: dark; --bg: #0b0d0c; --fg: #d8dad6; --dim: #8a918d; --faint: #232825; --accent: #c8e6a8; --link: #9cc7dc; --mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace; }
@@ -140,7 +157,16 @@ const ABOUT_CSS = `
   .tags span { font: .78rem var(--mono); padding: .1rem .5rem; border: 1px solid var(--faint); border-radius: 3px; }
   button.reveal { all: unset; cursor: pointer; color: var(--link); border-bottom: 1px dotted currentColor; }
   :focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
-  nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font: .85rem var(--mono); }
+  .cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.75rem 0 1rem; }
+  .btn { font: 500 .9rem var(--mono); padding: .55rem 1rem; border-radius: 6px; border: 1px solid var(--faint); color: var(--fg); background: #121614; text-decoration: none; cursor: pointer; transition: border-color .15s, background .15s; }
+  .btn:hover { border-color: #3b5d2c; background: #151b17; color: #fff; }
+  .btn.primary { background: var(--accent); color: #0b0d0c; border-color: var(--accent); }
+  .btn.primary:hover { background: #d8f0bd; color: #0b0d0c; }
+  .views { color: var(--dim); font: .82rem var(--mono); }
+  .views a { margin-left: .6rem; }
+  .activity { display: block; margin-top: .5rem; border-radius: 8px; overflow: hidden; }
+  .activity img { display: block; width: 100%; height: auto; }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
   footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--faint); color: var(--dim); font: .8rem var(--mono); }
   @media (max-width: 30rem) { dl { grid-template-columns: 1fr; gap: .2rem; } dd { margin-bottom: .6rem; } }
   @media print {
@@ -151,9 +177,17 @@ const ABOUT_CSS = `
 
 // Decodes profile.contact on click — same scheme as src/lib/contact.js.
 const REVEAL_SCRIPT = `
+  var decode = function (v) { return atob(v).split('').reverse().join(''); };
+  document.querySelectorAll('button[data-mailto]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var email = decode(b.dataset.mailto);
+      b.textContent = email;
+      location.href = 'mailto:' + email;
+    });
+  });
   document.querySelectorAll('button.reveal').forEach(function (b) {
     b.addEventListener('click', function () {
-      var v = atob(b.dataset.v).split('').reverse().join('');
+      var v = decode(b.dataset.v);
       var a = document.createElement('a');
       a.href = (b.dataset.kind === 'email' ? 'mailto:' : 'tel:') + v;
       a.textContent = v;
@@ -163,8 +197,16 @@ const REVEAL_SCRIPT = `
   });
 `;
 
-export function aboutHtml(buildDate) {
-  const pageTitle = `About ${profile.name} — ${profile.headline}`;
+// Old links like /?view=v3 now land on the homepage — forward them to the view.
+const LEGACY_VIEW_REDIRECT = `(function () {
+    var v = new URLSearchParams(location.search).get('view');
+    var map = ${JSON.stringify(Object.fromEntries(Object.entries(VIEWS).map(([id, v]) => [id, `/${v.slug}/`])))};
+    if (map[v]) location.replace(map[v]);
+  })();`;
+
+export function homeHtml(buildDate) {
+  const pageTitle = siteTitle;
+  const linkedin = profile.links.find((l) => l.id === 'linkedin');
   const experience = profile.experience.map((j) => `
         <article>
           <h3>${esc(j.role)} · ${j.url ? `<a href="${j.url}">${esc(j.company)}</a>` : esc(j.company)}</h3>
@@ -187,8 +229,11 @@ export function aboutHtml(buildDate) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#0b0d0c" />${metaTags({ pageTitle, pageUrl: PAGES.about, buildDate })}
-    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <meta name="theme-color" content="#0b0d0c" />
+    <script>${LEGACY_VIEW_REDIRECT}</script>${metaTags({ pageTitle, pageUrl: PAGES.home, buildDate })}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <style>${ABOUT_CSS}</style>
   </head>
   <body>
@@ -198,11 +243,13 @@ export function aboutHtml(buildDate) {
         <h1>${esc(profile.name)}</h1>
         <p class="role">${esc(profile.headline)} · ${esc(profile.location.city)}, ${esc(profile.location.country)} · remote</p>
         <p>${esc(profile.summary)}</p>
-        <nav aria-label="Other views">
-          <a href="../?view=v1">terminal view</a>
-          <a href="../?view=v2">ide view</a>
-          <a href="../?view=v3">monitor view</a>
-          <a href="${profile.resume.url}">resume.pdf</a>
+        <div class="cta">
+          <button type="button" class="btn primary" data-mailto="${profile.contact.email}">Email me</button>
+          <a class="btn" href="${linkedin.url}" rel="me">LinkedIn</a>
+          <a class="btn" href="${profile.resume.url}">Resume ↓</a>
+        </div>
+        <nav class="views" aria-label="Interactive views">
+          view as:${Object.values(VIEWS).map((v) => `<a href="/${v.slug}/">${v.slug}</a>`).join('')}
         </nav>
       </header>
 
@@ -212,6 +259,13 @@ export function aboutHtml(buildDate) {
 
       <section aria-labelledby="projects">
         <h2 id="projects">Projects</h2>${projects}
+      </section>
+
+      <section aria-labelledby="activity">
+        <h2 id="activity">Activity · last 12 months</h2>
+        <a class="activity" href="/monitor/" aria-label="Open the system monitor view">
+          <img src="/contributions.svg" alt="Contribution heatmap: GitLab and GitHub activity over the last 12 months" width="815" height="243" loading="lazy" />
+        </a>
       </section>
 
       <section aria-labelledby="skills">
@@ -239,10 +293,11 @@ export function aboutHtml(buildDate) {
       </section>
 
       <footer>
-        updated ${buildDate.slice(0, 10)} · <a href="../">hkumar.dev</a> · <a href="../llms.txt">llms.txt</a>
+        updated ${buildDate.slice(0, 10)} · <a href="/llms.txt">llms.txt</a> · <a href="https://github.com/hkrobotics/hkrobotics.github.io">source</a>
       </footer>
     </main>
     <script>${REVEAL_SCRIPT}</script>
+    ${analyticsTag()}
   </body>
 </html>
 `;
@@ -266,7 +321,7 @@ Key facts:
 ## Profile
 
 - [Full profile (Markdown)](${PAGES.llmsFull}): experience, projects, skills, and education in one file
-- [Plain-text portfolio](${PAGES.about}): the same content as semantic HTML
+- [Portfolio homepage](${PAGES.home}): the same content as semantic HTML
 - [Resume (PDF)](${profile.resume.url}): one-page resume
 
 ## Projects
@@ -279,7 +334,7 @@ ${profile.links.map((l) => `- [${l.name}](${l.url})`).join('\n')}
 
 ## Optional
 
-- [Interactive portfolio](${PAGES.home}): terminal, IDE, and system-monitor views of the same content (requires JavaScript)
+- [Interactive views](${viewUrl('v1')}): terminal, IDE (${viewUrl('v2')}), and system-monitor (${viewUrl('v3')}) takes on the same content (requires JavaScript)
 `;
 }
 
@@ -337,7 +392,7 @@ export function sitemapXml(buildDate) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${url(PAGES.home, '1.0')}
-${url(PAGES.about, '0.9')}
+${Object.keys(VIEWS).map((id) => url(viewUrl(id), '0.5')).join('\n')}
 </urlset>
 `;
 }
@@ -364,12 +419,29 @@ export function notFoundHtml() {
       <div><span class="accent">hkumar@portfolio</span><span class="dim">:~$</span> cd <span id="path"></span></div>
       <div class="warn">cd: no such file or directory</div>
       <p class="dim">try one of these instead:</p>
-      <div>› <a href="/">~/</a> <span class="dim">— interactive portfolio</span></div>
-      <div>› <a href="/about/">~/about</a> <span class="dim">— plain-text version</span></div>
+      <div>› <a href="/">~/</a> <span class="dim">— portfolio</span></div>
+      <div>› <a href="/terminal/">~/terminal</a> <span class="dim">— interactive terminal</span></div>
       <div>› <a href="${profile.resume.url}">resume.pdf</a></div>
     </main>
     <script>document.getElementById('path').textContent = location.pathname;</script>
   </body>
+</html>
+`;
+}
+
+// /about/ was the plain page before it became the homepage.
+export function redirectHtml(to) {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moved — ${esc(profile.name)}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${abs(to.replace(/^\//, ''))}" />
+    <meta http-equiv="refresh" content="0; url=${to}" />
+    <script>location.replace('${to}' + location.hash);</script>
+  </head>
+  <body><p>Moved to <a href="${to}">${esc(abs(to.replace(/^\//, '')))}</a>.</p></body>
 </html>
 `;
 }

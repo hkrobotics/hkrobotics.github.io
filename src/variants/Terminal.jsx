@@ -659,8 +659,8 @@ export default function V1Terminal() {
                 <span style={{ color: '#3d4347', fontSize: 10 }}>{key}</span>
               </button>
             ))}
-            <a className="v1-side-btn" href="./about/">
-              <span>≡ plain text</span>
+            <a className="v1-side-btn" href="/">
+              <span>≡ plain view</span>
               <span style={{ color: '#3d4347', fontSize: 10 }}>↗</span>
             </a>
             <div style={v1Styles.sideHead}>shortcuts</div>
@@ -680,7 +680,7 @@ export default function V1Terminal() {
                 ./{c}
               </button>
             ))}
-            <a className="v1-side-item-mobile" href="./about/">≡ plain text</a>
+            <a className="v1-side-item-mobile" href="/">≡ plain view</a>
           </div>
         </div>
 
