@@ -355,9 +355,11 @@
   border-top: 1px dashed #1a1d1e;
 }
 
-/* font-size: inherit keeps the input at the body's 13px on every width. */
+/* 13px like the rest of the terminal; bumped to 16px on narrow widths (below)
+   so iOS doesn't zoom the page when the input is focused. */
 .term-input {
   flex: 1;
+  min-width: 0;
   margin-left: 8px;
   padding: 0;
   background: transparent;
@@ -372,6 +374,7 @@
 .term-input:focus-visible { outline: none; }
 
 .term-caret {
+  flex-shrink: 0;
   display: inline-block;
   width: 8px;
   height: 16px;
@@ -400,6 +403,7 @@
   .term-main { padding: 12px 12px 0; }
   .term-ascii { font-size: 7px; }
   .term-topbar-title { font-size: 10px; }
+  .term-input { font-size: 16px; }
 }
 
 @container (max-width: 420px) {
@@ -407,13 +411,29 @@
 }
 
 /* …then the same rules keyed off data-narrow, for browsers without them. */
-[data-term-root][data-narrow="1"] .term-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-[data-term-root][data-narrow="1"] .term-sidebar { display: flex; gap: 6px; padding: 8px 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #1a1d1e; scrollbar-width: none; }
-[data-term-root][data-narrow="1"] .term-sidebar::-webkit-scrollbar { display: none; }
-[data-term-root][data-narrow="1"] .term-sidebar-desktop-only { display: none; }
-[data-term-root][data-narrow="1"] .term-sidebar-mobile-only { display: flex; gap: 6px; }
-[data-term-root][data-narrow="1"] .term-side-item-mobile { flex-shrink: 0; padding: 5px 10px; border: 1px solid #1f2326; border-radius: 3px; color: #9aa19f; font-size: 11px; white-space: nowrap; cursor: pointer; }
-[data-term-root][data-narrow="1"] .term-main { padding: 12px 12px 0; }
-[data-term-root][data-narrow="1"] .term-ascii { font-size: 7px; }
-[data-term-root][data-narrow="1"] .term-topbar-title { font-size: 10px; }
+[data-term-root][data-narrow="1"] .term-body,
+[data-term-root][data-narrow="2"] .term-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+[data-term-root][data-narrow="1"] .term-sidebar,
+[data-term-root][data-narrow="2"] .term-sidebar { display: flex; gap: 6px; padding: 8px 10px; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #1a1d1e; scrollbar-width: none; }
+[data-term-root][data-narrow="1"] .term-sidebar::-webkit-scrollbar,
+[data-term-root][data-narrow="2"] .term-sidebar::-webkit-scrollbar { display: none; }
+[data-term-root][data-narrow="1"] .term-sidebar-desktop-only,
+[data-term-root][data-narrow="2"] .term-sidebar-desktop-only { display: none; }
+[data-term-root][data-narrow="1"] .term-sidebar-mobile-only,
+[data-term-root][data-narrow="2"] .term-sidebar-mobile-only { display: flex; gap: 6px; }
+[data-term-root][data-narrow="1"] .term-side-item-mobile,
+[data-term-root][data-narrow="2"] .term-side-item-mobile { flex-shrink: 0; padding: 5px 10px; border: 1px solid #1f2326; border-radius: 3px; color: #9aa19f; font-size: 11px; white-space: nowrap; cursor: pointer; }
+[data-term-root][data-narrow="1"] .term-main,
+[data-term-root][data-narrow="2"] .term-main { padding: 12px 12px 0; }
+[data-term-root][data-narrow="1"] .term-ascii,
+[data-term-root][data-narrow="2"] .term-ascii { font-size: 7px; }
+[data-term-root][data-narrow="1"] .term-topbar-title,
+[data-term-root][data-narrow="2"] .term-topbar-title { font-size: 10px; }
+[data-term-root][data-narrow="1"] .term-input,
+[data-term-root][data-narrow="2"] .term-input { font-size: 16px; }
 [data-term-root][data-narrow="2"] .term-ascii { font-size: 5.5px; }
+
+/* Short screens (split-view laptops, phones in landscape): tighter title bar. */
+@media (max-height: 720px) {
+  .term-topbar { gap: 6px; }
+}
