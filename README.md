@@ -24,6 +24,7 @@ Generated at build time from `profile.js` by [`scripts/site-files.js`](scripts/s
   render client-side, and the terminal shows little until you type)
 - `/llms.txt` and `/llms-full.txt` — [llmstxt.org](https://llmstxt.org) index + full Markdown profile
 - `/sitemap.xml` (with `lastmod`) and `/404.html`
+- `/contributions.svg` + `/contributions-light.svg` — heatmap image for the GitHub profile README
 
 Fonts are self-hosted via Fontsource and each view is lazy-loaded.
 
