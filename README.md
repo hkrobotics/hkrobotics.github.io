@@ -46,6 +46,7 @@ bun run dev              # local dev server
 bun run build            # production build → dist/
 bun run fetch:activity   # refresh src/data/activity.json
 bun run og-image         # render design/og-image.svg → public/og-image.png
+bun run icons            # regenerate favicon + app icons (scripts/render-icons.mjs)
 ```
 
 ## Layout

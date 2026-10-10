@@ -188,6 +188,7 @@ export function homeHtml(buildDate) {
     <meta name="theme-color" content="#0b0d0c" />
     <script>${LEGACY_VIEW_REDIRECT}</script>${metaTags({ pageTitle, pageUrl: PAGES.home, buildDate })}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <style>${homeCss()}</style>
