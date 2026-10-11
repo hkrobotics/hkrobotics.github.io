@@ -42,6 +42,11 @@ jobs:
       - name: Fetch contribution activity
         run: bun run fetch:activity
 
+      # Share images include the heatmap; on failure the committed PNGs are used.
+      - name: Render social images
+        run: bun run images
+        continue-on-error: true
+
       - name: Build
         run: bun run build
 
