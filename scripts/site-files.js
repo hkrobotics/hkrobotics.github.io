@@ -61,27 +61,28 @@ function person() {
   };
 }
 
+// One JSON-LD block per entity, each with a top-level @type: equivalent to an
+// @graph for Google, but readable by simpler parsers and AI crawlers too.
 function jsonLd(buildDate, pageUrl, pageTitle) {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'ProfilePage',
-        '@id': `${pageUrl}#page`,
-        url: pageUrl,
-        name: pageTitle,
-        dateModified: buildDate,
-        mainEntity: { '@id': `${PAGES.home}#person` },
-      },
-      person(),
-      { '@type': 'WebSite', '@id': `${PAGES.home}#website`, name: profile.name, url: PAGES.home, inLanguage: 'en' },
-    ],
-  };
+  const context = { '@context': 'https://schema.org' };
+  return [
+    {
+      ...context,
+      '@type': 'ProfilePage',
+      '@id': `${pageUrl}#page`,
+      url: pageUrl,
+      name: pageTitle,
+      dateModified: buildDate,
+      mainEntity: { '@id': `${PAGES.home}#person` },
+    },
+    { ...context, ...person() },
+    { ...context, '@type': 'WebSite', '@id': `${PAGES.home}#website`, name: profile.name, url: PAGES.home, inLanguage: 'en' },
+  ];
 }
 
-function metaTags({ pageTitle, pageUrl, buildDate }) {
+function metaTags({ pageTitle, pageUrl, buildDate, image = 'og-image.png' }) {
   const desc = description();
-  const ogImage = abs('og-image.png');
+  const ogImage = abs(image);
   return `
     <title>${esc(pageTitle)}</title>
     <meta name="description" content="${esc(desc)}" />
@@ -102,17 +103,18 @@ function metaTags({ pageTitle, pageUrl, buildDate }) {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content="${esc(siteTitle)}" />
+    <meta property="og:image:alt" content="${esc(pageTitle)}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@hkumarDev" />
     <meta name="twitter:title" content="${esc(pageTitle)}" />
     <meta name="twitter:description" content="${esc(desc)}" />
     <meta name="twitter:image" content="${ogImage}" />
-    <script type="application/ld+json">${JSON.stringify(jsonLd(buildDate, pageUrl, pageTitle))}</script>`;
+    ${jsonLd(buildDate, pageUrl, pageTitle).map((data) => `<script type="application/ld+json">${JSON.stringify(data)}</script>`).join('\n    ')}`;
 }
 
 export const viewTitle = (id) => `${siteTitle} · ${viewById(id).title}`;
-export const viewHead = (buildDate, id) => metaTags({ pageTitle: viewTitle(id), pageUrl: viewUrl(id), buildDate });
+export const viewHead = (buildDate, id) =>
+  metaTags({ pageTitle: viewTitle(id), pageUrl: viewUrl(id), buildDate, image: `og/${id}.png` });
 
 // Short no-JS fallback for the interactive views; the full content is on /.
 export function viewNoscript() {

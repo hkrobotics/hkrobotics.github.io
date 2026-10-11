@@ -1,11 +1,13 @@
-// Renders design/og-image.svg → public/og-image.png (1200×630).
+// Renders every social image defined in scripts/social-images.js to PNG.
 // Downloads Inter + JetBrains Mono from Google Fonts into a local cache so the
 // output is identical on any machine, regardless of installed fonts.
 //
-// Usage: bun run og-image
+// Usage: bun run images   (CI runs it before each build to refresh the heatmaps)
 
-import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
+import { mkdir, writeFile, access } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
+import { IMAGES, renderSvg } from './social-images.js';
 
 const root = new URL('..', import.meta.url);
 const cacheDir = new URL('node_modules/.cache/og-fonts/', root);
@@ -31,10 +33,13 @@ async function fontFiles() {
   return files;
 }
 
-const svg = await readFile(new URL('design/og-image.svg', root), 'utf8');
-const resvg = new Resvg(svg, {
-  fitTo: { mode: 'width', value: 1200 },
-  font: { fontFiles: await fontFiles(), loadSystemFonts: false, defaultFontFamily: 'JetBrains Mono' },
-});
-await writeFile(new URL('public/og-image.png', root), resvg.render().asPng());
-console.log('wrote public/og-image.png');
+const font = { fontFiles: await fontFiles(), loadSystemFonts: false, defaultFontFamily: 'JetBrains Mono' };
+const only = process.argv.slice(2);
+
+for (const image of IMAGES) {
+  if (only.length && !only.some((name) => image.file.includes(name))) continue;
+  const out = new URL(image.file, root);
+  await mkdir(dirname(out.pathname), { recursive: true });
+  await writeFile(out, new Resvg(renderSvg(image), { font }).render().asPng());
+  console.log(`wrote ${image.file}`);
+}

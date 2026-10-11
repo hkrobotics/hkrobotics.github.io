@@ -34,25 +34,23 @@ const MONO = `ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospac
 const dayKey = (d) => d.toISOString().slice(0, 10);
 const sum = (map) => Object.values(map).reduce((s, n) => s + n, 0);
 
-export function contributionsSvg(theme = 'dark', now = new Date()) {
-  const t = THEMES[theme];
+// Last 53 weeks (Sunday → Saturday columns, ending this week, UTC) with a
+// 0–4 colour level per day relative to the busiest day. Future days are
+// omitted. Shared with the social images (scripts/social-images.js).
+export function activityGrid(now = new Date()) {
   const merged = { ...activity.gitlab };
   for (const [day, n] of Object.entries(activity.github)) merged[day] = (merged[day] || 0) + n;
-  const max = Math.max(1, ...Object.values(merged));
-
+  const peak = Math.max(1, ...Object.values(merged));
   const level = (c) => {
     if (!c) return 0;
-    const pct = c / max;
+    const pct = c / peak;
     return pct < 0.15 ? 1 : pct < 0.35 ? 2 : pct < 0.65 ? 3 : 4;
   };
 
-  // Grid ends on the Saturday of the current week (UTC), like GitHub's.
   const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   end.setUTCDate(end.getUTCDate() + (6 - end.getUTCDay()));
 
   const cells = [];
-  const months = [];
-  let lastMonth = -1;
   for (let w = 0; w < WEEKS; w++) {
     for (let d = 0; d < 7; d++) {
       const dt = new Date(end);
@@ -60,13 +58,35 @@ export function contributionsSvg(theme = 'dark', now = new Date()) {
       if (dt > now) continue;
       const key = dayKey(dt);
       const count = merged[key] || 0;
-      const x = GRID_LEFT + w * (CELL + GAP);
-      const y = GRID_TOP + d * (CELL + GAP);
-      cells.push(`<rect x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="2" fill="${t.palette[level(count)]}"><title>${count} contribution${count === 1 ? '' : 's'} on ${key}</title></rect>`);
-      if (d === 0 && dt.getUTCMonth() !== lastMonth) {
-        lastMonth = dt.getUTCMonth();
-        if (w < WEEKS - 2) months.push(`<text x="${x}" y="${GRID_TOP - 8}">${dt.toLocaleString('en', { month: 'short', timeZone: 'UTC' })}</text>`);
-      }
+      cells.push({ w, d, dt, key, count, level: level(count) });
+    }
+  }
+
+  return {
+    cells,
+    total: sum(merged),
+    gitlab: sum(activity.gitlab),
+    github: sum(activity.github),
+    activeDays: Object.keys(merged).length,
+    peak,
+    synced: activity.fetchedAt.slice(0, 10),
+  };
+}
+
+export function contributionsSvg(theme = 'dark', now = new Date()) {
+  const t = THEMES[theme];
+  const grid = activityGrid(now);
+
+  const cells = [];
+  const months = [];
+  let lastMonth = -1;
+  for (const { w, d, dt, key, count, level } of grid.cells) {
+    const x = GRID_LEFT + w * (CELL + GAP);
+    const y = GRID_TOP + d * (CELL + GAP);
+    cells.push(`<rect x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="2" fill="${t.palette[level]}"><title>${count} contribution${count === 1 ? '' : 's'} on ${key}</title></rect>`);
+    if (d === 0 && dt.getUTCMonth() !== lastMonth) {
+      lastMonth = dt.getUTCMonth();
+      if (w < WEEKS - 2) months.push(`<text x="${x}" y="${GRID_TOP - 8}">${dt.toLocaleString('en', { month: 'short', timeZone: 'UTC' })}</text>`);
     }
   }
 
@@ -75,18 +95,17 @@ export function contributionsSvg(theme = 'dark', now = new Date()) {
   const height = gridBottom + 44;
 
   const stats = [
-    ['contributions · 12mo', sum(merged).toLocaleString('en'), t.text],
-    ['gitlab', sum(activity.gitlab).toLocaleString('en'), t.gitlab],
-    ['github', sum(activity.github).toLocaleString('en'), t.github],
-    ['active days', Object.keys(merged).length, t.label],
-    ['peak day', max, t.peak],
+    ['contributions · 12mo', grid.total.toLocaleString('en'), t.text],
+    ['gitlab', grid.gitlab.toLocaleString('en'), t.gitlab],
+    ['github', grid.github.toLocaleString('en'), t.github],
+    ['active days', grid.activeDays, t.label],
+    ['peak day', grid.peak, t.peak],
   ];
   const statX = [PAD, PAD + 170, PAD + 270, PAD + 370, PAD + 480];
 
   const legendX = width - PAD - 5 * (CELL + 3) - 34;
-  const synced = activity.fetchedAt.slice(0, 10);
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Hemant Kumar — ${sum(merged)} contributions in the last 12 months across GitLab and GitHub">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Hemant Kumar — ${grid.total} contributions in the last 12 months across GitLab and GitHub">
   <title>Contributions · last 12 months · GitLab + GitHub</title>
   <rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="8" fill="${t.bg}" stroke="${t.border}"/>
   <g font-family="${FONT}">
@@ -103,7 +122,7 @@ export function contributionsSvg(theme = 'dark', now = new Date()) {
     ${cells.join('\n    ')}
   </g>
   <g font-family="${FONT}" font-size="10" fill="${t.label}">
-    <text x="${PAD}" y="${gridBottom + 26}">gitlab + github · synced ${synced} · hkumar.dev</text>
+    <text x="${PAD}" y="${gridBottom + 26}">gitlab + github · synced ${grid.synced} · hkumar.dev</text>
     <text x="${legendX - 6}" y="${gridBottom + 26}" text-anchor="end">Less</text>
     ${t.palette.map((c, i) => `<rect x="${legendX + i * (CELL + 3)}" y="${gridBottom + 17}" width="${CELL}" height="${CELL}" rx="2" fill="${c}"/>`).join('')}
     <text x="${legendX + 5 * (CELL + 3) + 3}" y="${gridBottom + 26}">More</text>

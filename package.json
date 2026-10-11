@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "fetch:activity": "node scripts/fetch-activity.mjs",
-    "og-image": "node scripts/render-og-image.mjs",
+    "images": "node scripts/render-images.mjs",
     "icons": "node scripts/render-icons.mjs"
   },
   "dependencies": {

@@ -45,7 +45,7 @@ bun install
 bun run dev              # local dev server
 bun run build            # production build → dist/
 bun run fetch:activity   # refresh src/data/activity.json
-bun run og-image         # render design/og-image.svg → public/og-image.png
+bun run images           # render share images (og-image, og/*, design/exports/*) — scripts/social-images.js
 bun run icons            # regenerate favicon + app icons (scripts/render-icons.mjs)
 ```
 
@@ -58,8 +58,8 @@ src/
   components/  shared UI, each with its own .css (ContribHeatmap, RevealContact, WindowControls)
   styles/      global.css (app shell), home.css (homepage, inlined at build)
   lib/         helpers (dates, activity, contact decoding, build info, view context, cx)
-scripts/       build-time scripts (activity fetch, SEO/llms.txt pages, og-image)
-design/        source SVGs
+scripts/       build-time scripts (activity fetch, SEO/llms.txt pages, social images, icons)
+design/        exports/: off-site images (LinkedIn banner, GitHub repo preview)
 public/        static files; v0/ is the archived first portfolio, v1/ redirects to /
 ```
 
