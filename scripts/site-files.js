@@ -9,25 +9,30 @@
 //   /sitemap.xml        with lastmod
 //   /404.html           GitHub Pages not-found page
 //
+// Blog pages live in scripts/blog-pages.js and reuse the head/page helpers here.
 // Used by the `site-files` plugin in vite.config.js.
 
 import { readFileSync } from 'node:fs';
 import { profile } from '../src/data/profile.js';
 import { experienceLabel, formatRange } from '../src/lib/dates.js';
 import { VIEWS, viewById } from '../src/data/views.js';
+import { posts } from './blog.js';
 
-const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const abs = (path) => new URL(path, profile.site).href;
+export const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+export const abs = (path) => new URL(path, profile.site).href;
 const range = (from, to) => formatRange(from, to, { capital: true }).replace(' — ', ' – ');
 const host = (url) => url.replace(/^https:\/\/(www\.)?|\/$/g, '');
 const current = profile.experience[0];
 
 export const siteTitle = `${profile.name} — ${profile.headline}`;
 
-const description = () =>
+export const siteDescription = () =>
   `${profile.name} is a ${profile.title.toLowerCase()} with ${experienceLabel()} of experience, focused on React Native: white-label iOS/Android apps, the New Architecture, full-stack web and AWS infrastructure. Based in ${profile.location.city}, ${profile.location.country}.`;
 
-const PAGES = { home: abs('./'), llms: abs('llms.txt'), llmsFull: abs('llms-full.txt') };
+export const PAGES = {
+  home: abs('./'), llms: abs('llms.txt'), llmsFull: abs('llms-full.txt'),
+  blog: abs('blog/'), feed: abs('blog/feed.xml'),
+};
 
 const viewUrl = (id) => abs(viewById(id).path.slice(1));
 
@@ -40,7 +45,7 @@ export function analyticsTag() {
 
 // ── <head> ──────────────────────────────────────────────────────────────────
 
-function person() {
+export function person() {
   return {
     '@type': 'Person',
     '@id': `${PAGES.home}#person`,
@@ -80,8 +85,19 @@ function jsonLd(buildDate, pageUrl, pageTitle) {
   ];
 }
 
-function metaTags({ pageTitle, pageUrl, buildDate, image = 'og-image.png' }) {
-  const desc = description();
+const profileOg = () => `
+    <meta property="og:type" content="profile" />
+    <meta property="profile:first_name" content="${esc(profile.name.split(' ')[0])}" />
+    <meta property="profile:last_name" content="${esc(profile.name.split(' ').slice(1).join(' '))}" />
+    <meta property="profile:username" content="${profile.handle}" />`;
+
+// Defaults describe the profile pages; blog pages pass their own description,
+// og:type block and JSON-LD.
+export function metaTags({
+  pageTitle, pageUrl, buildDate, image = 'og-image.png',
+  description = siteDescription(), og = profileOg(), ld = jsonLd(buildDate, pageUrl, pageTitle),
+}) {
+  const desc = description;
   const ogImage = abs(image);
   return `
     <title>${esc(pageTitle)}</title>
@@ -90,12 +106,9 @@ function metaTags({ pageTitle, pageUrl, buildDate, image = 'og-image.png' }) {
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="${pageUrl}" />
     <link rel="alternate" type="text/plain" title="llms.txt" href="${PAGES.llms}" />
+    <link rel="alternate" type="application/rss+xml" title="${esc(profile.name)} — blog" href="${PAGES.feed}" />
     <meta property="og:site_name" content="${esc(profile.name)}" />
-    <meta property="og:locale" content="en_IN" />
-    <meta property="og:type" content="profile" />
-    <meta property="profile:first_name" content="${esc(profile.name.split(' ')[0])}" />
-    <meta property="profile:last_name" content="${esc(profile.name.split(' ').slice(1).join(' '))}" />
-    <meta property="profile:username" content="${profile.handle}" />
+    <meta property="og:locale" content="en_IN" />${og}
     <meta property="og:url" content="${pageUrl}" />
     <meta property="og:title" content="${esc(pageTitle)}" />
     <meta property="og:description" content="${esc(desc)}" />
@@ -109,7 +122,7 @@ function metaTags({ pageTitle, pageUrl, buildDate, image = 'og-image.png' }) {
     <meta name="twitter:title" content="${esc(pageTitle)}" />
     <meta name="twitter:description" content="${esc(desc)}" />
     <meta name="twitter:image" content="${ogImage}" />
-    ${jsonLd(buildDate, pageUrl, pageTitle).map((data) => `<script type="application/ld+json">${JSON.stringify(data)}</script>`).join('\n    ')}`;
+    ${ld.map((data) => `<script type="application/ld+json">${JSON.stringify(data)}</script>`).join('\n    ')}`;
 }
 
 export const viewTitle = (id) => `${siteTitle} · ${viewById(id).title}`;
@@ -126,11 +139,41 @@ export function viewNoscript() {
     </noscript>`;
 }
 
-// ── / — the homepage: plain, semantic, crawlable ────────────────────────────
+// ── Static page shell (homepage + blog) ─────────────────────────────────────
 
-// Homepage styles live in a real stylesheet, inlined so the page needs no extra request.
+// Styles live in real stylesheets, inlined so pages need no extra request.
 // Read on every call so the dev server picks up edits without a restart.
-const homeCss = () => readFileSync(new URL('../src/styles/home.css', import.meta.url), 'utf8');
+export const css = (name) => readFileSync(new URL(`../src/styles/${name}.css`, import.meta.url), 'utf8');
+
+export const page = ({ head, styles = ['home'], body, scripts = '' }) => `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0b0d0c" />${head}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <style>${styles.map(css).join('\n')}</style>
+  </head>
+  <body>
+    <main>${body}
+    </main>${scripts}
+    ${analyticsTag()}
+  </body>
+</html>
+`;
+
+export const footer = (buildDate) => `
+      <footer>
+        updated ${buildDate.slice(0, 10)} · <a href="/blog/">blog</a> · <a href="/blog/feed.xml">rss</a> · <a href="/llms.txt">llms.txt</a> · <a href="https://github.com/hkrobotics/hkrobotics.github.io">source</a>
+      </footer>`;
+
+export const shortDate = (iso) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+// ── / — the homepage: plain, semantic, crawlable ────────────────────────────
 
 // Decodes profile.contact on click — same scheme as src/lib/contact.js.
 const REVEAL_SCRIPT = `
@@ -182,21 +225,17 @@ export function homeHtml(buildDate) {
           <dt>${esc(g.group)}</dt>
           <dd class="tags">${g.items.map((i) => `<span>${esc(i)}</span>`).join('')}</dd>`).join('');
 
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#0b0d0c" />
-    <script>${LEGACY_VIEW_REDIRECT}</script>${metaTags({ pageTitle, pageUrl: PAGES.home, buildDate })}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="apple-touch-icon" href="/icon-180.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <style>${homeCss()}</style>
-  </head>
-  <body>
-    <main>
+  const writing = posts().slice(0, 3).map((p) => `
+        <article>
+          <h3><a href="${p.path}">${esc(p.title)}</a></h3>
+          <p class="meta">${shortDate(p.date)} · ${p.minutes} min read</p>
+          <p>${esc(p.summary)}</p>
+        </article>`).join('');
+
+  return page({
+    head: `
+    <script>${LEGACY_VIEW_REDIRECT}</script>${metaTags({ pageTitle, pageUrl: PAGES.home, buildDate })}`,
+    body: `
       <header>
         <p class="prompt"><b>hkumar@portfolio</b>:~$ cat about.md</p>
         <h1>${esc(profile.name)}</h1>
@@ -219,7 +258,12 @@ export function homeHtml(buildDate) {
       <section aria-labelledby="projects">
         <h2 id="projects">Projects</h2>${projects}
       </section>
-
+${writing && `
+      <section aria-labelledby="writing">
+        <h2 id="writing">Writing</h2>${writing}
+        <p class="more"><a href="/blog/">All posts →</a></p>
+      </section>
+`}
       <section aria-labelledby="activity">
         <h2 id="activity">Activity · last 12 months</h2>
         <a class="activity" href="/monitor/" aria-label="Open the system monitor view">
@@ -250,19 +294,24 @@ export function homeHtml(buildDate) {
           <dt>location</dt><dd>${esc(profile.location.city)}, ${esc(profile.location.country)} · remote · ${profile.location.tz}</dd>
         </dl>
       </section>
-
-      <footer>
-        updated ${buildDate.slice(0, 10)} · <a href="/llms.txt">llms.txt</a> · <a href="https://github.com/hkrobotics/hkrobotics.github.io">source</a>
-      </footer>
-    </main>
-    <script>${REVEAL_SCRIPT}</script>
-    ${analyticsTag()}
-  </body>
-</html>
-`;
+${footer(buildDate)}`,
+    scripts: `
+    <script>${REVEAL_SCRIPT}</script>`,
+  });
 }
 
 // ── llms.txt (https://llmstxt.org) ──────────────────────────────────────────
+
+// Posts link to their Markdown source (/blog/<slug>/index.md), the llms.txt convention.
+const blogLinks = () => {
+  const list = posts();
+  if (!list.length) return '';
+  return `
+## Writing
+
+${list.map((p) => `- [${p.title}](${abs(`${p.path.slice(1)}index.md`)}): ${p.summary}`).join('\n')}
+`;
+};
 
 export function llmsTxt() {
   return `# ${profile.name}
@@ -286,7 +335,7 @@ Key facts:
 ## Projects
 
 ${profile.projects.map((p) => `- [${p.name}](${p.url}): ${p.tagline}`).join('\n')}
-
+${blogLinks()}
 ## Links
 
 ${profile.links.map((l) => `- [${l.name}](${l.url})`).join('\n')}
@@ -329,7 +378,7 @@ Stack: ${p.stack.join(', ')}
 ## Skills
 
 ${profile.skills.map((g) => `- **${g.group}:** ${g.items.join(', ')}`).join('\n')}
-
+${blogLinks()}
 ## Education
 
 ${profile.education.degree}, ${profile.education.school} (${profile.education.from}–${profile.education.to}) · CGPA ${profile.education.cgpa}
@@ -347,11 +396,13 @@ Generated ${buildDate.slice(0, 10)} from ${PAGES.home}
 
 export function sitemapXml(buildDate) {
   const day = buildDate.slice(0, 10);
-  const url = (loc, priority) => `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${day}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
+  const url = (loc, priority, lastmod = day) => `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n  </url>`;
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${url(PAGES.home, '1.0')}
 ${VIEWS.map((v) => url(viewUrl(v.id), '0.5')).join('\n')}
+${url(PAGES.blog, '0.7')}
+${posts().map((p) => url(abs(p.path.slice(1)), '0.8', p.updated)).join('\n')}
 </urlset>
 `;
 }
@@ -380,6 +431,7 @@ export function notFoundHtml() {
       <p class="dim">try one of these instead:</p>
       <div>› <a href="/">~/</a> <span class="dim">— portfolio</span></div>
       <div>› <a href="/terminal/">~/terminal</a> <span class="dim">— interactive terminal</span></div>
+      <div>› <a href="/blog/">~/blog</a> <span class="dim">— writing</span></div>
       <div>› <a href="${profile.resume.url}">resume.pdf</a></div>
     </main>
     <script>document.getElementById('path').textContent = location.pathname;</script>

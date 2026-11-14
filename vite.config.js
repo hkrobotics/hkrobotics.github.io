@@ -9,6 +9,7 @@ import {
   analyticsTag, homeHtml, llmsFullTxt, llmsTxt, notFoundHtml, redirectHtml,
   sitemapXml, viewHead, viewNoscript, viewTitle,
 } from './scripts/site-files.js';
+import { blogFiles } from './scripts/blog-pages.js';
 
 const git = (cmd, fallback) => {
   try { return execSync(`git ${cmd}`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return fallback; }
@@ -20,7 +21,7 @@ const buildInfo = {
   date: new Date().toISOString(),
 };
 
-// Generated pages, keyed by output path. See scripts/site-files.js.
+// Generated pages, keyed by output path. See scripts/site-files.js and scripts/blog-pages.js.
 const generatedFiles = () => ({
   'index.html': { type: 'text/html', body: homeHtml(buildInfo.date) },
   'about/index.html': { type: 'text/html', body: redirectHtml('/') },
@@ -31,6 +32,7 @@ const generatedFiles = () => ({
   // Embedded in the GitHub profile README (refreshed by the daily build).
   'contributions.svg': { type: 'image/svg+xml', body: contributionsSvg('dark') },
   'contributions-light.svg': { type: 'image/svg+xml', body: contributionsSvg('light') },
+  ...blogFiles(buildInfo.date),
 });
 
 // Fills the <!-- profile:* --> markers in app.html for one interactive view.
@@ -42,7 +44,7 @@ const fillView = (html, id) => html
 
 const viewForUrl = (url) => VIEWS.find((v) => url === v.path || url === v.path.slice(0, -1))?.id;
 
-// Homepage + generated files from src/data/profile.js; app.html becomes
+// Homepage, blog + generated files from src/data/profile.js and content/blog/; app.html becomes
 // /terminal/, /ide/ and /monitor/.
 function siteFilesPlugin() {
   let outDir;
@@ -61,8 +63,10 @@ function siteFilesPlugin() {
           res.end(fillView(await server.transformIndexHtml(url, raw), view));
           return;
         }
-        const path = url === '/' ? 'index.html' : url.replace(/^\//, '').replace(/^about\/?$/, 'about/index.html');
-        const file = generatedFiles()[path];
+        const files = generatedFiles();
+        const path = url.slice(1);
+        // Directory URLs (with or without the trailing slash) serve their index.html.
+        const file = files[path] || files[`${path.replace(/\/$/, '')}/index.html`.replace(/^\//, '')];
         if (!file) return next();
         res.setHeader('content-type', `${file.type}; charset=utf-8`);
         res.end(file.body);
