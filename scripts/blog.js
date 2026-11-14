@@ -61,7 +61,7 @@ function codeBlock({ text, lang: info }) {
   });
   const label = title ?? (lang === 'text' ? '' : lang);
   return `<figure class="code">
-  <figcaption><span>${esc(label)}</span><button type="button" class="copy" aria-label="Copy code">copy</button></figcaption>
+  <figcaption><span>${esc(label)}</span><button type="button" class="copy" aria-live="polite">copy</button></figcaption>
   ${html}
 </figure>\n`;
 }

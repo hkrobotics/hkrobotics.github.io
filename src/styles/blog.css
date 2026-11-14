@@ -1,22 +1,31 @@
 /* Blog post styles — inlined after home.css by scripts/blog-pages.js. */
-:root { --panel: #101311; --code-border: #1c221e; }
+:root { --panel: #101311; --code-border: #1c221e; --ease-out: cubic-bezier(.23, 1, .32, 1); }
 
 .prompt a { color: inherit; text-decoration: none; }
 .post header h1 { font-size: clamp(1.9rem, 5.5vw, 2.5rem); text-wrap: balance; }
-.post header .meta { margin-top: .6rem; }
+.post header .meta { margin-top: .6rem; font-variant-numeric: tabular-nums; }
 
-.prose { margin-top: 2rem; font-size: 1.0625rem; }
+.prose { margin-top: 2rem; font-size: 1.0625rem; -webkit-font-smoothing: antialiased; }
 .prose > * + * { margin-top: 1.1rem; }
 .prose p, .prose ul, .prose ol { margin-bottom: 0; }
+.prose p, .prose li { text-wrap: pretty; }  /* no one-word last lines */
 .prose li { margin: .35rem 0; }
 .prose ol li::marker { content: counter(list-item) ". "; color: var(--dim); font: .9em var(--mono); }
 .prose strong { color: #f2f3f1; font-weight: 600; }
+.prose ::selection { background: #3b5d2c; color: #f2f3f1; }
 
 /* Post sections need real hierarchy, unlike the homepage's mono h2 labels. */
-.prose h2 { font: 600 1.35rem/1.3 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; text-transform: none; letter-spacing: -.01em; color: #f2f3f1; margin-top: 3rem; padding-bottom: .4rem; }
-.prose h3 { margin-top: 2rem; }
-.prose h2 a, .prose h3 a { color: inherit; text-decoration: none; }
-.prose h2 a:hover, .prose h3 a:hover { color: var(--accent); }
+.prose h2 { font: 600 1.35rem/1.3 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; text-transform: none; letter-spacing: -.01em; color: #f2f3f1; margin-top: 3rem; padding-bottom: .4rem; text-wrap: balance; }
+.prose h3 { margin-top: 2rem; text-wrap: balance; }
+.prose :is(h2, h3) { scroll-margin-top: 1.5rem; }  /* #anchor jumps keep breathing room */
+
+/* Heading permalinks: a "#" that fades in beside the heading, pointer devices only. */
+.prose :is(h2, h3) a { position: relative; color: inherit; text-decoration: none; }
+.prose :is(h2, h3) a::before { content: "#"; position: absolute; right: 100%; padding-right: .4em; color: var(--dim); font-weight: 400; opacity: 0; transition: opacity 150ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .prose :is(h2, h3) a:hover::before { opacity: 1; }
+}
+.prose :is(h2, h3) a:focus-visible::before { opacity: 1; }
 
 .prose :not(pre) > code { font: .88em var(--mono); padding: .1em .35em; border-radius: 4px; background: var(--panel); border: 1px solid var(--code-border); overflow-wrap: anywhere; }
 
@@ -24,7 +33,8 @@
 
 .prose blockquote { margin: 1.5rem 0 0; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); color: var(--dim); }
 
-.prose table { width: 100%; border-collapse: collapse; font-size: .92rem; display: block; overflow-x: auto; }
+/* Wide content scrolls sideways without triggering the browser's back-swipe. */
+.prose table { width: 100%; border-collapse: collapse; font-size: .92rem; display: block; overflow-x: auto; overscroll-behavior-x: contain; }
 .prose th, .prose td { text-align: left; padding: .45rem .9rem .45rem 0; border-bottom: 1px solid var(--faint); vertical-align: top; }
 .prose th { color: var(--dim); font: 500 .75rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 
@@ -33,13 +43,30 @@
 /* Code blocks: a caption bar with the file name and a copy button. */
 figure.code { margin: 1.5rem 0 0; border: 1px solid var(--code-border); border-radius: 8px; overflow: hidden; background: var(--panel); }
 figure.code figcaption { display: flex; justify-content: space-between; align-items: center; padding: .4rem .5rem .4rem .9rem; border-bottom: 1px solid var(--code-border); color: var(--dim); font: .75rem var(--mono); }
-figure.code .copy { all: unset; cursor: pointer; padding: .15rem .5rem; border-radius: 4px; color: var(--dim); }
-figure.code .copy:hover { color: var(--fg); background: #181d1a; }
-figure.code .copy:focus-visible { outline: 1px solid var(--accent); }
-figure.code pre { margin: 0; padding: .9rem; overflow-x: auto; font: .82rem/1.6 var(--mono); tab-size: 2; }
+figure.code pre { margin: 0; padding: .9rem; overflow-x: auto; overscroll-behavior-x: contain; font: .82rem/1.6 var(--mono); tab-size: 2; }
 figure.code code { font: inherit; }
 
+/* Copy button: presses in on click; "copied" turns accent so the change reads at a glance. */
+figure.code .copy {
+  all: unset; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  padding: .15rem .5rem; border-radius: 4px; color: var(--dim);
+  transition: color 150ms ease, background-color 150ms ease, transform 160ms var(--ease-out);
+}
+figure.code .copy:active { transform: scale(.96); }
+figure.code .copy:focus-visible { outline: 1px solid var(--accent); }
+figure.code .copy[data-state="copied"] { color: var(--accent); }
+figure.code .copy[data-state="failed"] { color: #e6c07a; }
+@media (hover: hover) and (pointer: fine) {
+  figure.code .copy:hover { color: var(--fg); background: #181d1a; }
+  figure.code .copy[data-state="copied"]:hover { color: var(--accent); }
+}
+
 .post-nav { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3.5rem; font: .85rem var(--mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  figure.code .copy { transition: color 150ms ease, background-color 150ms ease; }
+  figure.code .copy:active { transform: none; }
+}
 
 @media print {
   figure.code .copy, .post-nav { display: none; }

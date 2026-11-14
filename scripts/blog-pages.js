@@ -24,15 +24,27 @@ const imageFor = (post) =>
 const crumb = (trail) => `
       <p class="prompt"><a href="/"><b>${profile.handle}@portfolio</b></a>:${trail}$</p>`;
 
-// Copy buttons on code blocks — the only script on blog pages.
+// Copy buttons on code blocks — the only script on blog pages. Repeat clicks
+// restart the timer instead of stacking, and a blocked clipboard (http, old
+// browsers) falls back to selecting the code so ⌘C still works.
 const COPY_SCRIPT = `
   document.querySelectorAll('figure.code .copy').forEach(function (b) {
+    var timer;
+    var show = function (state, label) {
+      b.dataset.state = state;
+      b.textContent = label;
+      clearTimeout(timer);
+      timer = setTimeout(function () { b.dataset.state = ''; b.textContent = 'copy'; }, 1600);
+    };
     b.addEventListener('click', function () {
-      var code = b.closest('figure').querySelector('pre').innerText;
-      navigator.clipboard.writeText(code).then(function () {
-        b.textContent = 'copied';
-        setTimeout(function () { b.textContent = 'copy'; }, 1500);
-      });
+      var pre = b.closest('figure').querySelector('pre');
+      var text = pre.innerText.replace(/\\n$/, '');
+      var select = function () {
+        getSelection().selectAllChildren(pre);
+        show('failed', 'press ⌘C');
+      };
+      if (!navigator.clipboard) return select();
+      navigator.clipboard.writeText(text).then(function () { show('copied', 'copied'); }, select);
     });
   });
 `;
