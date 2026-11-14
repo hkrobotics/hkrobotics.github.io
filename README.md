@@ -18,6 +18,27 @@ all generated from it — don't hardcode copy anywhere else.
 - **Analytics:** paste a Cloudflare Web Analytics token into `analytics.cloudflareToken`;
   empty means no analytics script is shipped.
 
+## Writing a blog post
+
+Add `content/blog/<slug>.md`; the file name becomes `/blog/<slug>/`.
+
+```md
+---
+title: Steal my zsh config
+summary: One line for the index, RSS and share card.
+date: 2026-11-15
+updated: 2026-12-01      (optional)
+tags: zsh, terminal      (optional)
+---
+```
+
+Then `bun run images blog` to render its share card (`public/og/blog/<slug>.png`).
+Posts are compiled at build time by [`scripts/blog.js`](scripts/blog.js) (marked +
+Shiki, no client-side highlighting) and laid out by
+[`scripts/blog-pages.js`](scripts/blog-pages.js). A post shows up on the homepage,
+`/blog/`, `/blog/feed.xml`, the sitemap and `llms.txt` automatically. Code fences
+take a caption: ` ```zsh title=".zshrc" `.
+
 ## SEO & LLMs
 
 Generated at build time from `profile.js` by [`scripts/site-files.js`](scripts/site-files.js):
@@ -27,6 +48,7 @@ Generated at build time from `profile.js` by [`scripts/site-files.js`](scripts/s
 - `/terminal/`, `/ide/`, `/monitor/` — built from `app.html` with per-view meta
 - `/llms.txt` and `/llms-full.txt` — [llmstxt.org](https://llmstxt.org) index + full Markdown profile
 - `/sitemap.xml` (with `lastmod`) and `/404.html`
+- `/blog/`, `/blog/<slug>/` (+ `index.md` source) and `/blog/feed.xml` — from `content/blog/`
 - `/contributions.svg` + `/contributions-light.svg` — heatmap image for the GitHub profile README
 
 Fonts are self-hosted via Fontsource and each view is lazy-loaded.
@@ -56,9 +78,10 @@ src/
   data/        profile.js (content), views.js (view list), activity.json (generated)
   views/       Terminal, IDE, Monitor — each a .jsx + co-located .css; switch via useView()
   components/  shared UI, each with its own .css (ContribHeatmap, RevealContact, WindowControls)
-  styles/      global.css (app shell), home.css (homepage, inlined at build)
+  styles/      global.css (app shell), home.css (homepage + blog), blog.css (posts) — inlined at build
   lib/         helpers (dates, activity, contact decoding, build info, view context, cx)
-scripts/       build-time scripts (activity fetch, SEO/llms.txt pages, social images, icons)
+content/blog/  blog posts as Markdown
+scripts/       build-time scripts (activity fetch, SEO/llms.txt pages, blog, social images, icons)
 design/        exports/: off-site images (LinkedIn banner, GitHub repo preview)
 public/        static files; v0/ is the archived first portfolio, v1/ redirects to /
 ```

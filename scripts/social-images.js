@@ -3,6 +3,7 @@
 //
 //   og-image.png            homepage (/) — also the default share image
 //   og/terminal.png …       one per view, in that view's palette
+//   og/blog/<slug>.png      one per blog post
 //   linkedin-banner.png     1584×396 profile banner (left side kept clear for the photo)
 //   github-preview.png      1280×640 repository social preview
 //
@@ -12,6 +13,8 @@ import { profile } from '../src/data/profile.js';
 import { VIEWS } from '../src/data/views.js';
 import { experienceLabel } from '../src/lib/dates.js';
 import { activityGrid } from './contrib-svg.js';
+import { posts } from './blog.js';
+import { postImage } from './blog-pages.js';
 
 const SANS = 'Inter';
 const MONO = 'JetBrains Mono';
@@ -175,6 +178,38 @@ function monitor(grid) {
     ${text(1116, 524, HOST, { size: 14, fill: t.accent, anchor: 'end' })}</g>`);
 }
 
+// ── /blog/<slug>/ ───────────────────────────────────────────────────────────
+
+// Greedy word wrap: SVG text has no layout engine.
+function wrap(words, maxChars) {
+  const lines = [];
+  for (const word of words.split(' ')) {
+    const last = lines.at(-1);
+    if (last && `${last} ${word}`.length <= maxChars) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  return lines;
+}
+
+function blogPost(post) {
+  const t = THEMES.home;
+  const pad = 80;
+  const title = wrap(post.title, 24).slice(0, 3);
+  const lines = wrap(post.summary, 62);
+  const summary = lines.length > 3 ? [...lines.slice(0, 2), `${lines[2]}…`] : lines;
+  const titleY = 220;
+  const summaryY = titleY + (title.length - 1) * 84 + 70;
+  const date = new Date(`${post.date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  return svg(1200, 630, `
+    <rect width="1200" height="630" fill="${t.bg}"/>
+    ${text(pad, 102, `<tspan fill="${t.accent}">$</tspan> cat blog/${esc(post.slug)}.md`, { size: 20, fill: t.dim })}
+    ${title.map((line, i) => text(pad - 4, titleY + i * 84, esc(line), { size: 76, fill: t.fg, font: SANS, weight: 700, spacing: -1.5 })).join('')}
+    ${summary.map((line, i) => text(pad, summaryY + i * 34, esc(line), { size: 24, fill: t.dim, font: SANS, weight: 500 })).join('')}
+    <line x1="${pad}" x2="${1200 - pad}" y1="${630 - 66}" y2="${630 - 66}" stroke="${t.faint}"/>
+    ${text(pad, 630 - 34, `${esc(profile.name)} · ${date} · ${post.minutes} min read`, { size: 16, fill: t.dim })}
+    ${text(1200 - pad, 630 - 34, `${HOST}/blog`, { size: 16, fill: t.accent, anchor: 'end' })}`);
+}
+
 // ── off-site: LinkedIn banner, GitHub repo preview ──────────────────────────
 
 function linkedinBanner(grid) {
@@ -196,6 +231,7 @@ const githubPreview = (grid) => home(grid, 1280, 640);
 export const IMAGES = [
   { file: 'public/og-image.png', render: home },
   ...VIEWS.map((v) => ({ file: `public/og/${v.id}.png`, render: { terminal, ide, monitor }[v.id] })),
+  ...posts().map((p) => ({ file: `public/${postImage(p)}`, render: () => blogPost(p) })),
   { file: 'design/exports/linkedin-banner.png', render: linkedinBanner },
   { file: 'design/exports/github-preview.png', render: githubPreview },
 ];

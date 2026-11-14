@@ -1,0 +1,47 @@
+/* Blog post styles — inlined after home.css by scripts/blog-pages.js. */
+:root { --panel: #101311; --code-border: #1c221e; }
+
+.prompt a { color: inherit; text-decoration: none; }
+.post header h1 { font-size: clamp(1.9rem, 5.5vw, 2.5rem); text-wrap: balance; }
+.post header .meta { margin-top: .6rem; }
+
+.prose { margin-top: 2rem; font-size: 1.0625rem; }
+.prose > * + * { margin-top: 1.1rem; }
+.prose p, .prose ul, .prose ol { margin-bottom: 0; }
+.prose li { margin: .35rem 0; }
+.prose ol li::marker { content: counter(list-item) ". "; color: var(--dim); font: .9em var(--mono); }
+.prose strong { color: #f2f3f1; font-weight: 600; }
+
+/* Post sections need real hierarchy, unlike the homepage's mono h2 labels. */
+.prose h2 { font: 600 1.35rem/1.3 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; text-transform: none; letter-spacing: -.01em; color: #f2f3f1; margin-top: 3rem; padding-bottom: .4rem; }
+.prose h3 { margin-top: 2rem; }
+.prose h2 a, .prose h3 a { color: inherit; text-decoration: none; }
+.prose h2 a:hover, .prose h3 a:hover { color: var(--accent); }
+
+.prose :not(pre) > code { font: .88em var(--mono); padding: .1em .35em; border-radius: 4px; background: var(--panel); border: 1px solid var(--code-border); overflow-wrap: anywhere; }
+
+.prose kbd { font: .8em var(--mono); padding: .05em .4em; border: 1px solid var(--code-border); border-bottom-width: 2px; border-radius: 4px; background: var(--panel); white-space: nowrap; }
+
+.prose blockquote { margin: 1.5rem 0 0; padding: .1rem 0 .1rem 1rem; border-left: 2px solid var(--accent); color: var(--dim); }
+
+.prose table { width: 100%; border-collapse: collapse; font-size: .92rem; display: block; overflow-x: auto; }
+.prose th, .prose td { text-align: left; padding: .45rem .9rem .45rem 0; border-bottom: 1px solid var(--faint); vertical-align: top; }
+.prose th { color: var(--dim); font: 500 .75rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+
+.prose hr { border: 0; border-top: 1px solid var(--faint); margin: 2.5rem 0; }
+
+/* Code blocks: a caption bar with the file name and a copy button. */
+figure.code { margin: 1.5rem 0 0; border: 1px solid var(--code-border); border-radius: 8px; overflow: hidden; background: var(--panel); }
+figure.code figcaption { display: flex; justify-content: space-between; align-items: center; padding: .4rem .5rem .4rem .9rem; border-bottom: 1px solid var(--code-border); color: var(--dim); font: .75rem var(--mono); }
+figure.code .copy { all: unset; cursor: pointer; padding: .15rem .5rem; border-radius: 4px; color: var(--dim); }
+figure.code .copy:hover { color: var(--fg); background: #181d1a; }
+figure.code .copy:focus-visible { outline: 1px solid var(--accent); }
+figure.code pre { margin: 0; padding: .9rem; overflow-x: auto; font: .82rem/1.6 var(--mono); tab-size: 2; }
+figure.code code { font: inherit; }
+
+.post-nav { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3.5rem; font: .85rem var(--mono); }
+
+@media print {
+  figure.code .copy, .post-nav { display: none; }
+  figure.code, .prose :not(pre) > code { background: #f6f6f6; }
+}

@@ -32,6 +32,7 @@ button.reveal { all: unset; cursor: pointer; color: var(--link); border-bottom: 
 .btn.primary:hover { background: #d8f0bd; color: #0b0d0c; }
 .views { color: var(--dim); font: .82rem var(--mono); }
 .views a { margin-left: .6rem; }
+.more { font: .85rem var(--mono); margin: 0; }
 .activity { display: block; margin-top: .5rem; border-radius: 8px; overflow: hidden; }
 .activity img { display: block; width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
