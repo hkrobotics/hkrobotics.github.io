@@ -34,7 +34,6 @@ brew "zoxide"                   # cd that remembers
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 cask "ghostty"
-cask "font-meslo-lg-nerd-font"  # icons for eza
 ```
 
 Then two things Homebrew doesn't cover, oh-my-zsh and fzf-git:
@@ -180,19 +179,22 @@ Keep the theme file in your dotfiles repo as well. bat only reads its compiled c
 
 ## History
 
+oh-my-zsh already sets sensible history defaults: a 50,000-line history, `share_history` across tabs, `hist_verify`, and skipping commands that start with a space. I only add de-duplication on top:
+
 ```zsh title=".zshrc"
 HISTFILE="$HOME/.zhistory"
-HISTSIZE=20000                  # kept in memory; keep it above SAVEHIST
-SAVEHIST=10000                  # saved to disk
 
-setopt append_history           # add to the file instead of overwriting it
-setopt hist_ignore_dups         # skip a command identical to the previous one
-setopt hist_expire_dups_first   # when trimming, drop duplicates first
-setopt hist_reduce_blanks       # tidy extra spaces
-setopt hist_verify              # !! and !$ expand for editing instead of running
+setopt hist_ignore_all_dups   # re-running a command removes its older copy
+setopt hist_save_no_dups      # don't write duplicates to the file
+setopt hist_find_no_dups      # Ctrl-R and up-arrow skip duplicates
+setopt hist_reduce_blanks     # tidy extra spaces
 ```
 
-`hist_verify` has saved me more than once. `sudo !!` shows you the expanded command first, so you can check it before pressing <kbd>Enter</kbd>.
+With these, <kbd>Ctrl</kbd>+<kbd>R</kbd> shows each command once, at its most recent position, so finding the command from yesterday doesn't mean scrolling past it ten times.
+
+If you also set `HISTSIZE` or `SAVEHIST`, do it in a way that doesn't lower oh-my-zsh's numbers. A line like `HISTSIZE=5000` after oh-my-zsh loads quietly shrinks your history to a tenth.
+
+The oh-my-zsh default I like most is `hist_verify`. `sudo !!` shows you the expanded command first, so you can check it before pressing <kbd>Enter</kbd>.
 
 ## Plugins go last
 
@@ -223,7 +225,7 @@ The JDK comes from `brew install --cask zulu@17`, which is the one the React Nat
 
 ```ini title="~/.config/ghostty/config"
 theme = TokyoNight
-font-family = "MesloLGS Nerd Font Mono"
+font-family = "JetBrains Mono"
 font-size = 16
 window-padding-x = 12
 window-padding-y = 12
@@ -238,7 +240,7 @@ macos-option-as-alt = left
 Ghostty is fast and native, and its defaults are good enough that this is the whole file. Three of these lines do real work:
 
 - **`macos-option-as-alt = left`** makes <kbd>⌥</kbd>+<kbd>C</kbd> work. Using only the left key keeps the right one free for typing special characters.
-- **The font name has to match exactly.** Ghostty quietly falls back to its built-in font when it can't find yours, and that font has icons too, so you may not notice. `ghostty +list-fonts` shows the real names.
+- **JetBrains Mono ships inside Ghostty**, along with Nerd Font icons, so eza's file icons work without installing a patched font. If you pick another font, check its exact name with `ghostty +list-fonts`. Ghostty quietly falls back to its built-in font when it can't find yours.
 - **`ssh-env`** reports a standard terminal type over SSH, so servers that have never heard of Ghostty don't break `clear` or `htop`.
 
 ## Git diffs: delta
